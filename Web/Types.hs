@@ -18,3 +18,13 @@ data BoardController
     | UpdateBoardAction { boardId :: !(Id Board) }
     | DeleteBoardAction { boardId :: !(Id Board) }
     deriving (Eq, Show, Data)
+
+data CardController
+    = CardsAction
+    | NewCardAction
+    | ShowCardAction { cardId :: !(Id Card) }
+    | CreateCardAction
+    | EditCardAction { cardId :: !(Id Card) }
+    | UpdateCardAction { cardId :: !(Id Card) }
+    | DeleteCardAction { cardId :: !(Id Card) }
+    deriving (Eq, Show, Data)

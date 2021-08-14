@@ -7,3 +7,6 @@ import Web.Types
 instance AutoRoute StaticController
 instance AutoRoute BoardController
 
+
+instance AutoRoute CardController
+
