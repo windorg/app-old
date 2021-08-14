@@ -8,3 +8,13 @@ data WebApplication = WebApplication deriving (Eq, Show)
 
 
 data StaticController = WelcomeAction deriving (Eq, Show, Data)
+
+data BoardController
+    = BoardsAction
+    | NewBoardAction
+    | ShowBoardAction { boardId :: !(Id Board) }
+    | CreateBoardAction
+    | EditBoardAction { boardId :: !(Id Board) }
+    | UpdateBoardAction { boardId :: !(Id Board) }
+    | DeleteBoardAction { boardId :: !(Id Board) }
+    deriving (Eq, Show, Data)
