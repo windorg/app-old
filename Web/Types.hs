@@ -28,3 +28,13 @@ data CardController
     | UpdateCardAction { cardId :: !(Id Card) }
     | DeleteCardAction { cardId :: !(Id Card) }
     deriving (Eq, Show, Data)
+
+data CardUpdateController
+    = CardUpdatesAction
+    | NewCardUpdateAction
+    | ShowCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
+    | CreateCardUpdateAction
+    | EditCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
+    | UpdateCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
+    | DeleteCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
+    deriving (Eq, Show, Data)
