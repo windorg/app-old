@@ -21,6 +21,7 @@ instance Controller CardUpdateController where
 
     action EditCardUpdateAction { cardUpdateId } = do
         cardUpdate <- fetch cardUpdateId
+        card :: Card <- fetch (get #cardId cardUpdate)
         render EditView { .. }
 
     action UpdateCardUpdateAction { cardUpdateId } = do
@@ -28,7 +29,9 @@ instance Controller CardUpdateController where
         cardUpdate
             |> buildCardUpdate
             |> ifValid \case
-                Left cardUpdate -> render EditView { .. }
+                Left cardUpdate -> do
+                    card :: Card <- fetch (get #cardId cardUpdate)
+                    render EditView { .. }
                 Right cardUpdate -> do
                     cardUpdate <- cardUpdate |> updateRecord
                     setSuccessMessage "CardUpdate updated"
