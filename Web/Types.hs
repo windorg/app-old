@@ -33,7 +33,7 @@ data CardUpdateController
     = CardUpdatesAction
     | NewCardUpdateAction
     | ShowCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
-    | CreateCardUpdateAction
+    | CreateCardUpdateAction { cardId :: !(Id Card) }
     | EditCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
     | UpdateCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
     | DeleteCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }

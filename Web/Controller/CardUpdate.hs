@@ -34,10 +34,12 @@ instance Controller CardUpdateController where
                     setSuccessMessage "CardUpdate updated"
                     redirectTo EditCardUpdateAction { .. }
 
-    action CreateCardUpdateAction = do
-        let cardUpdate = newRecord @CardUpdate
+    action CreateCardUpdateAction { cardId } = do
+        let cardUpdate = (newRecord :: CardUpdate) {
+                cardId = cardId
+            }
         cardUpdate
-            |> buildCardUpdate
+            |> fill @'["content"]
             |> ifValid \case
                 Left cardUpdate -> render NewView { .. } 
                 Right cardUpdate -> do

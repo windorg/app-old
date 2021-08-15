@@ -8,6 +8,8 @@ data ShowView = ShowView {
     cardUpdates :: [CardUpdate]
     }
 
+-- Currently both "show" and "edit", kind of. Assuming the board's owner is
+-- viewing the board
 instance View ShowView where
     html ShowView { .. } = [hsx|
         <nav>
@@ -18,27 +20,54 @@ instance View ShowView where
                 <li class="breadcrumb-item active">{get #title card}</li>
             </ol>
         </nav>
-        <h1>{get #title card}</h1>
-        {forEach cardUpdates renderCardUpdate}
-    |]
-      where
-        -- TODO render year as well
-        renderTimestamp :: _ -> Text
-        renderTimestamp time =
-            -- February 14th, 18:20
-            format "{} {}, {}"
-              (timeF "%B" time)
-              (dayOfMonthOrdF time)
-              (timeF "%R" time)
-        
-        renderCardUpdate cardUpdate = [hsx|
-          <p>
-            <span class="text-muted small">
-              {renderTimestamp (get #createdAt cardUpdate)}
-            </span>
-            <br>
-            <a href={EditCardUpdateAction (get #id cardUpdate)}>
-              {get #content cardUpdate}
-            </a>
-          </p>
-        |]
+        <h1 style="margin-bottom:1em">{get #title card}</h1>
+        {renderCardUpdateAddForm card}
+        <div style="margin-top:30px;">
+          {forEach cardUpdates renderCardUpdate}
+        </div>
+     |]
+
+renderCardUpdateAddForm :: Card -> Html
+renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
+  <style>
+    .update-content-field { max-width:500px; width:100%; height:120px; }
+  </style>
+  {(textareaField #content) {
+     placeholder = "Did helpful thing X / did nothing today / etc",
+     disableLabel = True,
+     fieldClass = "update-content-field"
+   }
+  }
+  {submitButton {
+     label = "Send"
+   }
+  }
+  |]
+  where
+    cardUpdate = (newRecord :: CardUpdate)
+
+    options :: FormContext CardUpdate -> FormContext CardUpdate
+    options formContext = formContext
+      |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
+
+-- TODO render year as well
+renderTimestamp :: _ -> Text
+renderTimestamp time =
+    -- February 14th, 18:20
+    format "{} {}, {}"
+      (timeF "%B" time)
+      (dayOfMonthOrdF time)
+      (timeF "%R" time)
+
+renderCardUpdate :: CardUpdate -> Html
+renderCardUpdate cardUpdate = [hsx|
+  <p>
+    <span class="text-muted small">
+      {renderTimestamp (get #createdAt cardUpdate)}
+    </span>
+    <br>
+    <a href={EditCardUpdateAction (get #id cardUpdate)}>
+      {get #content cardUpdate}
+    </a>
+  </p>
+  |]
