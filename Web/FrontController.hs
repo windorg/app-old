@@ -5,6 +5,7 @@ import Web.Controller.Prelude
 import Web.View.Layout (defaultLayout)
 
 -- Controller Imports
+import Web.Controller.User
 import Web.Controller.CardUpdate
 import Web.Controller.Card
 import Web.Controller.Board
@@ -14,6 +15,7 @@ instance FrontController WebApplication where
     controllers = 
         [ startPage WelcomeAction
         -- Generator Marker
+        , parseRoute @UserController
         , parseRoute @CardUpdateController
         , parseRoute @CardController
         , parseRoute @BoardController

@@ -13,3 +13,6 @@ instance AutoRoute CardController
 
 instance AutoRoute CardUpdateController
 
+
+instance AutoRoute UserController
+
