@@ -3,7 +3,8 @@ CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
     handle TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    display_name TEXT NOT NULL
 );
 CREATE TABLE cards (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,

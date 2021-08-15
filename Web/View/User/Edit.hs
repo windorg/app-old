@@ -19,5 +19,6 @@ renderForm :: User -> Html
 renderForm user = formFor user [hsx|
     {(textField #email)}
     {(textField #handle)}
+    {(textField #displayName)}
     {submitButton}
 |]

@@ -35,3 +35,10 @@ ALTER TABLE public.cards DISABLE TRIGGER ALL;
 ALTER TABLE public.cards ENABLE TRIGGER ALL;
 
 
+ALTER TABLE public.card_updates DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.card_updates ENABLE TRIGGER ALL;
+
+
