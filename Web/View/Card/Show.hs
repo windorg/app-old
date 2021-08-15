@@ -1,5 +1,6 @@
 module Web.View.Card.Show where
 import Web.View.Prelude
+import Fmt
 
 data ShowView = ShowView { card :: Card, cardUpdates :: [CardUpdate] }
 
@@ -15,9 +16,21 @@ instance View ShowView where
         {forEach cardUpdates renderCardUpdate}
     |]
       where
+        -- TODO render year as well
+        renderTimestamp :: _ -> Text
+        renderTimestamp time =
+            -- February 14th, 18:20
+            format "{} {}, {}"
+              (timeF "%B" time)
+              (dayOfMonthOrdF time)
+              (timeF "%R" time)
+        
         renderCardUpdate cardUpdate = [hsx|
           <p>
-            <span class="text-muted small">{get #createdAt cardUpdate}</span><br>
+            <span class="text-muted small">
+              {renderTimestamp (get #createdAt cardUpdate)}
+            </span>
+            <br>
             <a href={ShowCardUpdateAction (get #id cardUpdate)}>
               {get #content cardUpdate}
             </a>

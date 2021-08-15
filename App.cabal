@@ -28,7 +28,8 @@ executable App
   	ihp,
   	base,
   	wai,
-    text
+    text,
+    fmt
   hs-source-dirs:      .
   default-language:    Haskell2010
   extensions:

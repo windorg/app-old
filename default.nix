@@ -11,6 +11,14 @@ let
             wai
             text
             hlint
+            fmt
+            aeson
+            unordered-containers
+            extra
+            commonmark
+            named
+            time
+            aeson
             p.ihp
         ];
         otherDeps = p: with p; [
