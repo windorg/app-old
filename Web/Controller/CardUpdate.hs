@@ -47,7 +47,7 @@ instance Controller CardUpdateController where
                 Left cardUpdate -> render NewView { .. } 
                 Right cardUpdate -> do
                     cardUpdate <- cardUpdate |> createRecord
-                    setSuccessMessage "CardUpdate created"
+                    setSuccessMessage "Card update posted"
                     redirectTo CardUpdatesAction
 
     action DeleteCardUpdateAction { cardUpdateId } = do

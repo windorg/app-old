@@ -23,7 +23,7 @@ data CardController
     = CardsAction
     | NewCardAction
     | ShowCardAction { cardId :: !(Id Card) }
-    | CreateCardAction
+    | CreateCardAction { boardId :: !(Id Board) }
     | EditCardAction { cardId :: !(Id Card) }
     | UpdateCardAction { cardId :: !(Id Card) }
     | DeleteCardAction { cardId :: !(Id Card) }

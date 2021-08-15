@@ -36,16 +36,15 @@ instance Controller CardController where
                     setSuccessMessage "Card updated"
                     redirectTo EditCardAction { .. }
 
-    action CreateCardAction = do
-        let card = newRecord @Card
+    action CreateCardAction { boardId } = do
+        let card = (newRecord :: Card) { boardId = boardId }
         card
-            |> buildCard
+            |> fill @'["title"]
             |> ifValid \case
                 Left card -> render NewView { .. } 
                 Right card -> do
                     card <- card |> createRecord
-                    setSuccessMessage "Card created"
-                    redirectTo CardsAction
+                    redirectTo ShowBoardAction { .. }
 
     action DeleteCardAction { cardId } = do
         card <- fetch cardId
