@@ -17,6 +17,7 @@ instance Controller CardController where
 
     action ShowCardAction { cardId } = do
         card <- fetch cardId
+        board :: Board <- fetch (get #boardId card)
         cardUpdates <- fetch (get #cardUpdates card)
         render ShowView { .. }
 

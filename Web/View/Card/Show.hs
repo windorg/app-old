@@ -2,14 +2,20 @@ module Web.View.Card.Show where
 import Web.View.Prelude
 import Fmt
 
-data ShowView = ShowView { card :: Card, cardUpdates :: [CardUpdate] }
+data ShowView = ShowView {
+    board :: Board,
+    card :: Card,
+    cardUpdates :: [CardUpdate]
+    }
 
 instance View ShowView where
     html ShowView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href={CardsAction}>Cards</a></li>
-                <li class="breadcrumb-item active">Show Card</li>
+                <li class="breadcrumb-item">
+                  <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
+                </li>
+                <li class="breadcrumb-item active">{get #title card}</li>
             </ol>
         </nav>
         <h1>{get #title card}</h1>
