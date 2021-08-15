@@ -18,7 +18,6 @@ instance View EditView where
 renderForm :: Card -> Html
 renderForm card = formFor card [hsx|
     {(textField #title)}
-    {(textField #comments)}
     {(textField #boardId)}
     {submitButton}
 |]
