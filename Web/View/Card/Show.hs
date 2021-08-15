@@ -31,7 +31,7 @@ instance View ShowView where
               {renderTimestamp (get #createdAt cardUpdate)}
             </span>
             <br>
-            <a href={ShowCardUpdateAction (get #id cardUpdate)}>
+            <a href={EditCardUpdateAction (get #id cardUpdate)}>
               {get #content cardUpdate}
             </a>
           </p>
