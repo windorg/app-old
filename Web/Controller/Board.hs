@@ -17,7 +17,7 @@ instance Controller BoardController where
 
     action ShowBoardAction { boardId } = do
         board <- fetch boardId
-        cards <- fetch (get #cards board)
+        cards <- get #cards board |> orderByDesc #createdAt |> fetch
         render ShowView { .. }
 
     action EditBoardAction { boardId } = do
