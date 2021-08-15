@@ -49,8 +49,7 @@ instance Controller CardController where
     action DeleteCardAction { cardId } = do
         card <- fetch cardId
         deleteRecord card
-        setSuccessMessage "Card deleted"
-        redirectTo CardsAction
+        redirectTo ShowBoardAction { boardId = get #boardId card }
 
 buildCard card = card
-    |> fill @["title", {- "comments", -} "boardId"]
+    |> fill @["title", "boardId"]

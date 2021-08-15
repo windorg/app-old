@@ -20,12 +20,33 @@ instance View ShowView where
                 <li class="breadcrumb-item active">{get #title card}</li>
             </ol>
         </nav>
-        <h1 style="margin-bottom:1em">{get #title card}</h1>
+        <h1 style="margin-bottom:1em">
+          {get #title card}
+          {renderCardDeleteButton card}
+        </h1>
         {renderCardUpdateAddForm card}
         <div style="margin-top:30px;">
           {forEach cardUpdates renderCardUpdate}
         </div>
      |]
+
+renderCardDeleteButton :: Card -> Html
+renderCardDeleteButton card = [hsx|
+  <form
+    action={DeleteCardAction (get #id card)}
+    method="POST"
+    style="display:inline-block"
+  >
+    <input type="hidden" name="_method" value="DELETE"/>
+    <button
+      type="submit"
+      class="btn btn-sm btn-outline-danger"
+      style="margin-left:1em"
+    >
+      Delete
+    </button>
+  </form>
+  |]
 
 renderCardUpdateAddForm :: Card -> Html
 renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
