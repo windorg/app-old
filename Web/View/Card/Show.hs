@@ -33,20 +33,13 @@ instance View ShowView where
 
 renderCardDeleteButton :: Card -> Html
 renderCardDeleteButton card = [hsx|
-  <form
-    action={DeleteCardAction (get #id card)}
-    method="POST"
-    style="display:inline-block"
+  <a
+    href={DeleteCardAction (get #id card)}
+    class="btn btn-sm btn-outline-danger js-delete"
+    style="margin-left:1em"
   >
-    <input type="hidden" name="_method" value="DELETE"/>
-    <button
-      type="submit"
-      class="btn btn-sm btn-outline-danger"
-      style="margin-left:1em"
-    >
-      Delete
-    </button>
-  </form>
+    Delete
+  </a>
   |]
 
 renderCardUpdateAddForm :: Card -> Html
@@ -88,16 +81,31 @@ renderCardUpdate cardUpdate = [hsx|
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}
       </span>
-      <a
-        class="btn btn-sm btn-info"
-        style="margin-left:.5rem; padding:.125rem .25rem; font-size:.6rem"
-        href={EditCardUpdateAction (get #id cardUpdate)}
-      >
-        Edit
-      </a>
+      {renderCardUpdateEditButton cardUpdate}
+      {renderCardUpdateDeleteButton cardUpdate}
     </div>
     {renderMarkdown (get #content cardUpdate)}
   </div>
+  |]
+
+renderCardUpdateEditButton cardUpdate = [hsx|
+  <a
+    class="btn btn-sm btn-outline-info"
+    style="margin-left:.5rem; padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
+    href={EditCardUpdateAction (get #id cardUpdate)}
+  >
+    Edit
+  </a>
+  |]
+
+renderCardUpdateDeleteButton cardUpdate = [hsx|
+  <a
+    class="btn btn-sm btn-outline-danger js-delete js-delete-no-confirm"
+    style="padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
+    href={DeleteCardUpdateAction (get #id cardUpdate)}
+  >
+    Kill
+  </a>
   |]
 
 renderMarkdown :: Text -> Html

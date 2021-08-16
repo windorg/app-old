@@ -34,8 +34,7 @@ instance Controller CardUpdateController where
                     render EditView { .. }
                 Right cardUpdate -> do
                     cardUpdate <- cardUpdate |> updateRecord
-                    setSuccessMessage "CardUpdate updated"
-                    redirectTo EditCardUpdateAction { .. }
+                    redirectTo ShowCardAction { cardId = get #cardId cardUpdate }
 
     action CreateCardUpdateAction { cardId } = do
         let cardUpdate = (newRecord :: CardUpdate) {
@@ -47,14 +46,12 @@ instance Controller CardUpdateController where
                 Left cardUpdate -> render NewView { .. } 
                 Right cardUpdate -> do
                     cardUpdate <- cardUpdate |> createRecord
-                    setSuccessMessage "Card update posted"
-                    redirectTo CardUpdatesAction
+                    redirectTo ShowCardAction { cardId }
 
     action DeleteCardUpdateAction { cardUpdateId } = do
         cardUpdate <- fetch cardUpdateId
         deleteRecord cardUpdate
-        setSuccessMessage "CardUpdate deleted"
-        redirectTo CardUpdatesAction
+        redirectTo ShowCardAction { cardId = get #cardId cardUpdate }
 
 buildCardUpdate cardUpdate = cardUpdate
     |> fill @["content","cardId"]
