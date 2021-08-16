@@ -1,6 +1,7 @@
 module Web.View.Card.Show where
 import Web.View.Prelude
 import Fmt
+import qualified Commonmark
 
 data ShowView = ShowView {
     board :: Board,
@@ -82,18 +83,26 @@ renderTimestamp time =
 
 renderCardUpdate :: CardUpdate -> Html
 renderCardUpdate cardUpdate = [hsx|
-  <p>
-    <span class="text-muted small">
-      {renderTimestamp (get #createdAt cardUpdate)}
-    </span>
-    <a
-      class="btn btn-sm btn-info"
-      style="margin-left:.5rem; padding:.125rem .25rem; font-size:.6rem"
-      href={EditCardUpdateAction (get #id cardUpdate)}
-    >
-      Edit
-    </a>
-    <br>
-    {get #content cardUpdate}
-  </p>
+  <div style="margin-bottom:2em;">
+    <div style="margin-bottom:.3em">
+      <span class="text-muted small">
+        {renderTimestamp (get #createdAt cardUpdate)}
+      </span>
+      <a
+        class="btn btn-sm btn-info"
+        style="margin-left:.5rem; padding:.125rem .25rem; font-size:.6rem"
+        href={EditCardUpdateAction (get #id cardUpdate)}
+      >
+        Edit
+      </a>
+    </div>
+    {renderMarkdown (get #content cardUpdate)}
+  </div>
   |]
+
+renderMarkdown :: Text -> Html
+renderMarkdown text =
+    case Commonmark.commonmark "" text of
+        Left err -> toHtml text
+        Right (val :: Commonmark.Html ()) ->
+            preEscapedToHtml (Commonmark.renderHtml val)
