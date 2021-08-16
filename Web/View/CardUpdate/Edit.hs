@@ -22,8 +22,8 @@ instance View EditView where
 renderForm :: CardUpdate -> Html
 renderForm cardUpdate = formFor cardUpdate [hsx|
     {(textareaField #content) {
-        disableLabel = True,
-        fieldClass = "autosize"
-    }}
+        disableLabel = True
+      } |> autosize 5
+    }
     {submitButton {label = "Save"}}
 |]
