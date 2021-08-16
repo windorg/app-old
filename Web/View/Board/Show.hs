@@ -1,10 +1,12 @@
 module Web.View.Board.Show where
+
 import Web.View.Prelude
 
-data ShowView = ShowView { board :: Board, cards :: [Card] }
+data ShowView = ShowView {board :: Board, cards :: [Card]}
 
 instance View ShowView where
-    html ShowView { .. } = [hsx|
+  html ShowView {..} =
+    [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>My boards</a></li>
@@ -17,22 +19,27 @@ instance View ShowView where
           {forEach cards renderCard}
         </div>
     |]
-      where
-        renderCard card = [hsx|
+    where
+      renderCard card =
+        [hsx|
           <p>
             <a href={ShowCardAction (get #id card)}>{get #title card}</a>
           </p>
         |]
 
 renderCardAddForm :: Board -> Html
-renderCardAddForm board = formForWithOptions card options [hsx|
+renderCardAddForm board =
+  formForWithOptions
+    card
+    options
+    [hsx|
   <style>
-    .title-field { max-width:500px; width:100%; height:120px; }
+    .title-field { max-width:500px; width:100%; min-height:120px; }
   </style>
   {(textareaField #title) {
      placeholder = "I want to ...",
      disableLabel = True,
-     fieldClass = "title-field"
+     fieldClass = "title-field autosize"
    }
   }
   {submitButton {
@@ -44,5 +51,6 @@ renderCardAddForm board = formForWithOptions card options [hsx|
     card = (newRecord :: Card)
 
     options :: FormContext Card -> FormContext Card
-    options formContext = formContext
-      |> set #formAction (pathTo (CreateCardAction (get #id board)))
+    options formContext =
+      formContext
+        |> set #formAction (pathTo (CreateCardAction (get #id board)))

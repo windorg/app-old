@@ -4,5 +4,8 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"nixEnvSelector.nixFile": "${workspaceRoot}/default.nix",
+		"haskell.plugin.hlint.diagnosticsOn": false
+	}
 }

@@ -52,12 +52,12 @@ renderCardDeleteButton card = [hsx|
 renderCardUpdateAddForm :: Card -> Html
 renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
   <style>
-    .update-content-field { max-width:500px; width:100%; height:100px !important; }
+    .update-content-field { max-width:500px; width:100%; min-height:120px; }
   </style>
   {(textareaField #content) {
      placeholder = "Did helpful thing X / did nothing today / etc",
      disableLabel = True,
-     fieldClass = "update-content-field"
+     fieldClass = "update-content-field autosize"
    }
   }
   {submitButton {

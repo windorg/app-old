@@ -53,6 +53,12 @@ scripts = [hsx|
         <script src={assetPath "/vendor/turbolinksMorphdom.js"}></script>
         <script src={assetPath "/helpers.js"}></script>
         <script src={assetPath "/ihp-auto-refresh.js"}></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.min.js"></script>
+        <script>
+            window.onload = function () {
+                autosize(document.querySelectorAll('.autosize'));
+            };
+        </script>
     |]
 
 devScripts :: Html
