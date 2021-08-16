@@ -86,9 +86,14 @@ renderCardUpdate cardUpdate = [hsx|
     <span class="text-muted small">
       {renderTimestamp (get #createdAt cardUpdate)}
     </span>
-    <br>
-    <a href={EditCardUpdateAction (get #id cardUpdate)}>
-      {get #content cardUpdate}
+    <a
+      class="btn btn-sm btn-info"
+      style="margin-left:.5rem; padding:.125rem .25rem; font-size:.6rem"
+      href={EditCardUpdateAction (get #id cardUpdate)}
+    >
+      Edit
     </a>
+    <br>
+    {get #content cardUpdate}
   </p>
   |]
