@@ -18,7 +18,9 @@ instance Controller BoardController where
     action ShowBoardAction { boardId } = do
         board <- fetch boardId
         cards <- get #cards board |> orderByDesc #createdAt |> fetch
-        render ShowView { .. }
+        counts <- forM cards $ \card -> 
+            sqlQueryScalar "SELECT COUNT(*) FROM card_updates WHERE card_id = ?" [get #id card]
+        render ShowView { cards = zip cards counts, .. }
 
     action EditBoardAction { boardId } = do
         board <- fetch boardId

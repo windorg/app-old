@@ -2,7 +2,7 @@ module Web.View.Board.Show where
 
 import Web.View.Prelude
 
-data ShowView = ShowView {board :: Board, cards :: [Card]}
+data ShowView = ShowView {board :: Board, cards :: [(Card, Int)]}
 
 instance View ShowView where
   html ShowView {..} =
@@ -20,10 +20,11 @@ instance View ShowView where
         </div>
     |]
     where
-      renderCard card =
+      renderCard (card, count) =
         [hsx|
           <p>
             <a href={ShowCardAction (get #id card)}>{get #title card}</a>
+            <span style="margin-left:.5em;" class="badge badge-secondary">{count}</span>
           </p>
         |]
 
