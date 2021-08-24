@@ -4,7 +4,10 @@ CREATE TABLE users (
     email TEXT NOT NULL,
     handle TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    display_name TEXT NOT NULL
+    display_name TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    failed_login_attempts INT DEFAULT 0 NOT NULL
 );
 CREATE TABLE cards (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,

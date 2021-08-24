@@ -22,6 +22,12 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 </head>
 <body>
     <div class="container mt-4">
+        <div class="text-muted text-right mb-2">
+            {case currentUserOrNothing of
+               Just _ -> "Logged in" :: Text
+               Nothing -> "Logged out" :: Text
+            }
+        </div>
         {renderFlashMessages}
         {inner}
     </div>
