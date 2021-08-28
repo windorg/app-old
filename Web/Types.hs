@@ -21,9 +21,7 @@ data BoardController
     deriving (Eq, Show, Data)
 
 data CardController
-    = CardsAction
-    | NewCardAction
-    | ShowCardAction { cardId :: !(Id Card) }
+    = ShowCardAction { cardId :: !(Id Card) }
     | CreateCardAction { boardId :: !(Id Board) }
     | EditCardAction { cardId :: !(Id Card) }
     | UpdateCardAction { cardId :: !(Id Card) }
@@ -31,9 +29,7 @@ data CardController
     deriving (Eq, Show, Data)
 
 data CardUpdateController
-    = CardUpdatesAction
-    | NewCardUpdateAction
-    | ShowCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
+    = ShowCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
     | CreateCardUpdateAction { cardId :: !(Id Card) }
     | EditCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }
     | UpdateCardUpdateAction { cardUpdateId :: !(Id CardUpdate) }

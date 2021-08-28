@@ -5,6 +5,7 @@ import Web.View.Board.Index
 import Web.View.Board.New
 import Web.View.Board.Edit
 import Web.View.Board.Show
+import Web.Controller.Authorization
 
 instance Controller BoardController where
     action BoardsAction = do
@@ -16,6 +17,7 @@ instance Controller BoardController where
         render NewView { .. }
 
     action ShowBoardAction { boardId } = do
+        accessDeniedUnless =<< userCanView @Board boardId
         board <- fetch boardId
         cards <- get #cards board |> orderByDesc #createdAt |> fetch
         counts <- forM cards $ \card -> 
@@ -23,10 +25,12 @@ instance Controller BoardController where
         render ShowView { cards = zip cards counts, .. }
 
     action EditBoardAction { boardId } = do
+        accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
         render EditView { .. }
 
     action UpdateBoardAction { boardId } = do
+        accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
         board
             |> buildBoard
@@ -49,6 +53,7 @@ instance Controller BoardController where
                     redirectTo BoardsAction
 
     action DeleteBoardAction { boardId } = do
+        accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
         deleteRecord board
         setSuccessMessage "Board deleted"

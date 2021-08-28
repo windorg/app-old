@@ -1,31 +1,26 @@
 module Web.Controller.Card where
 
 import Web.Controller.Prelude
-import Web.View.Card.Index
-import Web.View.Card.New
 import Web.View.Card.Edit
 import Web.View.Card.Show
+import Web.Controller.Authorization
 
 instance Controller CardController where
-    action CardsAction = do
-        card <- query @Card |> fetch
-        render IndexView { .. }
-
-    action NewCardAction = do
-        let card = newRecord
-        render NewView { .. }
-
     action ShowCardAction { cardId } = do
+        accessDeniedUnless =<< userCanView @Card cardId
         card <- fetch cardId
-        board :: Board <- fetch (get #boardId card)
+        board <- fetch (get #boardId card)
         cardUpdates <- get #cardUpdates card |> orderByDesc #createdAt |> fetch
         render ShowView { .. }
 
     action EditCardAction { cardId } = do
+        accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
+        board <- fetch (get #boardId card)
         render EditView { .. }
 
     action UpdateCardAction { cardId } = do
+        accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         card
             |> buildCard
@@ -37,16 +32,20 @@ instance Controller CardController where
                     redirectTo EditCardAction { .. }
 
     action CreateCardAction { boardId } = do
+        accessDeniedUnless =<< userCanEdit @Board boardId
         let card = (newRecord :: Card) { boardId = boardId }
         card
             |> fill @'["title"]
             |> ifValid \case
-                Left card -> render NewView { .. } 
+                Left card -> do
+                    setErrorMessage "Card is invalid"
+                    redirectTo ShowBoardAction { .. }
                 Right card -> do
                     card <- card |> createRecord
                     redirectTo ShowBoardAction { .. }
 
     action DeleteCardAction { cardId } = do
+        accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         deleteRecord card
         redirectTo ShowBoardAction { boardId = get #boardId card }
