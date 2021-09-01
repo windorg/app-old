@@ -19,14 +19,17 @@ instance View ShowView where
           {forEach cards renderCard}
         </div>
     |]
-    where
-      renderCard (card, count) =
-        [hsx|
-          <p>
-            <a href={ShowCardAction (get #id card)}>{get #title card}</a>
-            <span style="margin-left:.5em;" class="badge badge-secondary">{count}</span>
-          </p>
-        |]
+
+renderCard :: (Card, Int) -> Html
+renderCard (card, count) =
+  [hsx|
+    <div class="card mb-2">
+      <div class="card-body">
+        <a class="stretched-link" href={ShowCardAction (get #id card)}>{get #title card}</a>
+        <span style="margin-left:.5em;" class="badge badge-secondary">{count}</span>
+      </div>
+    </div>
+  |]
 
 renderCardAddForm :: Board -> Html
 renderCardAddForm board =
