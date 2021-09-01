@@ -42,7 +42,8 @@ instance Controller BoardController where
                     redirectTo EditBoardAction { .. }
 
     action CreateBoardAction = do
-        let board = newRecord @Board
+        ensureIsUser
+        let board = (newRecord :: Board) { userId = currentUserId }
         board
             |> buildBoard
             |> ifValid \case
@@ -60,4 +61,4 @@ instance Controller BoardController where
         redirectTo BoardsAction
 
 buildBoard board = board
-    |> fill @["title","userId"]
+    |> fill @'["title"]

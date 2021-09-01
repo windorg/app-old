@@ -18,6 +18,5 @@ instance View NewView where
 renderForm :: Board -> Html
 renderForm board = formFor board [hsx|
     {(textField #title)}
-    {(textField #userId)}
     {submitButton}
 |]
