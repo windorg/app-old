@@ -37,8 +37,7 @@ data CardUpdateController
     deriving (Eq, Show, Data)
 
 data UserController
-    = UsersAction
-    | NewUserAction
+    = NewUserAction
     | ShowUserAction { userId :: !(Id User) }
     | CreateUserAction
     | EditUserAction { userId :: !(Id User) }

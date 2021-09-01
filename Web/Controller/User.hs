@@ -1,16 +1,11 @@
 module Web.Controller.User where
 
 import Web.Controller.Prelude
-import Web.View.User.Index
 import Web.View.User.New
 import Web.View.User.Edit
 import Web.View.User.Show
 
 instance Controller UserController where
-    action UsersAction = do
-        user <- query @User |> fetch
-        render IndexView { .. }
-
     action NewUserAction = do
         let user = newRecord
         render NewView { .. }
@@ -38,18 +33,23 @@ instance Controller UserController where
         let user = newRecord @User
         user
             |> buildUser
+            |> validateField #email isEmail
+            |> validateField #passwordHash nonEmpty
             |> ifValid \case
                 Left user -> render NewView { .. } 
                 Right user -> do
-                    user <- user |> createRecord
+                    hashed <- hashPassword (get #passwordHash user)
+                    user <- user
+                        |> set #passwordHash hashed
+                        |> createRecord
                     setSuccessMessage "User created"
-                    redirectTo UsersAction
+                    redirectToPath "/"
 
     action DeleteUserAction { userId } = do
         user <- fetch userId
         deleteRecord user
         setSuccessMessage "User deleted"
-        redirectTo UsersAction
+        redirectToPath "/"
 
 buildUser user = user
     |> fill @["email","handle","displayName"]

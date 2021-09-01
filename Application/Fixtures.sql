@@ -34,6 +34,7 @@ ALTER TABLE public.cards DISABLE TRIGGER ALL;
 
 INSERT INTO public.cards (id, title, board_id, created_at) VALUES ('a4d244eb-0623-4c74-859d-21012b718e7d', 'Clean up the mess on the table', 'af44c8c9-9d8d-49e5-bb31-3d970ef02e0b', '2021-08-16 01:42:27.340191+02');
 INSERT INTO public.cards (id, title, board_id, created_at) VALUES ('fde6dedf-cde3-4dc3-96ab-08498e63de63', 'wind of change: just going to see what happens', 'af44c8c9-9d8d-49e5-bb31-3d970ef02e0b', '2021-08-15 23:42:05.46303+02');
+INSERT INTO public.cards (id, title, board_id, created_at) VALUES ('17d4cc38-66b1-4558-a74a-e5daa0a12893', 'Test', 'af44c8c9-9d8d-49e5-bb31-3d970ef02e0b', '2021-09-02 00:22:28.869145+02');
 
 
 ALTER TABLE public.cards ENABLE TRIGGER ALL;
@@ -50,6 +51,8 @@ INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('cb21
 INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('11026625-1117-4124-ba32-70beed3723b0', '2021-08-16 06:01:39.033102+02', 'Cleaned up a bit', 'a4d244eb-0623-4c74-859d-21012b718e7d');
 INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('48702749-b2d2-49a0-b906-21917676f363', '2021-08-16 18:06:38.446239+02', 'Done', 'a4d244eb-0623-4c74-859d-21012b718e7d');
 INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('a178637f-08a5-401c-a206-1e1b0a3be402', '2021-08-24 20:27:08.39942+02', 'Doing another wind of change stream, in English this time.', 'fde6dedf-cde3-4dc3-96ab-08498e63de63');
+INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('785c360b-1966-49a6-9a1e-4527d4aef7b5', '2021-09-02 00:22:32.363782+02', 'Something else', '17d4cc38-66b1-4558-a74a-e5daa0a12893');
+INSERT INTO public.card_updates (id, created_at, content, card_id) VALUES ('d5377255-7b56-4972-ae15-265c0a8625e1', '2021-09-02 00:22:34.867182+02', 'Whatever', '17d4cc38-66b1-4558-a74a-e5daa0a12893');
 
 
 ALTER TABLE public.card_updates ENABLE TRIGGER ALL;
