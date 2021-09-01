@@ -14,7 +14,9 @@ instance View ShowView where
             </ol>
         </nav>
         <h1 style="margin-bottom:1em;">{get #title board}</h1>
-        {renderCardAddForm board}
+        {if get #id currentUser == get #userId board 
+           then renderCardAddForm board
+           else mempty}
         <div style="margin-top:30px;">
           {forEach cards renderCard}
         </div>
