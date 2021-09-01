@@ -38,8 +38,7 @@ instance Controller BoardController where
                 Left board -> render EditView { .. }
                 Right board -> do
                     board <- board |> updateRecord
-                    setSuccessMessage "Board updated"
-                    redirectTo EditBoardAction { .. }
+                    redirectTo BoardsAction
 
     action CreateBoardAction = do
         ensureIsUser
