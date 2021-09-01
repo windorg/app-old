@@ -11,6 +11,6 @@ instance Controller SessionsController where
         case currentUserOrNothing of
             Just user -> logout user
             Nothing -> pure ()
-        redirectToPath "/"
+        redirectTo BoardsAction
 
 instance Sessions.SessionsControllerConfig User
