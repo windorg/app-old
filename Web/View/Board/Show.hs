@@ -14,6 +14,10 @@ instance View ShowView where
             </ol>
         </nav>
         <h1 style="margin-bottom:1em;">{get #title board}</h1>
+        <div class="alert alert-warning">
+          All boards and cards are currently <strong>public</strong>. Others can't edit your cards,
+          but they can definitely see them.
+        </div>
         {if get #id currentUser == get #userId board 
            then renderCardAddForm board
            else mempty}
