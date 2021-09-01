@@ -52,4 +52,4 @@ instance Controller UserController where
         redirectToPath "/"
 
 buildUser user = user
-    |> fill @["email","handle","displayName"]
+    |> fill @["email","handle","displayName","passwordHash"]

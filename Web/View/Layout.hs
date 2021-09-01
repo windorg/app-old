@@ -33,7 +33,10 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
   where
     loginOrLogout = case currentUserOrNothing of
         Just _ -> [hsx|<a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>|]
-        Nothing -> [hsx|<a href={NewSessionAction}>Login</a>|]
+        Nothing -> [hsx|
+          <a class="mr-3" href={NewSessionAction}>Login</a>
+          <a href={NewUserAction}>Sign up</a>
+          |]
 
 -- The 'assetPath' function used below appends a `?v=SOME_VERSION` to the static assets in production
 -- This is useful to avoid users having old CSS and JS files in their browser cache once a new version is deployed

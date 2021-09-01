@@ -9,10 +9,14 @@ import Web.Controller.Authorization
 
 instance Controller BoardController where
     action BoardsAction = do
-        board <- query @Board |> fetch
+        ensureIsUser
+        board <- query @Board 
+            |> filterWhere (#userId, currentUserId)
+            |> fetch
         render IndexView { .. }
 
     action NewBoardAction = do
+        ensureIsUser
         let board = newRecord
         render NewView { .. }
 
