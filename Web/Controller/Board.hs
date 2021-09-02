@@ -7,12 +7,20 @@ import Web.View.Board.Edit
 import Web.View.Board.Show
 import Web.Controller.Authorization
 
+import Named
+
 instance Controller BoardController where
     action BoardsAction = do
         ensureIsUser
-        board <- query @Board 
+        ownBoards <- query @Board 
             |> filterWhere (#userId, currentUserId)
             |> fetch
+        othersBoardsRaw <- query @Board 
+            |> filterWhereNot (#userId, currentUserId)
+            |> fetch
+        othersBoards <- forM othersBoardsRaw \board -> do
+            user <- fetch (get #userId board)
+            pure (board, #handle (get #handle user), #displayName (get #displayName user))
         render IndexView { .. }
 
     action NewBoardAction = do

@@ -1,24 +1,38 @@
 module Web.View.Board.Index where
 import Web.View.Prelude
+import Named
 
-data IndexView = IndexView { board :: [Board] }
+data IndexView = IndexView { 
+    ownBoards :: [Board], 
+    othersBoards :: [(Board, "handle" :! Text, "displayName" :! Text)] 
+    }
 
 instance View IndexView where
     html IndexView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active"><a href={BoardsAction}>My boards</a></li>
+                <li class="breadcrumb-item active"><a href={BoardsAction}>Boards</a></li>
             </ol>
         </nav>
-        <a href={pathTo NewBoardAction} class="btn btn-primary">New board</a>
+
+        <h1>
+            Your boards
+            <a href={pathTo NewBoardAction} class="ml-3 btn btn-outline-primary btn-sm">+ New</a>
+        </h1>
+        
         <div class="row-cols-1 row-cols-md2">
-            {forEach board renderBoard}
+            {forEach ownBoards renderOwnBoard}
+        </div>
+
+        <h1 class="mt-5">Others' boards</h1>
+        <div class="row-cols-1 row-cols-md2">
+            {forEach othersBoards renderOthersBoard }
         </div>
     |]
 
 
-renderBoard :: Board -> Html
-renderBoard board = [hsx|
+renderOwnBoard :: Board -> Html
+renderOwnBoard board = [hsx|
     <div class="card mt-3 mb-3">
         <div class="card-body">
             <h3>
@@ -49,3 +63,18 @@ renderBoardDeleteButton board = [hsx|
     Delete
   </a>
   |]
+
+renderOthersBoard :: (Board, "handle" :! Text, "displayName" :! Text) -> Html
+renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
+    <div class="card mt-3 mb-3">
+        <div class="card-body">
+            <h3>
+                <a class="text-muted" href={ShowBoardAction (get #id board)}>{get #title board}</a>
+            </h3>
+            <span class="text-muted">
+                <span class="mr-2">{displayName}</span>
+                <em>@{handle}</em>
+            </span>
+        </div>
+    </div>
+|]
