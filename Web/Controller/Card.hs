@@ -28,7 +28,6 @@ instance Controller CardController where
                 Left card -> render EditView { .. }
                 Right card -> do
                     card <- card |> updateRecord
-                    setSuccessMessage "Card updated"
                     redirectTo EditCardAction { .. }
 
     action CreateCardAction { boardId } = do

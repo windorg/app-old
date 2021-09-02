@@ -26,7 +26,6 @@ instance Controller UserController where
                 Left user -> render EditView { .. }
                 Right user -> do
                     user <- user |> updateRecord
-                    setSuccessMessage "User updated"
                     redirectTo EditUserAction { .. }
 
     action CreateUserAction = do
@@ -42,13 +41,11 @@ instance Controller UserController where
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
-                    setSuccessMessage "User created"
                     redirectToPath "/"
 
     action DeleteUserAction { userId } = do
         user <- fetch userId
         deleteRecord user
-        setSuccessMessage "User deleted"
         redirectToPath "/"
 
 buildUser user = user

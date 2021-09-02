@@ -61,14 +61,12 @@ instance Controller BoardController where
                 Left board -> render NewView { .. } 
                 Right board -> do
                     board <- board |> createRecord
-                    setSuccessMessage "Board created"
                     redirectTo BoardsAction
 
     action DeleteBoardAction { boardId } = do
         accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
         deleteRecord board
-        setSuccessMessage "Board deleted"
         redirectTo BoardsAction
 
 buildBoard board = board
