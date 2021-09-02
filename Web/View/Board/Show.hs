@@ -1,6 +1,7 @@
 module Web.View.Board.Show where
 
 import Web.View.Prelude
+import Named
 
 data ShowView = ShowView {board :: Board, cards :: [(Card, Int)]}
 
@@ -9,22 +10,21 @@ instance View ShowView where
     [hsx|
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href={BoardsAction}>My boards</a></li>
+                <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
                 <li class="breadcrumb-item active">{get #title board}</li>
             </ol>
         </nav>
         <h1 style="margin-bottom:1em;">{get #title board}</h1>
         <div class="alert alert-warning">
-          All boards and cards are currently <strong>public</strong>. Others can't edit your cards,
-          but they can definitely see them.
+          All boards and cards are currently <strong>public</strong>.
         </div>
-        {if get #id currentUser == get #userId board 
-           then renderCardAddForm board
-           else mempty}
+        {when editable (renderCardAddForm board)}
         <div style="margin-top:30px;">
           {forEach cards renderCard}
         </div>
     |]
+    where
+      editable = (get #id <$> currentUserOrNothing) == Just (get #userId board)
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =
