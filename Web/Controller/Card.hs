@@ -28,7 +28,7 @@ instance Controller CardController where
                 Left card -> render EditView { .. }
                 Right card -> do
                     card <- card |> updateRecord
-                    redirectTo EditCardAction { .. }
+                    redirectTo ShowCardAction { .. }
 
     action CreateCardAction { boardId } = do
         accessDeniedUnless =<< userCanEdit @Board boardId
@@ -50,4 +50,4 @@ instance Controller CardController where
         redirectTo ShowBoardAction { boardId = get #boardId card }
 
 buildCard card = card
-    |> fill @["title", "boardId"]
+    |> fill @'["title"]

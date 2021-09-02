@@ -10,8 +10,6 @@ data ShowView = ShowView {
     cardUpdates :: [CardUpdate]
     }
 
--- Currently both "show" and "edit", kind of. Assuming the board's owner is
--- viewing the board
 instance View ShowView where
     html ShowView { .. } = [hsx|
         <nav>
@@ -25,7 +23,7 @@ instance View ShowView where
         </nav>
         <h1 style="margin-bottom:1em">
           {get #title card}
-          {when editable (renderCardDeleteButton card)}
+          {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
         </h1>
         {when editable (renderCardUpdateAddForm card)}
         <div style="margin-top:30px;">
@@ -34,6 +32,17 @@ instance View ShowView where
      |]
      where
        editable = (get #id <$> currentUserOrNothing) == Just (get #userId board)
+
+renderCardEditButton :: Card -> Html
+renderCardEditButton card = [hsx|
+  <a
+    href={EditCardAction (get #id card)}
+    class="btn btn-sm btn-outline-info"
+    style="margin-left:1em"
+  >
+    Edit
+  </a>
+  |]
 
 renderCardDeleteButton :: Card -> Html
 renderCardDeleteButton card = [hsx|

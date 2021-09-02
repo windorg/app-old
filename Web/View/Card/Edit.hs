@@ -7,7 +7,6 @@ instance View EditView where
     html EditView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href={ShowBoardAction (get #boardId card)}>%TODO BOARD TITLE</a></li>
                 <li class="breadcrumb-item active">Edit Card</li>
             </ol>
         </nav>
@@ -18,6 +17,5 @@ instance View EditView where
 renderForm :: Card -> Html
 renderForm card = formFor card [hsx|
     {(textField #title)}
-    {(textField #boardId)}
     {submitButton}
 |]
