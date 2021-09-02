@@ -44,13 +44,13 @@ renderCardAddForm board =
     options
     [hsx|
   <style>
-    .title-field { max-width:500px; width:100%; }
+    .title-field { max-width:40rem; width:100%; }
   </style>
   {(textareaField #title) {
      placeholder = "I want to ...",
      disableLabel = True,
      fieldClass = "title-field"
-   } |> autosize 5
+   } |> autosize 3
   }
   {submitButton {
     label = "Add"

@@ -58,13 +58,13 @@ renderCardDeleteButton card = [hsx|
 renderCardUpdateAddForm :: Card -> Html
 renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
   <style>
-    .update-content-field { max-width:500px; width:100%; }
+    .update-content-field { max-width:40rem; width:100%; }
   </style>
   {(textareaField #content) {
      placeholder = "Did helpful thing X / did nothing today / etc",
      disableLabel = True,
      fieldClass = "update-content-field"
-   } |> autosize 5
+   } |> autosize 3
   }
   {submitButton {
      label = "Send"
@@ -89,7 +89,7 @@ renderTimestamp time =
 
 renderCardUpdate :: "editable" :! Bool -> CardUpdate -> Html
 renderCardUpdate (Arg editable) cardUpdate = [hsx|
-  <div style="margin-bottom:2em;">
+  <div style="margin-bottom:2em; max-width:40rem;">
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}
