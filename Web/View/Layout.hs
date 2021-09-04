@@ -28,6 +28,11 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
         {renderFlashMessages}
         {inner}
     </div>
+    <footer class="container py-4">
+        <div class="text-center text-muted">
+            made by <a href="https://twitter.com/availablegreen">Artyom Kazak</a> • favicon by <a href="https://loading.io/">loading.io</a>
+        </div>
+    </footer>
 </body>
 |]
   where
@@ -78,6 +83,10 @@ metaTags :: Html
 metaTags = [hsx|
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon-large.png">
+    <meta name="theme-color" content="#ffffff">
     <meta property="og:title" content="wind of change"/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://windofchange.me"/>

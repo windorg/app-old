@@ -1,0 +1,12 @@
+{
+    "name": "wind of change",
+    "short_name": "wind of change",
+    "start_url": "/",
+    "icons": [{
+        "src": "favicon-large.png",
+        "sizes": "512x512"
+    }],
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "display": "minimal-ui"
+}

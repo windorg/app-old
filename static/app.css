@@ -1,3 +1,13 @@
 blockquote {
   margin-left: 1.5em;
 }
+
+/* https://dev.to/nehalahmadkhan/how-to-make-footer-stick-to-bottom-of-web-page-3i14 */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+footer {
+  margin-top: auto;
+}
