@@ -19,6 +19,6 @@ renderForm user = formFor user [hsx|
     {(textField #email)}
     {(textField #handle)}
     {(textField #displayName)}
-    {(textField #passwordHash) {fieldLabel = "Password"}}
+    {(passwordField #passwordHash) {fieldLabel = "Password"}}
     {submitButton}
 |]
