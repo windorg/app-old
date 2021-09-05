@@ -31,7 +31,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
     </div>
     <footer class="container py-4">
         <div class="text-center text-muted">
-            made by <a href="https://twitter.com/availablegreen">Artyom Kazak</a> • favicon by <a href="https://loading.io/">loading.io</a>
+            made by <a href="https://twitter.com/availablegreen">Artyom Kazak</a> • built with <a href="https://ihp.digitallyinduced.com/">IHP</a> • favicon by <a href="https://loading.io/">loading.io</a>
         </div>
     </footer>
 </body>
