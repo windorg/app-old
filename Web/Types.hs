@@ -4,6 +4,7 @@ import IHP.Prelude
 import IHP.ModelSupport
 import Generated.Types
 import IHP.LoginSupport.Types
+import Application.Orphans
 
 data WebApplication = WebApplication deriving (Eq, Show)
 
@@ -51,7 +52,22 @@ data SessionsController
     | DeleteSessionAction
     deriving (Eq, Show, Data)
 
+data InboxController
+    = ShowInboxAction
+    deriving (Eq, Show, Data)
+
 instance HasNewSessionUrl User where
     newSessionUrl _ = "/NewSession"
 
 type instance CurrentUserRecord = User
+
+data ReplySource = ReplySourceCard { cardId :: Id Card } | ReplySourceInbox
+    deriving (Eq, Read, Show, Data)
+
+data ReplyController
+    = NewReplyAction { cardUpdateId :: Id CardUpdate, replySourceSerialized :: Text }
+    | CreateReplyAction { cardUpdateId :: Id CardUpdate, replySourceSerialized :: Text }
+    | EditReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
+    | UpdateReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
+    | DeleteReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
+    deriving (Eq, Show, Data)

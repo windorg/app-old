@@ -28,3 +28,15 @@ instance Access Board where
     userCanEdit boardId = do
         board <- fetch boardId
         pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
+
+instance Access Reply where
+    userCanView replyId = pure True
+    userCanEdit replyId = do
+        reply <- fetch replyId
+        pure $ case get #authorId reply of
+            Nothing -> False -- nobody can edit deleted users' replies
+            Just authorId -> Just authorId == (get #id <$> currentUserOrNothing)
+    -- TODO there should be userCanDelete b/c for replies edit /= delete. Or maybe for replies we want "hide" and not "delete", actually. Or something.
+        
+userCanReply :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id CardUpdate -> IO Bool
+userCanReply id = userCanView @CardUpdate id

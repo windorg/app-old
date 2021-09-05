@@ -4,6 +4,7 @@ import Web.Controller.Prelude
 import Web.View.Card.Edit
 import Web.View.Card.Show
 import Web.Controller.Authorization
+import Named
 
 instance Controller CardController where
     action ShowCardAction { cardId } = do
@@ -11,7 +12,12 @@ instance Controller CardController where
         card <- fetch cardId
         board <- fetch (get #boardId card)
         cardUpdates <- get #cardUpdates card |> orderByDesc #createdAt |> fetch
-        render ShowView { .. }
+        replySets <- forM cardUpdates \c -> do
+            replies :: [Reply] <- fetch (get #replies c)
+            forM replies \r -> do
+                author :: Maybe User <- mapM fetch (get #authorId r)
+                pure (r, #author author)
+        render ShowView { cardUpdates = zip cardUpdates replySets, .. }
 
     action EditCardAction { cardId } = do
         accessDeniedUnless =<< userCanEdit @Card cardId

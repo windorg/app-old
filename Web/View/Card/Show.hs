@@ -7,7 +7,7 @@ import Named
 data ShowView = ShowView {
     board :: Board,
     card :: Card,
-    cardUpdates :: [CardUpdate]
+    cardUpdates :: [(CardUpdate, [(Reply, "author" :! Maybe User)])]
     }
 
 instance View ShowView where
@@ -87,19 +87,26 @@ renderTimestamp time =
       (dayOfMonthOrdF time)
       (timeF "%R" time)
 
-renderCardUpdate :: "editable" :! Bool -> CardUpdate -> Html
-renderCardUpdate (Arg editable) cardUpdate = [hsx|
-  <div style="margin-bottom:2em; max-width:40rem;">
+renderCardUpdate :: "editable" :! Bool -> (CardUpdate, [(Reply, "author" :! Maybe User)]) -> Html
+renderCardUpdate (Arg editable) (cardUpdate, replies) = [hsx|
+  <div class="card-update" style="margin-bottom:2em; max-width:40rem;">
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}
       </span>
       {when editable (renderCardUpdateEditButton cardUpdate)}
       {when editable (renderCardUpdateDeleteButton cardUpdate)}
+      {when (isJust currentUserOrNothing) (renderCardUpdateReplyButton cardUpdate)}
     </div>
-    {renderMarkdown (get #content cardUpdate)}
+    <div class="content">
+      {renderMarkdown (get #content cardUpdate)}
+    </div>
+    <div class="replies ml-5">
+      {forEach replies renderReply}
+    </div>
   </div>
   |]
+  -- TODO: a bunch of authorization logic outside the Authorization module, gotta fix that
 
 renderCardUpdateEditButton cardUpdate = [hsx|
   <a
@@ -120,6 +127,31 @@ renderCardUpdateDeleteButton cardUpdate = [hsx|
     Kill
   </a>
   |]
+
+renderCardUpdateReplyButton cardUpdate = [hsx|
+  <a
+    class="btn btn-sm btn-outline-secondary"
+    style="padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
+    href={NewReplyAction (get #id cardUpdate) (show replySource)}
+  >
+    Reply
+  </a>
+  |]
+  where
+    replySource = ReplySourceCard (get #cardId cardUpdate)
+
+renderReply :: (Reply, "author" :! Maybe User) -> Html
+renderReply (reply, Arg author) = [hsx|
+<div class="reply">
+  <div class="mb-1">
+    <span class="text-muted small">
+      <span class="mr-2 font-weight-bold">{maybe "[deleted]" (get #displayName) author}</span>
+      <span>{renderTimestamp (get #createdAt reply)}</span>
+    </span>
+  </div>
+  <div class="content small">{renderMarkdown (get #content reply)}</div>
+</div>
+|]
 
 renderMarkdown :: Text -> Html
 renderMarkdown text =

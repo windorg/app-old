@@ -27,6 +27,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
         </div>
         {renderFlashMessages}
         {inner}
+        {modal}
     </div>
     <footer class="container py-4">
         <div class="text-center text-muted">

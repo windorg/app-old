@@ -17,3 +17,6 @@ instance AutoRoute CardUpdateController
 instance AutoRoute UserController
 
 instance AutoRoute SessionsController
+instance AutoRoute ReplyController
+instance AutoRoute InboxController
+
