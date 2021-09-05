@@ -25,6 +25,7 @@ renderForm cardUpdate = formFor cardUpdate [hsx|
     {(textareaField #content) {
         disableLabel = True
       } |> autosize 5
+        |> cmdEnterSubmit
     }
     {submitButton {label = "Save"}}
 |]

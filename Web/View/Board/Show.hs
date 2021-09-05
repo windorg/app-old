@@ -51,6 +51,7 @@ renderCardAddForm board =
      disableLabel = True,
      fieldClass = "title-field"
    } |> autosize 3
+     |> cmdEnterSubmit
   }
   {submitButton {
     label = "Add"

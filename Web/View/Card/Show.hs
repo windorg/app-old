@@ -65,6 +65,7 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
      disableLabel = True,
      fieldClass = "update-content-field"
    } |> autosize 3
+     |> cmdEnterSubmit
   }
   {submitButton {
      label = "Send"

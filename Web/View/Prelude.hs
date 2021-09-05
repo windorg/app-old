@@ -25,3 +25,12 @@ autosize minRows f = f {
             ! customAttribute "is" "auto-size" 
             ! H.rows (cs (show minRows))
     }
+
+cmdEnterSubmit :: FormField -> FormField
+cmdEnterSubmit f = f { 
+    fieldInput = \formField -> 
+        fieldInput f f 
+            ! H.onkeydown 
+                "if (event.keyCode == 13 && (event.metaKey || event.ctrlKey)) {\
+                    \$(this).closest('form').submit()} "
+    }
