@@ -11,3 +11,9 @@ body {
 footer {
   margin-top: auto;
 }
+
+.btn-tiny {
+  padding: 0.125rem 0.25rem;
+  font-size: 0.5rem;
+  opacity: 50%;
+}

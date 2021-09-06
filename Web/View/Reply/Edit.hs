@@ -10,12 +10,14 @@ instance View EditView where
       , modalCloseUrl = pathToReplySource replySource
       , modalFooter = Nothing
       , modalContent = [hsx|
-          {renderForm reply}
+          {renderForm reply replySource}
         |]
       }
 
-renderForm :: Reply -> Html
-renderForm reply = formFor reply [hsx|
+renderForm :: Reply -> ReplySource -> Html
+renderForm reply replySource = formFor' reply (pathTo action) [hsx|
     {(textField #content)}
     {submitButton}
-|]
+  |]
+  where
+    action = UpdateReplyAction (get #id reply) (show replySource)

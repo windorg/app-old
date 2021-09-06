@@ -1,13 +1,13 @@
 module Web.View.Card.Show where
 import Web.View.Prelude
-import Fmt
-import qualified Commonmark
 import Named
+import Web.Controller.Authorization
+import Web.ViewTypes
 
 data ShowView = ShowView {
     board :: Board,
     card :: Card,
-    cardUpdates :: [(CardUpdate, [(Reply, "author" :! Maybe User)])]
+    cardUpdates :: [(CardUpdate, [ReplyV])]
     }
 
 instance View ShowView where
@@ -27,7 +27,7 @@ instance View ShowView where
         </h1>
         {when editable (renderCardUpdateAddForm card)}
         <div style="margin-top:30px;">
-          {forEach cardUpdates (renderCardUpdate (($) #editable editable))}
+          {forEach cardUpdates (renderCardUpdate (($) #editable editable) card)}
         </div>
      |]
      where
@@ -79,84 +79,86 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
     options formContext = formContext
       |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
 
--- TODO render year as well
-renderTimestamp :: _ -> Text
-renderTimestamp time =
-    -- February 14th, 18:20
-    format "{} {}, {}"
-      (timeF "%B" time)
-      (dayOfMonthOrdF time)
-      (timeF "%R" time)
-
-renderCardUpdate :: "editable" :! Bool -> (CardUpdate, [(Reply, "author" :! Maybe User)]) -> Html
-renderCardUpdate (Arg editable) (cardUpdate, replies) = [hsx|
+renderCardUpdate 
+  :: "editable" :! Bool
+  -> Card
+  -> (CardUpdate, [ReplyV]) 
+  -> Html
+renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
   <div class="card-update" style="margin-bottom:2em; max-width:40rem;">
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}
       </span>
-      {when editable (renderCardUpdateEditButton cardUpdate)}
-      {when editable (renderCardUpdateDeleteButton cardUpdate)}
-      {when (isJust currentUserOrNothing) (renderCardUpdateReplyButton cardUpdate)}
+      <div class="ml-3 d-inline">
+        {when editable (renderCardUpdateEditButton cardUpdate)}
+        {when editable (renderCardUpdateDeleteButton cardUpdate)}
+        {when (isJust currentUserOrNothing) (renderCardUpdateReplyButton cardUpdate)}
+      </div>
     </div>
     <div class="content">
       {renderMarkdown (get #content cardUpdate)}
     </div>
     <div class="replies ml-5">
-      {forEach replies renderReply}
+      {forEach replies (renderReply cardUpdate)}
     </div>
   </div>
   |]
   -- TODO: a bunch of authorization logic outside the Authorization module, gotta fix that
 
 renderCardUpdateEditButton cardUpdate = [hsx|
-  <a
-    class="btn btn-sm btn-outline-info"
-    style="margin-left:.5rem; padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
-    href={EditCardUpdateAction (get #id cardUpdate)}
-  >
+  <a class="btn btn-tiny btn-outline-info"
+     href={EditCardUpdateAction (get #id cardUpdate)}>
     Edit
-  </a>
-  |]
+  </a>|]
 
 renderCardUpdateDeleteButton cardUpdate = [hsx|
-  <a
-    class="btn btn-sm btn-outline-danger js-delete js-delete-no-confirm"
-    style="padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
-    href={DeleteCardUpdateAction (get #id cardUpdate)}
-  >
+  <a class="btn btn-tiny btn-outline-danger js-delete js-delete-no-confirm"
+     href={DeleteCardUpdateAction (get #id cardUpdate)}>
     Kill
-  </a>
-  |]
+  </a>|]
 
 renderCardUpdateReplyButton cardUpdate = [hsx|
-  <a
-    class="btn btn-sm btn-outline-secondary"
-    style="padding:.125rem .25rem; font-size:.5rem; opacity:50%;"
-    href={NewReplyAction (get #id cardUpdate) (show replySource)}
-  >
+  <a class="btn btn-tiny btn-outline-secondary"
+     href={NewReplyAction (get #id cardUpdate) (show replySource)}>
     Reply
-  </a>
-  |]
+  </a>|]
   where
     replySource = ReplySourceCard (get #cardId cardUpdate)
 
-renderReply :: (Reply, "author" :! Maybe User) -> Html
-renderReply (reply, Arg author) = [hsx|
+renderReply :: CardUpdate -> ReplyV -> Html
+renderReply cardUpdate replyV = [hsx|
 <div class="reply">
   <div class="mb-1">
     <span class="text-muted small">
-      <span class="mr-2 font-weight-bold">{maybe "[deleted]" (get #displayName) author}</span>
-      <span>{renderTimestamp (get #createdAt reply)}</span>
+      <span class="mr-2 font-weight-bold">{fromMaybe "[deleted]" (get #authorDisplayName replyV)}</span>
+      <span>{renderTimestamp createdAt}</span>
+      <div class="ml-2 d-inline">
+        {when (get #editable replyV) $ renderReplyEditButton cardUpdate reply}
+        {when (get #deletable replyV) $ renderReplyDeleteButton cardUpdate reply}
+      </div> 
     </span>
   </div>
-  <div class="content small">{renderMarkdown (get #content reply)}</div>
+  <div class="content small">{renderMarkdown content}</div>
 </div>
 |]
+  where
+    reply@Reply{..} = get #reply replyV
 
-renderMarkdown :: Text -> Html
-renderMarkdown text =
-    case Commonmark.commonmark "" text of
-        Left err -> toHtml text
-        Right (val :: Commonmark.Html ()) ->
-            preEscapedToHtml (Commonmark.renderHtml val)
+renderReplyEditButton :: CardUpdate -> Reply -> Html
+renderReplyEditButton cardUpdate reply = [hsx|
+  <a class="btn btn-tiny btn-outline-info"
+     href={EditReplyAction (get #id reply) (show replySource)}>
+    Edit
+  </a>|]
+  where
+    replySource = ReplySourceCard (get #cardId cardUpdate)
+
+renderReplyDeleteButton :: CardUpdate -> Reply -> Html
+renderReplyDeleteButton cardUpdate reply = [hsx|
+  <a class="btn btn-tiny btn-outline-danger js-delete js-delete-no-confirm"
+     href={DeleteReplyAction (get #id reply) (show replySource)}>
+    Kill
+  </a>|]
+  where
+    replySource = ReplySourceCard (get #cardId cardUpdate)

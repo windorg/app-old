@@ -51,7 +51,7 @@ instance (Controller CardController, Controller InboxController) => Controller R
                     redirectToReplySource replySource
 
     action DeleteReplyAction { replySourceSerialized, replyId } = do
-        accessDeniedUnless =<< userCanEdit @Reply replyId
+        accessDeniedUnless =<< userCanDelete @Reply replyId
         let replySource = read (cs replySourceSerialized)
         reply <- fetch replyId
         deleteRecord reply

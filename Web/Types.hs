@@ -67,7 +67,7 @@ data ReplySource = ReplySourceCard { cardId :: Id Card } | ReplySourceInbox
 data ReplyController
     = NewReplyAction { cardUpdateId :: Id CardUpdate, replySourceSerialized :: Text }
     | CreateReplyAction { cardUpdateId :: Id CardUpdate, replySourceSerialized :: Text }
-    | EditReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
-    | UpdateReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
-    | DeleteReplyAction { replySourceSerialized :: Text, replyId :: !(Id Reply) }
+    | EditReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
+    | UpdateReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
+    | DeleteReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     deriving (Eq, Show, Data)
