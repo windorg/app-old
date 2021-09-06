@@ -11,17 +11,22 @@ import Named
 
 instance Controller BoardController where
     action BoardsAction = do
-        ensureIsUser
-        ownBoards <- query @Board 
-            |> filterWhere (#userId, currentUserId)
-            |> fetch
-        othersBoardsRaw <- query @Board 
-            |> filterWhereNot (#userId, currentUserId)
-            |> fetch
-        othersBoards <- forM othersBoardsRaw \board -> do
-            user <- fetch (get #userId board)
-            pure (board, #handle (get #handle user), #displayName (get #displayName user))
-        render IndexView { .. }
+        let augmentBoard board = do
+                user <- fetch (get #userId board)
+                pure (board, #handle (get #handle user), #displayName (get #displayName user))
+        case currentUserOrNothing of
+            Just _ -> do
+                ownBoards <- query @Board 
+                    |> filterWhere (#userId, currentUserId)
+                    |> fetch
+                othersBoards <- query @Board 
+                    |> filterWhereNot (#userId, currentUserId)
+                    |> fetch
+                    >>= mapM augmentBoard
+                render IndexViewUser { .. }
+            Nothing -> do
+                allBoards <- query @Board |> fetch >>= mapM augmentBoard
+                render IndexViewGuest{..}
 
     action NewBoardAction = do
         ensureIsUser
