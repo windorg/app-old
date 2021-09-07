@@ -47,7 +47,6 @@ renderCardAddForm board =
     .title-field { max-width:40rem; width:100%; }
   </style>
   {(textareaField #title) {
-     placeholder = "I want to ...",
      disableLabel = True,
      fieldClass = "title-field"
    } |> autosize 3

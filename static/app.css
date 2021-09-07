@@ -2,6 +2,15 @@ blockquote {
   margin-left: 1.5em;
 }
 
+pre {
+  margin-left: 1.5em;
+}
+
+.ProseMirror li p,
+.rendered-content li p {
+  margin-bottom: 0.5rem;
+}
+
 /* https://dev.to/nehalahmadkhan/how-to-make-footer-stick-to-bottom-of-web-page-3i14 */
 body {
   min-height: 100vh;
@@ -16,4 +25,18 @@ footer {
   padding: 0.125rem 0.25rem;
   font-size: 0.5rem;
   opacity: 50%;
+}
+
+.ProseMirror {
+  height: auto;
+}
+
+.ProseMirror:after {
+  font-size: 0.7rem;
+  color: #999;
+  width: 100%;
+  display: block;
+  text-align: right;
+  white-space: pre;
+  content: "Markdown, ⌘B ⌘I are OK; ⇧⏎ quits code blocks";
 }

@@ -72,7 +72,7 @@ scripts = [hsx|
         <script src={assetPath "/ihp-auto-refresh.js"}></script>
         <!-- Called in app.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.min.js"></script>
-        <script src={assetPath "/app.js"}></script>
+        <script type="module" src={assetPath "/app.js"}></script>
     |]
 
 devScripts :: Html

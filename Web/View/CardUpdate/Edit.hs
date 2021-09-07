@@ -23,9 +23,9 @@ instance View EditView where
 renderForm :: CardUpdate -> Html
 renderForm cardUpdate = formFor cardUpdate [hsx|
     {(textareaField #content) {
-        disableLabel = True
-      } |> autosize 5
-        |> cmdEnterSubmit
+        disableLabel = True,
+        fieldClass = "use-tiptap"
+      }
     }
     {submitButton {label = "Save"}}
 |]

@@ -61,11 +61,9 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
     .update-content-field { max-width:40rem; width:100%; }
   </style>
   {(textareaField #content) {
-     placeholder = "Did helpful thing X / did nothing today / etc",
      disableLabel = True,
-     fieldClass = "update-content-field"
-   } |> autosize 3
-     |> cmdEnterSubmit
+     fieldClass = "update-content-field use-tiptap"
+   }
   }
   {submitButton {
      label = "Send"
@@ -96,7 +94,7 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
         {when (isJust currentUserOrNothing) (renderCardUpdateReplyButton cardUpdate)}
       </div>
     </div>
-    <div class="content">
+    <div class="rendered-content">
       {renderMarkdown (get #content cardUpdate)}
     </div>
     <div class="replies ml-5">
@@ -139,7 +137,7 @@ renderReply cardUpdate replyV = [hsx|
       </div> 
     </span>
   </div>
-  <div class="content small">{renderMarkdown content}</div>
+  <div class="rendered-content small">{renderMarkdown content}</div>
 </div>
 |]
   where
