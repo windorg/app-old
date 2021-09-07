@@ -29,7 +29,7 @@ executable App
   	base,
   	wai,
     text,
-    commonmark,
+    cmark,
     fmt
   hs-source-dirs:      .
   default-language:    Haskell2010

@@ -1,17 +1,13 @@
 module Application.Helper.View where
 
 import IHP.ViewPrelude
-import qualified Commonmark
+import qualified CMark -- using instead of commonmark because the latter does not support 'safe'
 import Fmt
 
 -- Here you can add functions which are available in all your views
 
 renderMarkdown :: Text -> Html
-renderMarkdown text =
-    case Commonmark.commonmark "" text of
-        Left err -> toHtml text
-        Right (val :: Commonmark.Html ()) ->
-            preEscapedToHtml (Commonmark.renderHtml val)
+renderMarkdown text = preEscapedToHtml (CMark.commonmarkToHtml [CMark.optSafe] text)
 
 -- TODO render year as well
 renderTimestamp :: UTCTime -> Text

@@ -15,7 +15,7 @@ let
             aeson
             unordered-containers
             extra
-            commonmark
+            cmark
             named
             time
             aeson
