@@ -29,6 +29,7 @@ footer {
 
 .ProseMirror {
   height: auto;
+  max-width: 40rem;
 }
 
 .ProseMirror:after {
