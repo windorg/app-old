@@ -4,6 +4,7 @@ import StarterKit from 'https://cdn.skypack.dev/pin/@tiptap/starter-kit@v2.0.0-b
 import Typography from 'https://cdn.skypack.dev/pin/@tiptap/extension-typography@v2.0.0-beta.14-DZDA2cSqeTwyIh1QoLts/mode=imports,min/optimized/@tiptap/extension-typography.js';
 import HardBreak from './tiptap-hard-break.js';
 import CodeBlock from './tiptap-code-block.js';
+import Link from './tiptap-link.js';
 
 import TurndownService from 'https://cdn.skypack.dev/pin/turndown@v7.1.1-5XhlHlbwN5u9Cwiz1WQT/mode=imports,min/optimized/turndown.js';
 import * as commonmark from 'https://cdn.skypack.dev/pin/commonmark@v0.30.0-RYoFWHhKKHdGwKqr6TYw/mode=imports,min/optimized/commonmark.js';
@@ -47,7 +48,14 @@ $(document).on('ready turbolinks:load', function () {
 
     const newTiptap = function (content) {
         return new Editor({
-            extensions: [StarterKit, HardBreak, CodeBlock, Typography, SubmitShortcut],
+            extensions: [
+                StarterKit,
+                HardBreak,
+                CodeBlock,
+                Typography,
+                Link,
+                SubmitShortcut,
+            ],
             editorProps: {
                 attributes: {
                 class: 'form-control',
