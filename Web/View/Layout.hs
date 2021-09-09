@@ -22,8 +22,10 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 </head>
 <body>
     <div class="container mt-4">
-        <div class="text-right mb-3">
-            {loginOrLogout}
+        <div class="d-flex justify-content-end align-items-center align-self-center mb-3">
+            <div>News</div>
+            <div id="changelog-badge" data-turbolinks-permanent="data-turbolinks-permanent" class="mr-2" style="height:32px;width:32px;min-height:1px;"></div>
+            <div>{loginOrLogout}</div>
         </div>
         {renderFlashMessages}
         {inner}
@@ -70,6 +72,8 @@ scripts = [hsx|
         <script src={assetPath "/vendor/turbolinksMorphdom.js"}></script>
         <script src={assetPath "/helpers.js"}></script>
         <script src={assetPath "/ihp-auto-refresh.js"}></script>
+        <!-- Changelog -->
+        <script async src="https://cdn.headwayapp.co/widget.js"></script>
         <!-- Called in app.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>

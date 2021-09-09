@@ -39,5 +39,5 @@ footer {
   display: block;
   text-align: right;
   white-space: pre;
-  content: "Markdown, ⌘B ⌘I are OK; ⇧⏎ quits code blocks";
+  content: "Markdown, ⌘B ⌘I are OK; ⌘E for code; ⇧⏎ quits code blocks";
 }

@@ -41,8 +41,20 @@ const SubmitShortcut = Extension.create({
     }
 })
 
-// This is called when the page is loaded or changed by turbolinks
-$(document).on('ready turbolinks:load', function () {
+// Things that will only be called once.
+//
+// Note that data-turbolinks-permanent doesn't always work (e.g. it doesn't work on the Headway widget)
+function onReady() {
+}
+
+// Things that will be called on load, or Turbolinks reloads
+function onReadyOrTurbo() {
+    // Headway (changelog)
+    Headway.init({
+        selector: "#changelog-badge",
+        account:  "xYvgB7"
+    });
+    
     // Autosize
     autosize(document.querySelectorAll("textarea[is='auto-size']"));
 
@@ -80,6 +92,14 @@ $(document).on('ready turbolinks:load', function () {
         $(el).addClass('tiptap-processed');
         $(el).hide();
     });
+};
+
+$(document).ready(function () {
+    onReady();
+    onReadyOrTurbo();
+});
+$(document).on('turbolinks:load', function () {
+    onReadyOrTurbo();
 });
 
 // Register a cunning form submit handler that will turn HTML from rich editors into Markdown before submitting the
