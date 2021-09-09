@@ -23,8 +23,10 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 <body>
     <div class="container mt-4">
         <div class="d-flex justify-content-end align-items-center align-self-center mb-3">
-            <div>News</div>
-            <div id="changelog-badge" class="mr-2" style="height:32px;width:32px;min-height:1px;"></div>
+            <div id="changelog-trigger" class="d-flex align-items-center align-self-center mr-2" style="cursor:pointer">
+                <div class="text-primary">News</div>
+                <div id="changelog-badge" style="height:32px;width:32px;min-height:1px;"></div>
+            </div>
             <div>{loginOrLogout}</div>
         </div>
         {renderFlashMessages}

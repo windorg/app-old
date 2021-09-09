@@ -56,30 +56,26 @@ function loadScript(scriptUrl) {
   });
 }
 
+const headwayConfig = {
+    selector: "#changelog-badge",
+    trigger: "#changelog-trigger",
+    account: "xYvgB7"
+};
+
 // Things that will only be called once.
 //
 // Note that data-turbolinks-permanent doesn't always work (e.g. it doesn't work on the Headway widget)
 function onReady() {
     // Headway (changelog)
     loadScript('https://cdn.headwayapp.co/widget.js')
-      .then(() => {
-        Headway.init({
-            selector: "#changelog-badge",
-            account: "xYvgB7"
-        });
-      })
+      .then(() => {Headway.init(headwayConfig)})
       .catch(() => {});
 }
 
 // Things that will be called on load, or Turbolinks reloads
 function onReadyOrTurbo() {
     // Headway (changelog)
-    if (typeof Headway !== 'undefined') {
-        Headway.init({
-            selector: "#changelog-badge",
-            account: "xYvgB7"
-        });
-    };
+    if (typeof Headway !== 'undefined') {Headway.init(headwayConfig)};
 
     // Autosize
     autosize(document.querySelectorAll("textarea[is='auto-size']"));
