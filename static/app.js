@@ -41,20 +41,46 @@ const SubmitShortcut = Extension.create({
     }
 })
 
+// From https://stackoverflow.com/a/53744331/615030
+function loadScript(scriptUrl) {
+  const script = document.createElement('script');
+  script.src = scriptUrl;
+  document.body.appendChild(script);
+  return new Promise((res, rej) => {
+    script.onload = function() {
+      res();
+    }
+    script.onerror = function () {
+      rej();
+    }
+  });
+}
+
 // Things that will only be called once.
 //
 // Note that data-turbolinks-permanent doesn't always work (e.g. it doesn't work on the Headway widget)
 function onReady() {
+    // Headway (changelog)
+    loadScript('https://cdn.headwayapp.co/widget.js')
+      .then(() => {
+        Headway.init({
+            selector: "#changelog-badge",
+            account: "xYvgB7"
+        });
+      })
+      .catch(() => {});
 }
 
 // Things that will be called on load, or Turbolinks reloads
 function onReadyOrTurbo() {
     // Headway (changelog)
-    Headway.init({
-        selector: "#changelog-badge",
-        account:  "xYvgB7"
-    });
-    
+    if (typeof Headway !== 'undefined') {
+        Headway.init({
+            selector: "#changelog-badge",
+            account: "xYvgB7"
+        });
+    };
+
     // Autosize
     autosize(document.querySelectorAll("textarea[is='auto-size']"));
 
