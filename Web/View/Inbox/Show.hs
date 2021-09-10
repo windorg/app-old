@@ -23,7 +23,11 @@ renderReply replyV = [hsx|
   <div class="mb-1">
     <span class="text-muted small">
       <span class="mr-2 font-weight-bold">{fromMaybe "[deleted]" (get #authorDisplayName replyV)}</span>
-      <span><a href={ShowCardAction (get #cardId replyV)}>{renderTimestamp createdAt}</a></span>
+      <span>
+          <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
+              {renderTimestamp createdAt}
+          </a>
+      </span>
       <!-- We won't render the "delete" button to not confuse people into thinking delete = mark as read -->
       <div class="ml-2 d-inline">
         {renderReplyMarkAsReadButton reply}

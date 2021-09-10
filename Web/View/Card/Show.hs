@@ -126,7 +126,7 @@ renderCardUpdateReplyButton cardUpdate = [hsx|
 
 renderReply :: CardUpdate -> ReplyV -> Html
 renderReply cardUpdate replyV = [hsx|
-<div class="reply">
+<div id={"reply-" <> show (get #id reply)} class="reply">
   <div class="mb-1">
     <span class="text-muted small">
       <span class="mr-2 font-weight-bold">{fromMaybe "[deleted]" (get #authorDisplayName replyV)}</span>
