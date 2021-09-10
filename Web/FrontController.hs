@@ -2,7 +2,7 @@ module Web.FrontController where
 
 import IHP.RouterPrelude
 import Web.Controller.Prelude
-import Web.View.Layout (defaultLayout)
+import Web.View.Layout
 
 import IHP.LoginSupport.Middleware
 import Web.Controller.Sessions
@@ -30,7 +30,18 @@ instance FrontController WebApplication where
         ]
 
 instance InitControllerContext WebApplication where
+    -- Runs on every request apparently
     initContext = do
-        setLayout defaultLayout
-        initAutoRefresh
         initAuthentication @User
+        inboxCount <- case currentUserOrNothing of
+            Nothing -> pure Nothing
+            Just _ -> sqlQueryScalar [sql|
+              select count(*) from replies
+              where is_read = false and card_update_id in
+                  (select id from card_updates where card_id in
+                     (select id from cards where board_id in
+                        (select id from boards where user_id = ?)))
+              |]
+              (Only currentUserId)
+        setLayout (defaultLayout LayoutView{..})
+        initAutoRefresh

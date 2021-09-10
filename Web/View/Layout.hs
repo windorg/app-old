@@ -1,4 +1,4 @@
-module Web.View.Layout (defaultLayout, Html) where
+module Web.View.Layout where
 
 import IHP.ViewPrelude
 import IHP.Environment
@@ -10,8 +10,12 @@ import Web.Types
 import Web.Routes
 import Application.Helper.View
 
-defaultLayout :: Html -> Html
-defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
+data LayoutView = LayoutView {
+    inboxCount :: Maybe Int
+}
+
+defaultLayout :: LayoutView -> Html -> Html
+defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 <head>
     {metaTags}
 
@@ -42,8 +46,11 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 </body>
 |]
   where
-    inbox = case currentUserOrNothing of
-        Just _ -> [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox</a></div>|]
+    inbox = case inboxCount of
+        Just count ->
+          let badge | count == 0 = [hsx|<span id="inbox-badge" class="ml-2 badge badge-secondary">0</span>|]
+                    | otherwise  = [hsx|<span id="inbox-badge" class="ml-2 badge badge-danger">{count}</span>|]
+          in [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox{badge}</a></div>|]
         Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
         Just _ -> [hsx|<a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>|]

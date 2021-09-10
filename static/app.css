@@ -41,3 +41,8 @@ footer {
   white-space: pre;
   content: "Markdown, ⌘B ⌘I are OK; ⌘E for code; ⇧⏎ quits code blocks";
 }
+
+#inbox-badge {
+  bottom: 2px;
+  position: relative;
+}
