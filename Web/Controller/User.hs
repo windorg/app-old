@@ -4,6 +4,8 @@ import Web.Controller.Prelude
 import Web.View.User.New
 import Web.View.User.Edit
 import Web.View.User.Show
+import IHP.ValidationSupport.ValidateField (matchesRegex)
+import Data.Text (strip)
 
 instance Controller UserController where
     action NewUserAction = do
@@ -32,8 +34,11 @@ instance Controller UserController where
         let user = newRecord @User
         user
             |> buildUser
+            |> modify #displayName strip
             |> validateField #email isEmail
             |> validateField #passwordHash nonEmpty
+            |> validateField #handle (matchesRegex "^[a-zA-Z0-9_-]{1,64}$")
+            |> (\u -> if get #displayName u == "" then u |> set #displayName (get #handle u) else u)
             |> ifValid \case
                 Left user -> render NewView { .. } 
                 Right user -> do
