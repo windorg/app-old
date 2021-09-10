@@ -4,6 +4,12 @@ import IHP.AuthSupport.View.Sessions.New
 
 instance View (NewView User) where
     html NewView { .. } = [hsx|
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
+                <li class="breadcrumb-item active">Login</li>
+            </ol>
+        </nav>
         <div class="h-100" id="sessions-new">
             <div class="d-flex align-items-center">
                 <div class="w-100">

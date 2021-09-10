@@ -14,12 +14,15 @@ instance Controller CardUpdateController where
     action EditCardUpdateAction { cardUpdateId } = do
         accessDeniedUnless =<< userCanEdit @CardUpdate cardUpdateId
         cardUpdate <- fetch cardUpdateId
-        card :: Card <- fetch (get #cardId cardUpdate)
+        card <- fetch (get #cardId cardUpdate)
+        board <- fetch (get #boardId card)
         render EditView { .. }
 
     action UpdateCardUpdateAction { cardUpdateId } = do
         accessDeniedUnless =<< userCanEdit @CardUpdate cardUpdateId
         cardUpdate <- fetch cardUpdateId
+        card <- fetch (get #cardId cardUpdate)
+        board <- fetch (get #boardId card)
         cardUpdate
             |> buildCardUpdate
             |> ifValid \case

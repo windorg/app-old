@@ -26,6 +26,7 @@ instance Controller CardController where
     action UpdateCardAction { cardId } = do
         accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
+        board <- fetch (get #boardId card)
         card
             |> buildCard
             |> ifValid \case

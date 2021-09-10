@@ -1,7 +1,7 @@
 module Web.View.CardUpdate.Edit where
 import Web.View.Prelude
 
-data EditView = EditView { card :: Card, cardUpdate :: CardUpdate }
+data EditView = EditView { board :: Board, card :: Card, cardUpdate :: CardUpdate }
 
 instance View EditView where
     html EditView { .. } = [hsx|
@@ -9,7 +9,10 @@ instance View EditView where
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
                 <li class="breadcrumb-item">
-                  <a href={ShowCardAction (get #cardId cardUpdate) }>
+                  <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href={ShowCardAction (get #cardId cardUpdate)}>
                     {get #title card}
                   </a>
                 </li>
