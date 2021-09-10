@@ -6,6 +6,8 @@ import Web.View.Reply.Edit
 import Web.Helper.ReplySource
 import Web.Controller.Authorization
 import Prelude(read)
+import Web.Helper.Common
+import Debug.Trace (traceShowId)
 
 instance (Controller CardController, Controller InboxController) => Controller ReplyController where
     action NewReplyAction { cardUpdateId, replySourceSerialized } = do
@@ -38,10 +40,15 @@ instance (Controller CardController, Controller InboxController) => Controller R
 
     action CreateReplyAction {cardUpdateId, replySourceSerialized} = do
         accessDeniedUnless =<< userCanReply cardUpdateId
+        cardOwner <- getCardUpdateOwner cardUpdateId
         let replySource = read (cs replySourceSerialized)
-        let reply = (newRecord :: Reply) {cardUpdateId, authorId = Just currentUserId}
+        let reply = (newRecord :: Reply)
+              |> set #cardUpdateId cardUpdateId
+              |> set #authorId (Just currentUserId)
+              |> set #isRead (if currentUserId == cardOwner then True else False)
         reply
             |> buildReply
+            |> traceShowId
             |> ifValid \case
                 Left reply -> do
                     setModal NewView { .. }
@@ -55,6 +62,13 @@ instance (Controller CardController, Controller InboxController) => Controller R
         let replySource = read (cs replySourceSerialized)
         reply <- fetch replyId
         deleteRecord reply
+        redirectToReplySource replySource
+
+    action UpdateMarkReplyAsReadAction { replySourceSerialized, replyId } = do
+        accessDeniedUnless =<< userCanView @Reply replyId
+        let replySource = read (cs replySourceSerialized)
+        reply <- fetch replyId
+        reply |> set #isRead True |> updateRecord
         redirectToReplySource replySource
 
 buildReply reply = reply

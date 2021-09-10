@@ -19,6 +19,7 @@ let
             named
             time
             aeson
+            neat-interpolation
             p.ihp
         ];
         otherDeps = p: with p; [

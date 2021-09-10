@@ -59,7 +59,7 @@ instance Controller BoardController where
 
     action CreateBoardAction = do
         ensureIsUser
-        let board = (newRecord :: Board) { userId = currentUserId }
+        let board = (newRecord :: Board) |> set #userId currentUserId
         board
             |> buildBoard
             |> ifValid \case

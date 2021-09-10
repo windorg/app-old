@@ -69,5 +69,8 @@ data ReplyController
     | CreateReplyAction { cardUpdateId :: Id CardUpdate, replySourceSerialized :: Text }
     | EditReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     | UpdateReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
+    -- Things have to start with "Update" etc or else wrong HTTP methods are deduced for them (e.g. GET for
+    -- 'MarkReplyAsReadAction')
+    | UpdateMarkReplyAsReadAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     | DeleteReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     deriving (Eq, Show, Data)

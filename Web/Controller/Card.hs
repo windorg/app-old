@@ -36,7 +36,7 @@ instance Controller CardController where
 
     action CreateCardAction { boardId } = do
         accessDeniedUnless =<< userCanEdit @Board boardId
-        let card = (newRecord :: Card) { boardId = boardId }
+        let card = (newRecord :: Card) |> set #boardId boardId
         card
             |> fill @'["title"]
             |> ifValid \case

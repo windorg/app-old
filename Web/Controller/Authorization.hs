@@ -4,6 +4,7 @@ module Web.Controller.Authorization where
 
 import Web.Controller.Prelude
 import Named
+import Web.Helper.Common
 
 userCanEditReplyPure :: "user" :! Maybe (Id User) -> Reply -> Bool
 userCanEditReplyPure (Arg user) reply =
@@ -57,11 +58,7 @@ instance Access Reply where
         pure $ userCanEditReplyPure (#user (get #id <$> currentUserOrNothing)) reply
     userCanDelete replyId = do
         reply :: Reply <- fetch replyId
-        [Only cardOwner] <- sqlQuery 
-            "select user_id from boards where id = \
-            \(select board_id from cards where id = \
-            \(select card_id from card_updates where id = ?))"
-            (Only (get #cardUpdateId reply))
+        cardOwner <- getCardUpdateOwner (get #cardUpdateId reply)
         pure $ userCanDeleteReplyPure 
             (#user (get #id <$> currentUserOrNothing))
             (#cardOwner cardOwner)
