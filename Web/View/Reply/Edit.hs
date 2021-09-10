@@ -16,7 +16,11 @@ instance View EditView where
 
 renderForm :: Reply -> ReplySource -> Html
 renderForm reply replySource = formFor' reply (pathTo action) [hsx|
-    {(textField #content)}
+    {(textareaField #content) {
+        disableLabel = True,
+        fieldClass = "use-tiptap"
+      }
+    }
     {submitButton}
   |]
   where
