@@ -27,6 +27,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
                 <div class="text-primary">News</div>
                 <div id="changelog-badge" style="height:32px;width:32px;min-height:1px;"></div>
             </div>
+            {inbox}
             <div>{loginOrLogout}</div>
         </div>
         {renderFlashMessages}
@@ -41,6 +42,9 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 </body>
 |]
   where
+    inbox = case currentUserOrNothing of
+        Just _ -> [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox</a></div>|]
+        Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
         Just _ -> [hsx|<a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>|]
         Nothing -> [hsx|
