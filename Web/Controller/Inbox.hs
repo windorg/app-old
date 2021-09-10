@@ -17,6 +17,7 @@ instance Controller InboxController where
                 (select id from card_updates where card_id in
                    (select id from cards where board_id in
                       (select id from boards where user_id = ?)))
+            order by created_at desc
             |]
             (Only currentUserId)
         render InboxView{..}
