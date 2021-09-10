@@ -133,6 +133,7 @@ renderReply cardUpdate replyV = [hsx|
       <span>{renderTimestamp createdAt}</span>
       <div class="ml-2 d-inline">
         {when (get #editable replyV) $ renderReplyEditButton cardUpdate reply}
+        {when (get #markAsReadAble replyV) $ renderReplyMarkAsReadButton cardUpdate reply}
         {when (get #deletable replyV) $ renderReplyDeleteButton cardUpdate reply}
       </div> 
     </span>
@@ -158,5 +159,14 @@ renderReplyDeleteButton cardUpdate reply = [hsx|
      href={DeleteReplyAction (get #id reply) (show replySource)}>
     Kill
   </a>|]
+  where
+    replySource = ReplySourceCard (get #cardId cardUpdate)
+
+renderReplyMarkAsReadButton :: CardUpdate -> Reply -> Html
+renderReplyMarkAsReadButton cardUpdate reply = [hsx|
+  <form class="d-inline" method="POST" action={UpdateMarkReplyAsReadAction (get #id reply) (show replySource)}>
+    <button class="btn btn-tiny btn-outline-info">Mark as read</button>
+  </form>
+  |]
   where
     replySource = ReplySourceCard (get #cardId cardUpdate)
