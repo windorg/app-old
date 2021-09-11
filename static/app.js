@@ -4,6 +4,7 @@ import StarterKit from 'https://cdn.skypack.dev/pin/@tiptap/starter-kit@v2.0.0-b
 import Typography from 'https://cdn.skypack.dev/pin/@tiptap/extension-typography@v2.0.0-beta.14-DZDA2cSqeTwyIh1QoLts/mode=imports,min/optimized/@tiptap/extension-typography.js';
 import HardBreak from './tiptap-hard-break.js';
 import CodeBlock from './tiptap-code-block.js';
+import { TrailingNode } from './tiptap-trailing-node.js';
 import Link from './tiptap-link.js';
 
 import TurndownService from 'https://cdn.skypack.dev/pin/turndown@v7.1.1-5XhlHlbwN5u9Cwiz1WQT/mode=imports,min/optimized/turndown.js';
@@ -88,6 +89,7 @@ function onReadyOrTurbo() {
                 CodeBlock,
                 Typography,
                 Link,
+                TrailingNode,
                 SubmitShortcut,
             ],
             editorProps: {

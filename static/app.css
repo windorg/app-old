@@ -3,7 +3,9 @@ blockquote {
 }
 
 pre {
-  margin-left: 1.5em;
+  border: 1px solid #bbb;
+  padding: 0.75rem 1rem;
+  border-radius: 0.3rem;
 }
 
 .ProseMirror li p,
