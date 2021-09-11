@@ -6,6 +6,7 @@ import HardBreak from './tiptap-hard-break.js';
 import CodeBlock from './tiptap-code-block.js';
 import { TrailingNode } from './tiptap-trailing-node.js';
 import Link from './tiptap-link.js';
+import { Code } from './tiptap-code.js'
 
 import TurndownService from 'https://cdn.skypack.dev/pin/turndown@v7.1.1-5XhlHlbwN5u9Cwiz1WQT/mode=imports,min/optimized/turndown.js';
 import * as commonmark from 'https://cdn.skypack.dev/pin/commonmark@v0.30.0-RYoFWHhKKHdGwKqr6TYw/mode=imports,min/optimized/commonmark.js';
@@ -86,6 +87,7 @@ function onReadyOrTurbo() {
             extensions: [
                 StarterKit,
                 HardBreak,
+                Code,
                 CodeBlock,
                 Typography,
                 Link,
