@@ -16,7 +16,7 @@ instance View ShowView where
         </nav>
         <h1 style="margin-bottom:1em;">{get #title board}</h1>
         <div class="alert alert-warning">
-          All boards and cards are currently <strong>public</strong>.
+          By default, boards and cards are <strong>public</strong>.
         </div>
         {when editable (renderCardAddForm board)}
         <div style="margin-top:30px;">

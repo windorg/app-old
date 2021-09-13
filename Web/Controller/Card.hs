@@ -5,6 +5,7 @@ import Web.View.Card.Edit
 import Web.View.Card.Show
 import Web.Controller.Authorization
 import Named
+import Control.Monad (filterM)
 import Web.ViewTypes
 
 instance Controller CardController where
@@ -12,7 +13,11 @@ instance Controller CardController where
         accessDeniedUnless =<< userCanView @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
-        cardUpdates <- get #cardUpdates card |> orderByDesc #createdAt |> fetch
+        cardUpdates <- 
+          get #cardUpdates card 
+            |> orderByDesc #createdAt
+            |> fetch
+            >>= filterM (userCanView @CardUpdate . get #id)
         replySets <- forM cardUpdates \c ->
             mapM fetchReplyV =<< fetch (get #replies c)
         render ShowView { cardUpdates = zip cardUpdates replySets, .. }

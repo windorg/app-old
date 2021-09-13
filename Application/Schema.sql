@@ -26,7 +26,8 @@ CREATE TABLE card_updates (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     content TEXT NOT NULL,
-    card_id UUID NOT NULL
+    card_id UUID NOT NULL,
+    settings JSONB NOT NULL
 );
 CREATE INDEX card_updates_card_id_index ON card_updates (card_id);
 CREATE TABLE replies (

@@ -28,7 +28,14 @@ class Access thing where
     userCanDelete :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id thing -> IO Bool
 
 instance Access CardUpdate where
-    userCanView cardUpdateId = pure True
+    userCanView cardUpdateId = do
+        cardUpdate <- fetch cardUpdateId
+        case cardUpdate ^. #settings_ % #visibility of
+            VisibilityPublic -> pure True
+            VisibilityPrivate -> do
+                card <- fetch (get #cardId cardUpdate)
+                board <- fetch (get #boardId card)
+                pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
     userCanEdit cardUpdateId = do
         cardUpdate <- fetch cardUpdateId
         card <- fetch (get #cardId cardUpdate)

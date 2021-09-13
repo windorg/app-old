@@ -31,4 +31,12 @@ renderForm cardUpdate = formFor cardUpdate [hsx|
       }
     }
     {submitButton {label = "Save"}}
+    <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>
+      <label class="custom-control-label" for="private">🔒 Private comment</label>
+    </div>
 |]
+  where
+    private = case cardUpdate ^. #settings_ % #visibility of
+      VisibilityPrivate -> True
+      VisibilityPublic -> False

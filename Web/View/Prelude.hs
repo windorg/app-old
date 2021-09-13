@@ -6,6 +6,7 @@ module Web.View.Prelude
 , module Web.Types
 , module Application.Helper.View
 , module Web.View.Prelude
+, module Optics
 ) where
 
 import IHP.ViewPrelude
@@ -14,6 +15,8 @@ import Generated.Types
 import Web.Types
 import Web.Routes ()
 import Application.Helper.View
+
+import Optics ((%), (^.))
 
 import Text.Blaze.Internal (customAttribute)
 import qualified Text.Blaze.Html5.Attributes as H

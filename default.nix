@@ -21,6 +21,7 @@ let
             time
             aeson
             neat-interpolation
+            optics
             p.ihp
         ];
         otherDeps = p: with p; [

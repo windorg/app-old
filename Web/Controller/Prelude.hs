@@ -4,6 +4,7 @@ module Web.Controller.Prelude
 , module IHP.ControllerPrelude
 , module Generated.Types
 , module Database.PostgreSQL.Simple.SqlQQ
+, module Optics
 )
 where
 
@@ -12,3 +13,4 @@ import Application.Helper.Controller
 import IHP.ControllerPrelude
 import Generated.Types
 import Database.PostgreSQL.Simple.SqlQQ
+import Optics ((%), (^.))

@@ -4,6 +4,7 @@ import Web.Controller.Prelude
 import Web.View.CardUpdate.Edit
 import Web.View.CardUpdate.Show
 import Web.Controller.Authorization
+import qualified Optics
 
 instance Controller CardUpdateController where
     action ShowCardUpdateAction { cardUpdateId } = do
@@ -35,11 +36,10 @@ instance Controller CardUpdateController where
 
     action CreateCardUpdateAction { cardId } = do
         accessDeniedUnless =<< userCanEdit @Card cardId
-        let cardUpdate = (newRecord :: CardUpdate) {
-                cardId = cardId
-            }
+        let cardUpdate = (newRecord :: CardUpdate)
+              |> set #cardId cardId
         cardUpdate
-            |> fill @'["content"]
+            |> buildCardUpdate
             |> ifValid \case
                 Left cardUpdate -> do
                     setErrorMessage "Card update is invalid"
@@ -55,4 +55,7 @@ instance Controller CardUpdateController where
         redirectTo ShowCardAction { cardId = get #cardId cardUpdate }
 
 buildCardUpdate cardUpdate = cardUpdate
-    |> fill @["content","cardId"]
+    |> fill @'["content"]
+    |> Optics.set #settings_ CardUpdateSettings{
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+       }

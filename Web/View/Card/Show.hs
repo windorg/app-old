@@ -3,6 +3,7 @@ import Web.View.Prelude
 import Named
 import Web.Controller.Authorization
 import Web.ViewTypes
+import qualified Optics
 
 data ShowView = ShowView {
     board :: Board,
@@ -66,9 +67,13 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
    }
   }
   {submitButton {
-     label = "Send"
+     label = "Post"
    }
   }
+  <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+    <input type="checkbox" class="custom-control-input" id="private" name="private">
+    <label class="custom-control-label" for="private">🔒 Private comment</label>
+  </div>
   |]
   where
     cardUpdate = (newRecord :: CardUpdate)
@@ -83,11 +88,12 @@ renderCardUpdate
   -> (CardUpdate, [ReplyV]) 
   -> Html
 renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
-  <div class="card-update" style="margin-bottom:2em; max-width:40rem;">
+  <div class={"card-update " <> if private then "card-update-private" else "" :: Text}>
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}
       </span>
+      {when private lockIcon}
       <div class="ml-3 d-inline">
         {when editable (renderCardUpdateEditButton cardUpdate)}
         {when editable (renderCardUpdateDeleteButton cardUpdate)}
@@ -102,7 +108,11 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
     </div>
   </div>
   |]
-  -- TODO: a bunch of authorization logic outside the Authorization module, gotta fix that
+  where
+    private = case cardUpdate ^. #settings_ % #visibility of
+      VisibilityPublic -> False
+      VisibilityPrivate -> True
+    lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardUpdateEditButton cardUpdate = [hsx|
   <a class="btn btn-tiny btn-outline-info"

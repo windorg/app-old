@@ -5,6 +5,11 @@ import IHP.ModelSupport
 import Generated.Types
 import IHP.LoginSupport.Types
 import Application.Orphans
+import Data.Aeson (FromJSON(..), ToJSON(..))
+import qualified Data.Aeson as Aeson
+import qualified Optics
+import Control.Monad (fail)
+import GHC.Generics (Generic)
 
 data WebApplication = WebApplication deriving (Eq, Show)
 
@@ -74,3 +79,41 @@ data ReplyController
     | UpdateMarkReplyAsReadAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     | DeleteReplyAction { replyId :: !(Id Reply), replySourceSerialized :: Text }
     deriving (Eq, Show, Data)
+
+data Visibility
+    -- | Absolutely everybody can see
+    = VisibilityPublic 
+    -- | Nobody but the author can see
+    | VisibilityPrivate
+    deriving (Eq, Show)
+
+data CardUpdateSettings = CardUpdateSettings {
+    visibility :: Visibility
+  }
+  deriving (Show, Generic)
+
+instance FromJSON CardUpdateSettings
+instance ToJSON CardUpdateSettings
+
+instance FromJSON Visibility where
+    parseJSON = Aeson.withText "Visibility" $ \case
+        "public" -> pure VisibilityPublic
+        "private" -> pure VisibilityPrivate
+        s -> fail ("unknown visibility: " <> cs s)
+
+instance ToJSON Visibility where
+    toJSON = \case
+        VisibilityPublic -> toJSON ("public" :: Text)
+        VisibilityPrivate -> toJSON ("private" :: Text)
+
+instance Optics.LabelOptic "settings_" Optics.A_Lens CardUpdate CardUpdate CardUpdateSettings CardUpdateSettings where
+    labelOptic = 
+        Optics.lens (get #settings) (flip (set #settings))
+        Optics.% 
+        Optics.iso 
+            (\x -> case Aeson.fromJSON x of
+                Aeson.Success y -> y
+                _ -> error "#settings_ could not parse the settings field")
+            toJSON
+
+Optics.makeFieldLabelsNoPrefix ''CardUpdateSettings

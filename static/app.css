@@ -48,3 +48,13 @@ footer {
   bottom: 2px;
   position: relative;
 }
+
+.card-update {
+  padding: 0.5rem 1rem;
+  max-width: 40rem;
+  border-radius: 5px;
+}
+
+.card-update-private {
+  background-color: #efefef;
+}
