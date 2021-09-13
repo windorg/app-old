@@ -46,14 +46,14 @@ renderCardAddForm board =
   <style>
     .title-field { max-width:40rem; width:100%; }
   </style>
-  {(textareaField #title) {
+  {(textField #title) {
      disableLabel = True,
+     placeholder = "Card title",
      fieldClass = "title-field"
-   } |> autosize 3
-     |> cmdEnterSubmit
+   }
   }
   {submitButton {
-    label = "Add"
+    label = "Add a card"
    }
   }
   |]
