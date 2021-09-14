@@ -59,6 +59,7 @@ instance Access Board where
     userCanDelete boardId = userCanEdit @Board boardId
 
 instance Access Reply where
+    -- Note: this ignores visibility settings for cards updates. If we ever have an API, we might want to rethink this.
     userCanView replyId = pure True
     userCanEdit replyId = do
         reply :: Reply <- fetch replyId

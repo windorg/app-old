@@ -19,7 +19,10 @@ instance Controller CardController where
             |> fetch
             >>= filterM (userCanView @CardUpdate . get #id)
         replySets <- forM cardUpdates \c ->
-            mapM fetchReplyV =<< fetch (get #replies c)
+            get #replies c
+              |> orderByAsc #createdAt
+              |> fetch
+              >>= mapM fetchReplyV
         render ShowView { cardUpdates = zip cardUpdates replySets, .. }
 
     action EditCardAction { cardId } = do
