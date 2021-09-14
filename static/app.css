@@ -1,11 +1,21 @@
+* {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 blockquote {
   margin-left: 1.5em;
+  font-size: 90%;
 }
 
 pre {
   border: 1px solid #bbb;
   padding: 0.75rem 1rem;
   border-radius: 0.3rem;
+}
+
+pre code {
+  word-wrap: normal;
 }
 
 .ProseMirror li p,
@@ -40,7 +50,6 @@ footer {
   width: 100%;
   display: block;
   text-align: right;
-  white-space: pre;
   content: "Markdown, ⌘B ⌘I are OK; ⌘E for code; ⇧⏎ quits code blocks";
 }
 
