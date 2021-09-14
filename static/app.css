@@ -57,4 +57,5 @@ footer {
 
 .card-update-private {
   background-color: #efefef;
+  margin-bottom: 1rem; // Only for private ones! We don't want them to stick together.
 }
