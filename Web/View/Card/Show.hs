@@ -121,7 +121,7 @@ renderCardUpdateEditButton cardUpdate = [hsx|
   </a>|]
 
 renderCardUpdateDeleteButton cardUpdate = [hsx|
-  <a class="btn btn-tiny btn-outline-danger js-delete js-delete-no-confirm"
+  <a class="btn btn-tiny btn-outline-danger js-delete"
      href={DeleteCardUpdateAction (get #id cardUpdate)}>
     Kill
   </a>|]
@@ -165,7 +165,7 @@ renderReplyEditButton cardUpdate reply = [hsx|
 
 renderReplyDeleteButton :: CardUpdate -> Reply -> Html
 renderReplyDeleteButton cardUpdate reply = [hsx|
-  <a class="btn btn-tiny btn-outline-danger js-delete js-delete-no-confirm"
+  <a class="btn btn-tiny btn-outline-danger js-delete"
      href={DeleteReplyAction (get #id reply) (show replySource)}>
     Kill
   </a>|]
