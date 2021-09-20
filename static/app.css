@@ -58,13 +58,18 @@ footer {
   position: relative;
 }
 
-.card-update {
+.woc-board-private,
+.woc-card-private,
+.worc-card-update-private {
+  background-color: #efefef;
+}
+
+.woc-card-update {
   padding: 0.5rem 1rem;
   max-width: 40rem;
   border-radius: 5px;
 }
 
-.card-update-private {
-  background-color: #efefef;
+.woc-card-update-private {
   margin-bottom: 1rem; // Only for private ones! We don't want them to stick together.
 }

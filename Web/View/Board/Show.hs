@@ -14,28 +14,38 @@ instance View ShowView where
                 <li class="breadcrumb-item active">{get #title board}</li>
             </ol>
         </nav>
-        <h1 style="margin-bottom:1em;">{get #title board}</h1>
-        <div class="alert alert-warning">
-          By default, boards and cards are <strong>public</strong>.
-        </div>
+        <h1 style="margin-bottom:1em;">
+          {when private lockIcon}{" " :: Text}
+          {get #title board}
+        </h1>
         {when editable (renderCardAddForm board)}
         <div style="margin-top:30px;">
           {forEach cards renderCard}
         </div>
     |]
     where
-      editable = (get #id <$> currentUserOrNothing) == Just (get #userId board)
+      editable = mbCurrentUserId == Just (get #userId board)
+      private = case board ^. #settings_ % #visibility of
+          VisibilityPublic -> False
+          VisibilityPrivate -> True
+      lockIcon = [hsx|<span>🔒</span>|]
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =
   [hsx|
-    <div class="card mb-2">
+    <div class={"card mb-2 woc-card " <> if private then "woc-card-private" else "" :: Text}>
       <div class="card-body">
+        {when private lockIcon}{" " :: Text}
         <a class="stretched-link" href={ShowCardAction (get #id card)}>{get #title card}</a>
         <span style="margin-left:.5em;" class="badge badge-secondary">{count}</span>
       </div>
     </div>
   |]
+  where
+    private = case card ^. #settings_ % #visibility of
+      VisibilityPublic -> False
+      VisibilityPrivate -> True
+    lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardAddForm :: Board -> Html
 renderCardAddForm board =
@@ -56,6 +66,10 @@ renderCardAddForm board =
     label = "Add a card"
    }
   }
+  <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+    <input type="checkbox" class="custom-control-input" id="private" name="private">
+    <label class="custom-control-label" for="private">🔒 Private card</label>
+  </div>
   |]
   where
     card = (newRecord :: Card)

@@ -39,9 +39,10 @@ instance View IndexView where
 
 renderOwnBoard :: Board -> Html
 renderOwnBoard board = [hsx|
-    <div class="card mt-3 mb-3">
+    <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
+                {when private lockIcon}{" " :: Text}
                 <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
                 {renderBoardEditButton board}
                 {renderBoardDeleteButton board}
@@ -49,6 +50,11 @@ renderOwnBoard board = [hsx|
         </div>
     </div>
 |]
+  where
+    private = case board ^. #settings_ % #visibility of
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
+    lockIcon = [hsx|<span>🔒</span>|]
 
 renderBoardEditButton board = [hsx|
   <a
@@ -72,9 +78,10 @@ renderBoardDeleteButton board = [hsx|
 
 renderOthersBoard :: (Board, "handle" :! Text, "displayName" :! Text) -> Html
 renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
-    <div class="card mt-3 mb-3">
+    <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
+                {when private lockIcon}{" " :: Text}
                 <a class="text-muted" href={ShowBoardAction (get #id board)}>{get #title board}</a>
             </h3>
             <span class="text-muted">
@@ -84,3 +91,8 @@ renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
         </div>
     </div>
 |]
+  where
+    private = case board ^. #settings_ % #visibility of
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
+    lockIcon = [hsx|<span>🔒</span>|]

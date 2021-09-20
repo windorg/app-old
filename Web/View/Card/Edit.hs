@@ -25,4 +25,12 @@ renderForm :: Card -> Html
 renderForm card = formFor card [hsx|
     {(textField #title)}
     {submitButton}
+    <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>
+      <label class="custom-control-label" for="private">🔒 Private card</label>
+    </div>
 |]
+  where
+    private = case card ^. #settings_ % #visibility of
+      VisibilityPrivate -> True
+      VisibilityPublic -> False

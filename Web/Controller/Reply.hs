@@ -8,12 +8,17 @@ import Web.Controller.Authorization
 import Prelude(read)
 import Web.Helper.Common
 import Debug.Trace (traceShowId)
+import qualified Optics
 
 instance (Controller CardController, Controller InboxController) => Controller ReplyController where
     action NewReplyAction { cardUpdateId, replySourceSerialized } = do
         accessDeniedUnless =<< userCanReply cardUpdateId
         let replySource = read (cs replySourceSerialized)
-        let reply = newRecord |> set #cardUpdateId cardUpdateId
+        let reply = (newRecord :: Reply)
+                |> set #cardUpdateId cardUpdateId
+                |> Optics.set #settings_ ReplySettings{
+                       visibility = VisibilityPublic
+                   }
         setModal NewView { .. }
         jumpToReplySource replySource
 
@@ -40,7 +45,7 @@ instance (Controller CardController, Controller InboxController) => Controller R
 
     action CreateReplyAction {cardUpdateId, replySourceSerialized} = do
         accessDeniedUnless =<< userCanReply cardUpdateId
-        cardOwner <- getCardUpdateOwner cardUpdateId
+        cardOwner <- getOwnerById @CardUpdate cardUpdateId
         let replySource = read (cs replySourceSerialized)
         let reply = (newRecord :: Reply)
               |> set #cardUpdateId cardUpdateId
@@ -73,3 +78,6 @@ instance (Controller CardController, Controller InboxController) => Controller R
 
 buildReply reply = reply
     |> fill @'["content"]
+    |> Optics.set #settings_ ReplySettings{
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+       }

@@ -23,6 +23,7 @@ instance View ShowView where
             </ol>
         </nav>
         <h1 style="margin-bottom:1em">
+          {when private lockIcon}
           {get #title card}
           {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
         </h1>
@@ -32,7 +33,11 @@ instance View ShowView where
         </div>
      |]
      where
-       editable = (get #id <$> currentUserOrNothing) == Just (get #userId board)
+       editable = mbCurrentUserId == Just (get #userId board)
+       private = case card ^. #settings_ % #visibility of
+         VisibilityPublic -> False
+         VisibilityPrivate -> True
+       lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|
@@ -88,7 +93,7 @@ renderCardUpdate
   -> (CardUpdate, [ReplyV]) 
   -> Html
 renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
-  <div class={"card-update " <> if private then "card-update-private" else "" :: Text}>
+  <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}>
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
         {renderTimestamp (get #createdAt cardUpdate)}

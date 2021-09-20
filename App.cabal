@@ -73,3 +73,5 @@ executable App
     , PartialTypeSignatures
     , StandaloneDeriving
     , DerivingVia
+    , AllowAmbiguousTypes
+    

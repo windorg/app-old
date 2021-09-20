@@ -5,6 +5,7 @@ module Web.Controller.Prelude
 , module Generated.Types
 , module Database.PostgreSQL.Simple.SqlQQ
 , module Optics
+, module Control.Monad.Extra
 )
 where
 
@@ -14,3 +15,4 @@ import IHP.ControllerPrelude
 import Generated.Types
 import Database.PostgreSQL.Simple.SqlQQ
 import Optics ((%), (^.))
+import Control.Monad.Extra (filterM)

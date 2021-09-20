@@ -19,4 +19,12 @@ renderForm :: Board -> Html
 renderForm board = formFor board [hsx|
     {(textField #title)}
     {submitButton}
+    <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>
+      <label class="custom-control-label" for="private">🔒 Private board</label>
+    </div>
 |]
+  where
+    private = case board ^. #settings_ % #visibility of
+      VisibilityPrivate -> True
+      VisibilityPublic -> False

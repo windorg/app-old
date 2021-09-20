@@ -6,6 +6,7 @@ import Web.View.Board.New
 import Web.View.Board.Edit
 import Web.View.Board.Show
 import Web.Controller.Authorization
+import qualified Optics
 
 import Named
 
@@ -22,21 +23,31 @@ instance Controller BoardController where
                 othersBoards <- query @Board 
                     |> filterWhereNot (#userId, currentUserId)
                     |> fetch
+                    >>= filterM (userCanView @Board . get #id)
                     >>= mapM augmentBoard
                 render IndexViewUser { .. }
             Nothing -> do
-                allBoards <- query @Board |> fetch >>= mapM augmentBoard
+                allBoards <- query @Board 
+                    |> fetch 
+                    >>= filterM (userCanView @Board . get #id)
+                    >>= mapM augmentBoard
                 render IndexViewGuest{..}
 
     action NewBoardAction = do
         ensureIsUser
-        let board = newRecord
+        let board = (newRecord :: Board)
+                |> Optics.set #settings_ BoardSettings{
+                       visibility = VisibilityPublic
+                   }
         render NewView { .. }
 
     action ShowBoardAction { boardId } = do
         accessDeniedUnless =<< userCanView @Board boardId
         board <- fetch boardId
-        cards <- get #cards board |> orderByDesc #createdAt |> fetch
+        cards <- get #cards board 
+            |> orderByDesc #createdAt 
+            |> fetch
+            >>= filterM (userCanView @Card . get #id)
         counts <- forM cards $ \card -> 
             sqlQueryScalar "SELECT COUNT(*) FROM card_updates WHERE card_id = ?" [get #id card]
         render ShowView { cards = zip cards counts, .. }
@@ -76,3 +87,6 @@ instance Controller BoardController where
 
 buildBoard board = board
     |> fill @'["title"]
+    |> Optics.set #settings_ BoardSettings{
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+       }

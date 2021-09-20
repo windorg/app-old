@@ -5,6 +5,7 @@ module Web.View.Prelude
 , module Generated.Types
 , module Web.Types
 , module Application.Helper.View
+, module Web.Helper.Common
 , module Web.View.Prelude
 , module Optics
 ) where
@@ -14,6 +15,7 @@ import Web.View.Layout
 import Generated.Types
 import Web.Types
 import Web.Routes ()
+import Web.Helper.Common
 import Application.Helper.View
 
 import Optics ((%), (^.))

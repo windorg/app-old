@@ -87,14 +87,6 @@ data Visibility
     | VisibilityPrivate
     deriving (Eq, Show)
 
-data CardUpdateSettings = CardUpdateSettings {
-    visibility :: Visibility
-  }
-  deriving (Show, Generic)
-
-instance FromJSON CardUpdateSettings
-instance ToJSON CardUpdateSettings
-
 instance FromJSON Visibility where
     parseJSON = Aeson.withText "Visibility" $ \case
         "public" -> pure VisibilityPublic
@@ -106,6 +98,38 @@ instance ToJSON Visibility where
         VisibilityPublic -> toJSON ("public" :: Text)
         VisibilityPrivate -> toJSON ("private" :: Text)
 
+---
+
+data ReplySettings = ReplySettings {
+    visibility :: Visibility
+  }
+  deriving (Show, Generic)
+
+instance FromJSON ReplySettings
+instance ToJSON ReplySettings
+
+instance Optics.LabelOptic "settings_" Optics.A_Lens Reply Reply ReplySettings ReplySettings where
+    labelOptic = 
+        Optics.lens (get #settings) (flip (set #settings))
+        Optics.% 
+        Optics.iso 
+            (\x -> case Aeson.fromJSON x of
+                Aeson.Success y -> y
+                _ -> error "#settings_ could not parse the ReplySettings field")
+            toJSON
+
+Optics.makeFieldLabelsNoPrefix ''ReplySettings
+
+---
+
+data CardUpdateSettings = CardUpdateSettings {
+    visibility :: Visibility
+  }
+  deriving (Show, Generic)
+
+instance FromJSON CardUpdateSettings
+instance ToJSON CardUpdateSettings
+
 instance Optics.LabelOptic "settings_" Optics.A_Lens CardUpdate CardUpdate CardUpdateSettings CardUpdateSettings where
     labelOptic = 
         Optics.lens (get #settings) (flip (set #settings))
@@ -113,7 +137,51 @@ instance Optics.LabelOptic "settings_" Optics.A_Lens CardUpdate CardUpdate CardU
         Optics.iso 
             (\x -> case Aeson.fromJSON x of
                 Aeson.Success y -> y
-                _ -> error "#settings_ could not parse the settings field")
+                _ -> error "#settings_ could not parse the CardUpdateSettings field")
             toJSON
 
 Optics.makeFieldLabelsNoPrefix ''CardUpdateSettings
+
+---
+
+data CardSettings = CardSettings {
+    visibility :: Visibility
+  }
+  deriving (Show, Generic)
+
+instance FromJSON CardSettings
+instance ToJSON CardSettings
+
+instance Optics.LabelOptic "settings_" Optics.A_Lens Card Card CardSettings CardSettings where
+    labelOptic = 
+        Optics.lens (get #settings) (flip (set #settings))
+        Optics.% 
+        Optics.iso 
+            (\x -> case Aeson.fromJSON x of
+                Aeson.Success y -> y
+                _ -> error "#settings_ could not parse the CardSettings field")
+            toJSON
+
+Optics.makeFieldLabelsNoPrefix ''CardSettings
+
+---
+
+data BoardSettings = BoardSettings {
+    visibility :: Visibility
+  }
+  deriving (Show, Generic)
+
+instance FromJSON BoardSettings
+instance ToJSON BoardSettings
+
+instance Optics.LabelOptic "settings_" Optics.A_Lens Board Board BoardSettings BoardSettings where
+    labelOptic = 
+        Optics.lens (get #settings) (flip (set #settings))
+        Optics.% 
+        Optics.iso 
+            (\x -> case Aeson.fromJSON x of
+                Aeson.Success y -> y
+                e -> error "#settings_ could not parse the BoardSettings field")
+            toJSON
+
+Optics.makeFieldLabelsNoPrefix ''BoardSettings

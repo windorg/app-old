@@ -7,6 +7,7 @@ import Web.Controller.Authorization
 import Named
 import Control.Monad (filterM)
 import Web.ViewTypes
+import qualified Optics
 
 instance Controller CardController where
     action ShowCardAction { cardId } = do
@@ -22,6 +23,7 @@ instance Controller CardController where
             get #replies c
               |> orderByAsc #createdAt
               |> fetch
+              >>= filterM (userCanView @Reply . get #id)
               >>= mapM fetchReplyV
         render ShowView { cardUpdates = zip cardUpdates replySets, .. }
 
@@ -47,7 +49,7 @@ instance Controller CardController where
         accessDeniedUnless =<< userCanEdit @Board boardId
         let card = (newRecord :: Card) |> set #boardId boardId
         card
-            |> fill @'["title"]
+            |> buildCard
             |> ifValid \case
                 Left card -> do
                     setErrorMessage "Card is invalid"
@@ -64,3 +66,7 @@ instance Controller CardController where
 
 buildCard card = card
     |> fill @'["title"]
+    |> Optics.set #settings_ CardSettings{
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+       }
+    

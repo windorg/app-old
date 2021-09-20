@@ -4,6 +4,7 @@ module Web.Controller.Authorization where
 
 import Web.Controller.Prelude
 import Named
+import Control.Monad.Extra (andM)
 import Web.Helper.Common
 
 userCanEditReplyPure :: "user" :! Maybe (Id User) -> Reply -> Bool
@@ -27,48 +28,62 @@ class Access thing where
     userCanEdit :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id thing -> IO Bool
     userCanDelete :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id thing -> IO Bool
 
+instance Access Board where
+    userCanView boardId = do
+        board <- fetch boardId
+        case board ^. #settings_ % #visibility of
+            VisibilityPublic -> pure True
+            VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner board)
+    userCanEdit boardId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @Board boardId)
+    userCanDelete boardId = userCanEdit @Board boardId
+
+instance Access Card where
+    userCanView cardId = do
+        card <- fetch cardId
+        andM [
+            -- Must be able to see the board
+            userCanView @Board (get #boardId card),
+            -- And the card, too
+            case card ^. #settings_ % #visibility of
+                VisibilityPublic -> pure True
+                VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner card)
+            ]
+    userCanEdit cardId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @Card cardId)
+    userCanDelete cardId = userCanEdit @Card cardId
+
 instance Access CardUpdate where
     userCanView cardUpdateId = do
         cardUpdate <- fetch cardUpdateId
-        case cardUpdate ^. #settings_ % #visibility of
-            VisibilityPublic -> pure True
-            VisibilityPrivate -> do
-                card <- fetch (get #cardId cardUpdate)
-                board <- fetch (get #boardId card)
-                pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
-    userCanEdit cardUpdateId = do
-        cardUpdate <- fetch cardUpdateId
-        card <- fetch (get #cardId cardUpdate)
-        board <- fetch (get #boardId card)
-        pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
+        andM [
+            -- Must be able to see the card
+            userCanView @Card (get #cardId cardUpdate),
+            -- And the card update, too
+            case cardUpdate ^. #settings_ % #visibility of
+                VisibilityPublic -> pure True
+                VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner cardUpdate)
+            ]
+    userCanEdit cardUpdateId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @CardUpdate cardUpdateId)
     userCanDelete cardUpdateId = userCanEdit @CardUpdate cardUpdateId
 
-instance Access Card where
-    userCanView cardId = pure True
-    userCanEdit cardId = do
-        card <- fetch cardId
-        board <- fetch (get #boardId card)
-        pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
-    userCanDelete cardId = userCanEdit @Card cardId
-
-instance Access Board where
-    userCanView boardId = pure True
-    userCanEdit boardId = do
-        board <- fetch boardId
-        pure $ Just (get #userId board) == (get #id <$> currentUserOrNothing)
-    userCanDelete boardId = userCanEdit @Board boardId
-
 instance Access Reply where
-    -- Note: this ignores visibility settings for cards updates. If we ever have an API, we might want to rethink this.
-    userCanView replyId = pure True
+    userCanView replyId = do
+        reply <- fetch replyId
+        andM [
+            userCanView @CardUpdate (get #cardUpdateId reply),
+            -- TODO: we might want to add replies that only the author & the card owner can see
+            case reply ^. #settings_ % #visibility of
+                VisibilityPublic -> pure True
+                VisibilityPrivate -> (== mbCurrentUserId) <$> 
+                    (Just <$> getOwnerById @CardUpdate (get #cardUpdateId reply))
+            ]
     userCanEdit replyId = do
         reply :: Reply <- fetch replyId
-        pure $ userCanEditReplyPure (#user (get #id <$> currentUserOrNothing)) reply
+        pure $ userCanEditReplyPure (#user mbCurrentUserId) reply
     userCanDelete replyId = do
         reply :: Reply <- fetch replyId
-        cardOwner <- getCardUpdateOwner (get #cardUpdateId reply)
+        cardOwner <- getOwnerById @CardUpdate (get #cardUpdateId reply)
         pure $ userCanDeleteReplyPure 
-            (#user (get #id <$> currentUserOrNothing))
+            (#user mbCurrentUserId)
             (#cardOwner cardOwner)
             reply
         

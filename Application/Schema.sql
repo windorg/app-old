@@ -13,13 +13,15 @@ CREATE TABLE cards (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     title TEXT DEFAULT '' NOT NULL,
     board_id UUID NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    settings JSONB NOT NULL
 );
 CREATE TABLE boards (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     title TEXT DEFAULT '' NOT NULL,
     user_id UUID NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    settings JSONB NOT NULL
 );
 CREATE INDEX boards_user_id_index ON boards (user_id);
 CREATE TABLE card_updates (
@@ -36,7 +38,8 @@ CREATE TABLE replies (
     content TEXT NOT NULL,
     card_update_id UUID NOT NULL,
     author_id UUID,
-    is_read BOOLEAN DEFAULT false NOT NULL
+    is_read BOOLEAN DEFAULT false NOT NULL,
+    settings JSONB NOT NULL
 );
 CREATE INDEX replies_card_update_id_index ON replies (card_update_id);
 CREATE INDEX replies_author_id_index ON replies (author_id);
