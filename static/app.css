@@ -60,7 +60,7 @@ footer {
 
 .woc-board-private,
 .woc-card-private,
-.worc-card-update-private {
+.woc-card-update-private {
   background-color: #efefef;
 }
 
@@ -71,5 +71,5 @@ footer {
 }
 
 .woc-card-update-private {
-  margin-bottom: 1rem; // Only for private ones! We don't want them to stick together.
+  margin-bottom: 1rem; /* Only for private ones! We don't want them to stick together. */
 }
