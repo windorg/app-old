@@ -10,7 +10,6 @@ instance Controller InboxController where
 
     action ShowInboxAction = do
         unreadReplies <-
-          mapM fetchReplyV =<<
           sqlQuery [sql|
             select * from replies
             where is_read = false and card_update_id in
@@ -20,4 +19,7 @@ instance Controller InboxController where
             order by created_at desc
             |]
             (Only currentUserId)
+          -- Not 100% sure this is needed, but just in case
+          >>= filterM (userCanView @Reply . get #id)
+          >>= mapM fetchReplyV
         render InboxView{..}
