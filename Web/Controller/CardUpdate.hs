@@ -57,5 +57,6 @@ instance Controller CardUpdateController where
 buildCardUpdate cardUpdate = cardUpdate
     |> fill @'["content"]
     |> Optics.set #settings_ CardUpdateSettings{
-         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic,
+         subscribers = mempty
        }

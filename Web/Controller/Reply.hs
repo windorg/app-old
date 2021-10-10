@@ -9,6 +9,8 @@ import Prelude(read)
 import Web.Helper.Common
 import Debug.Trace (traceShowId)
 import qualified Optics
+import qualified Data.Set as Set
+import Data.Functor (void)
 
 instance (Controller CardController, Controller InboxController) => Controller ReplyController where
     action NewReplyAction { cardUpdateId, replySourceSerialized } = do
@@ -50,7 +52,6 @@ instance (Controller CardController, Controller InboxController) => Controller R
         let reply = (newRecord :: Reply)
               |> set #cardUpdateId cardUpdateId
               |> set #authorId (Just currentUserId)
-              |> set #isRead (if currentUserId == cardOwner then True else False)
         reply
             |> buildReply
             |> traceShowId
@@ -60,6 +61,36 @@ instance (Controller CardController, Controller InboxController) => Controller R
                     jumpToReplySource replySource
                 Right reply -> do
                     reply <- reply |> createRecord
+                    cardUpdate <- fetch cardUpdateId
+                    -- When replying to a thread: subscribe the user to that thread
+                    cardUpdate <- 
+                        if (currentUserId /= cardOwner) 
+                        then 
+                            cardUpdate
+                                |> Optics.over #settings_ (#subscribers Optics.%~ Set.insert currentUserId)
+                                |> updateRecord
+                        else pure cardUpdate
+                    -- Send out notifications
+                    let subscribers' = Set.insert cardOwner (cardUpdate ^. #settings_ % #subscribers)
+                    forM_ subscribers' \subscriber -> do
+                        -- ON DELETE CASCADE won't work on subscribers, so we just delete the subscriber when we know
+                        -- the user doesn't exist anymore
+                        subscriberExists <- query @User |> filterWhere (#id, subscriber) |> fetchExists
+                        if subscriberExists 
+                            then
+                                when (subscriber /= currentUserId) do
+                                    let subscriptionUpdate = (newRecord :: SubscriptionUpdate)
+                                            |> set #subscriberId subscriber
+                                            |> set #updateKind SukReply
+                                            |> set #cardUpdateId (Just cardUpdateId)
+                                            |> set #replyId (Just (get #id reply))
+                                    subscriptionUpdate <- subscriptionUpdate |> createRecord
+                                    pure ()
+                            else
+                                cardUpdate
+                                    |> Optics.over #settings_ (#subscribers Optics.%~ Set.delete subscriber)
+                                    |> updateRecord
+                                    |> void
                     redirectToReplySource replySource
 
     action DeleteReplyAction { replySourceSerialized, replyId } = do
@@ -70,10 +101,16 @@ instance (Controller CardController, Controller InboxController) => Controller R
         redirectToReplySource replySource
 
     action UpdateMarkReplyAsReadAction { replySourceSerialized, replyId } = do
+        -- TODO: am I sure this should be userCanView? Probably not.
         accessDeniedUnless =<< userCanView @Reply replyId
+        mbUpdate <- query @SubscriptionUpdate
+            |> filterWhere (#subscriberId, currentUserId)
+            |> filterWhere (#replyId, Just replyId)
+            |> filterWhere (#updateKind, SukReply)
+            |> fetchOneOrNothing
+        forM_ mbUpdate \update ->
+            update |> set #isRead True |> updateRecord
         let replySource = read (cs replySourceSerialized)
-        reply <- fetch replyId
-        reply |> set #isRead True |> updateRecord
         redirectToReplySource replySource
 
 buildReply reply = reply

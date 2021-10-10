@@ -27,5 +27,12 @@ fetchReplyV reply = do
     let authorDisplayName = get #displayName <$> mbAuthor
     editable <- userCanEdit @Reply (get #id reply)
     deletable <- userCanDelete @Reply (get #id reply)
-    let markAsReadAble = get #isRead reply == False && Just ownerId == mbCurrentUserId
+    -- An inbox event that corresponds to the reply. If it exists, it can be marked as read.
+    mbUpdate <- query @SubscriptionUpdate
+        |> filterWhere (#subscriberId, currentUserId)
+        |> filterWhere (#replyId, Just (get #id reply))
+        |> filterWhere (#updateKind, SukReply)
+        |> filterWhere (#isRead, False)
+        |> fetchOneOrNothing
+    let markAsReadAble = isJust mbUpdate
     pure ReplyV{..}

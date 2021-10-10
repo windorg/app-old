@@ -7,6 +7,8 @@ import Web.View.Layout
 import IHP.LoginSupport.Middleware
 import Web.Controller.Sessions
 
+import qualified Prelude
+
 -- Controller Imports
 import Web.Controller.Reply
 import Web.Controller.User
@@ -35,13 +37,7 @@ instance InitControllerContext WebApplication where
         initAuthentication @User
         inboxCount <- case currentUserOrNothing of
             Nothing -> pure Nothing
-            Just _ -> sqlQueryScalar [sql|
-              select count(*) from replies
-              where is_read = false and card_update_id in
-                  (select id from card_updates where card_id in
-                     (select id from cards where board_id in
-                        (select id from boards where user_id = ?)))
-              |]
-              (Only currentUserId)
+            -- TODO: this might be slow but we'll see later
+            Just _ -> Just . Prelude.length <$> getUnreadReplies
         setLayout (defaultLayout LayoutView{..})
         initAutoRefresh

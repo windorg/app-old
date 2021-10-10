@@ -4,22 +4,23 @@ import Web.Controller.Prelude
 import Web.Controller.Authorization
 import Web.View.Inbox.Show
 import Web.ViewTypes
+import Control.Monad ((<=<))
+
+getUnreadReplies :: (?context::ControllerContext, ?modelContext :: ModelContext) => IO [Id Reply]
+getUnreadReplies = do
+  unreadReplyUpdates <- query @SubscriptionUpdate
+    |> filterWhere (#subscriberId, currentUserId)
+    |> filterWhere (#updateKind, SukReply)
+    |> filterWhere (#isRead, False)
+    |> orderByDesc #createdAt
+    |> fetch
+  let unreadReplyIds = mapMaybe (get #replyId) unreadReplyUpdates
+  filterM (userCanView @Reply) unreadReplyIds
+
 
 instance Controller InboxController where
     beforeAction = ensureIsUser
 
     action ShowInboxAction = do
-        unreadReplies <-
-          sqlQuery [sql|
-            select * from replies
-            where is_read = false and card_update_id in
-                (select id from card_updates where card_id in
-                   (select id from cards where board_id in
-                      (select id from boards where user_id = ?)))
-            order by created_at desc
-            |]
-            (Only currentUserId)
-          -- Not 100% sure this is needed, but just in case
-          >>= filterM (userCanView @Reply . get #id)
-          >>= mapM fetchReplyV
-        render InboxView{..}
+      unreadReplies <- mapM (fetchReplyV <=< fetch @_ @Reply) =<< getUnreadReplies
+      render InboxView{..}
