@@ -22,6 +22,7 @@ let
             aeson
             neat-interpolation
             optics
+            ihp-sentry
             p.ihp
         ];
         otherDeps = p: with p; [
