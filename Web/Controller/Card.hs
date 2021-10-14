@@ -46,8 +46,11 @@ instance Controller CardController where
                     redirectTo ShowCardAction { .. }
 
     action CreateCardAction { boardId } = do
+        board <- fetch boardId
         accessDeniedUnless =<< userCanEdit @Board boardId
-        let card = (newRecord :: Card) |> set #boardId boardId
+        let card = (newRecord :: Card)
+                |> set #ownerId (get #ownerId board)
+                |> set #boardId boardId
         card
             |> buildCard
             |> ifValid \case

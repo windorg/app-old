@@ -35,9 +35,11 @@ instance Controller CardUpdateController where
                     redirectTo ShowCardAction { cardId = get #cardId cardUpdate }
 
     action CreateCardUpdateAction { cardId } = do
+        card <- fetch cardId
         accessDeniedUnless =<< userCanEdit @Card cardId
         let cardUpdate = (newRecord :: CardUpdate)
-              |> set #cardId cardId
+                |> set #ownerId (get #ownerId card)
+                |> set #cardId cardId
         cardUpdate
             |> buildCardUpdate
             |> ifValid \case

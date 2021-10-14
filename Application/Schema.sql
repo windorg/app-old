@@ -14,22 +14,24 @@ CREATE TABLE cards (
     title TEXT DEFAULT '' NOT NULL,
     board_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    settings JSONB NOT NULL
+    settings JSONB NOT NULL,
+    owner_id UUID NOT NULL
 );
 CREATE TABLE boards (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     title TEXT DEFAULT '' NOT NULL,
-    user_id UUID NOT NULL,
+    owner_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     settings JSONB NOT NULL
 );
-CREATE INDEX boards_user_id_index ON boards (user_id);
+CREATE INDEX boards_owner_id_index ON boards (owner_id);
 CREATE TABLE card_updates (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     content TEXT NOT NULL,
     card_id UUID NOT NULL,
-    settings JSONB NOT NULL
+    settings JSONB NOT NULL,
+    owner_id UUID NOT NULL
 );
 CREATE INDEX card_updates_card_id_index ON card_updates (card_id);
 CREATE TABLE replies (
@@ -59,9 +61,13 @@ CREATE INDEX subscription_updates_subscriber_id_index ON subscription_updates (s
 CREATE INDEX subscription_updates_card_id_index ON subscription_updates (card_id);
 CREATE INDEX subscription_updates_board_id_index ON subscription_updates (board_id);
 CREATE INDEX subscription_updates_reply_id_index ON subscription_updates (reply_id);
-ALTER TABLE boards ADD CONSTRAINT boards_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+CREATE INDEX cards_owner_id_index ON cards (owner_id);
+CREATE INDEX card_updates_owner_id_index ON card_updates (owner_id);
+ALTER TABLE boards ADD CONSTRAINT boards_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE card_updates ADD CONSTRAINT card_updates_ref_card_id FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE;
+ALTER TABLE card_updates ADD CONSTRAINT card_updates_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE cards ADD CONSTRAINT cards_ref_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;
+ALTER TABLE cards ADD CONSTRAINT cards_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE replies ADD CONSTRAINT replies_ref_author_id FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE SET NULL;
 ALTER TABLE replies ADD CONSTRAINT replies_ref_card_update_id FOREIGN KEY (card_update_id) REFERENCES card_updates (id) ON DELETE CASCADE;
 ALTER TABLE subscription_updates ADD CONSTRAINT subscription_updates_ref_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;

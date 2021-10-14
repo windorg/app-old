@@ -22,7 +22,7 @@ fetchReplyV :: (?modelContext::ModelContext, ?context::ControllerContext) => Rep
 fetchReplyV reply = do
     cardUpdate <- fetch (get #cardUpdateId reply)
     let cardId = get #cardId cardUpdate
-    ownerId <- getOwnerById @CardUpdate (get #cardUpdateId reply)
+    let ownerId = get #ownerId cardUpdate
     mbAuthor <- mapM fetch (get #authorId reply)
     let authorDisplayName = get #displayName <$> mbAuthor
     editable <- userCanEdit @Reply (get #id reply)

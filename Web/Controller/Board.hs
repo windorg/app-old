@@ -13,15 +13,15 @@ import Named
 instance Controller BoardController where
     action BoardsAction = do
         let augmentBoard board = do
-                user <- fetch (get #userId board)
+                user <- fetch (get #ownerId board)
                 pure (board, #handle (get #handle user), #displayName (get #displayName user))
         case currentUserOrNothing of
             Just _ -> do
                 ownBoards <- query @Board 
-                    |> filterWhere (#userId, currentUserId)
+                    |> filterWhere (#ownerId, currentUserId)
                     |> fetch
                 othersBoards <- query @Board 
-                    |> filterWhereNot (#userId, currentUserId)
+                    |> filterWhereNot (#ownerId, currentUserId)
                     |> fetch
                     >>= filterM (userCanView @Board . get #id)
                     >>= mapM augmentBoard
@@ -70,7 +70,7 @@ instance Controller BoardController where
 
     action CreateBoardAction = do
         ensureIsUser
-        let board = (newRecord :: Board) |> set #userId currentUserId
+        let board = (newRecord :: Board) |> set #ownerId currentUserId
         board
             |> buildBoard
             |> ifValid \case

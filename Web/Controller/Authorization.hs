@@ -33,7 +33,7 @@ instance Access Board where
         board <- fetch boardId
         case board ^. #settings_ % #visibility of
             VisibilityPublic -> pure True
-            VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner board)
+            VisibilityPrivate -> pure $ mbCurrentUserId == Just (get #ownerId board)
     userCanEdit boardId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @Board boardId)
     userCanDelete boardId = userCanEdit @Board boardId
 
@@ -46,7 +46,7 @@ instance Access Card where
             -- And the card, too
             case card ^. #settings_ % #visibility of
                 VisibilityPublic -> pure True
-                VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner card)
+                VisibilityPrivate -> pure $ mbCurrentUserId == Just (get #ownerId card)
             ]
     userCanEdit cardId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @Card cardId)
     userCanDelete cardId = userCanEdit @Card cardId
@@ -60,7 +60,7 @@ instance Access CardUpdate where
             -- And the card update, too
             case cardUpdate ^. #settings_ % #visibility of
                 VisibilityPublic -> pure True
-                VisibilityPrivate -> (== mbCurrentUserId) <$> (Just <$> getOwner cardUpdate)
+                VisibilityPrivate -> pure $ mbCurrentUserId == Just (get #ownerId cardUpdate)
             ]
     userCanEdit cardUpdateId = (== mbCurrentUserId) <$> (Just <$> getOwnerById @CardUpdate cardUpdateId)
     userCanDelete cardUpdateId = userCanEdit @CardUpdate cardUpdateId

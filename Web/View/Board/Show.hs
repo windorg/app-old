@@ -24,7 +24,7 @@ instance View ShowView where
         </div>
     |]
     where
-      editable = mbCurrentUserId == Just (get #userId board)
+      editable = mbCurrentUserId == Just (get #ownerId board)
       private = case board ^. #settings_ % #visibility of
           VisibilityPublic -> False
           VisibilityPrivate -> True
