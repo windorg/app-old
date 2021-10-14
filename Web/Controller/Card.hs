@@ -8,6 +8,7 @@ import Named
 import Control.Monad (filterM)
 import Web.ViewTypes
 import qualified Optics
+import Data.Text (strip)
 
 instance Controller CardController where
     action ShowCardAction { cardId } = do
@@ -53,6 +54,7 @@ instance Controller CardController where
                 |> set #boardId boardId
         card
             |> buildCard
+            |> modify #title strip
             |> ifValid \case
                 Left card -> do
                     setErrorMessage "Card is invalid"

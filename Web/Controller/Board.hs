@@ -9,6 +9,7 @@ import Web.Controller.Authorization
 import qualified Optics
 
 import Named
+import Data.Text (strip)
 
 instance Controller BoardController where
     action BoardsAction = do
@@ -73,6 +74,7 @@ instance Controller BoardController where
         let board = (newRecord :: Board) |> set #ownerId currentUserId
         board
             |> buildBoard
+            |> modify #title strip
             |> ifValid \case
                 Left board -> render NewView { .. } 
                 Right board -> do
