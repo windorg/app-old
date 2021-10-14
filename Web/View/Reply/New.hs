@@ -18,7 +18,8 @@ renderForm :: Reply -> ReplySource -> Html
 renderForm reply replySource = formFor' reply (pathTo action) [hsx|
     {(textareaField #content) {
         disableLabel = True,
-        fieldClass = "use-tiptap"
+        fieldClass = "use-tiptap",
+        autofocus = True
       }
     }
     {submitButton}

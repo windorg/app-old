@@ -104,19 +104,22 @@ function onReadyOrTurbo() {
     }
 
     // Revitalize tiptap editors that were killed by a turbolinks forth/back visit
-    $('textarea.use-tiptap.tiptap-processed').each(function(_, el) {
-        const editorElement = $(el).next().children()[0];
+    $('textarea.use-tiptap.tiptap-processed').each(function(_, textarea) {
+        const editorElement = $(textarea).next().children()[0];
         if (!editorElement.editor) {
             const editor = newTiptap(editorElement.innerHTML);
             $(editorElement).replaceWith(editor.options.element);
         }
     });
     // Create tiptap editors for new textareas
-    $('textarea.use-tiptap:not(.tiptap-processed)').each(function(_, el) {
-        const editor = newTiptap(cmarkWriter.render(cmarkReader.parse(el.value)));
-        $(el).after(editor.options.element);
-        $(el).addClass('tiptap-processed');
-        $(el).hide();
+    $('textarea.use-tiptap:not(.tiptap-processed)').each(function(_, textarea) {
+        const editor = newTiptap(cmarkWriter.render(cmarkReader.parse(textarea.value)));
+        $(textarea).after(editor.options.element);
+        $(textarea).addClass('tiptap-processed');
+        $(textarea).hide();
+        if ($(textarea).attr('autofocus')) {
+            editor.commands.focus();
+        }
     });
 
     // Make all external links open in a new tab
