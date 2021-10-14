@@ -20,15 +20,18 @@ instance Controller BoardController where
             Just _ -> do
                 ownBoards <- query @Board 
                     |> filterWhere (#ownerId, currentUserId)
+                    |> orderByAsc #createdAt
                     |> fetch
                 othersBoards <- query @Board 
                     |> filterWhereNot (#ownerId, currentUserId)
+                    |> orderByDesc #createdAt
                     |> fetch
                     >>= filterM (userCanView @Board . get #id)
                     >>= mapM augmentBoard
                 render IndexViewUser { .. }
             Nothing -> do
                 allBoards <- query @Board 
+                    |> orderByDesc #createdAt
                     |> fetch 
                     >>= filterM (userCanView @Board . get #id)
                     >>= mapM augmentBoard
