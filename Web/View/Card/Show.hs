@@ -1,8 +1,10 @@
 module Web.View.Card.Show where
+
 import Web.View.Prelude
 import Named
 import Web.Controller.Authorization
 import Web.ViewTypes
+import Web.Helper.View
 import qualified Optics
 
 data ShowView = ShowView {
@@ -37,7 +39,6 @@ instance View ShowView where
        private = case card ^. #settings_ % #visibility of
          VisibilityPublic -> False
          VisibilityPrivate -> True
-       lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|
@@ -117,7 +118,6 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
     private = case cardUpdate ^. #settings_ % #visibility of
       VisibilityPublic -> False
       VisibilityPrivate -> True
-    lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardUpdateEditButton cardUpdate = [hsx|
   <a class="btn btn-tiny btn-outline-info"

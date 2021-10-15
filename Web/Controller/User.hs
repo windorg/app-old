@@ -5,6 +5,7 @@ import Web.View.User.New
 import Web.View.User.Edit
 import Web.View.User.Show
 import IHP.ValidationSupport.ValidateField (matchesRegex)
+import Web.Controller.Authorization
 import Data.Text (strip)
 
 instance Controller UserController where
@@ -14,6 +15,11 @@ instance Controller UserController where
 
     action ShowUserAction { userId } = do
         user <- fetch userId
+        boards <- query @Board 
+            |> filterWhere (#ownerId, userId)
+            |> orderByDesc #createdAt
+            |> fetch
+            >>= filterM (userCanView @Board . get #id)
         render ShowView { .. }
 
     action EditUserAction { userId } = do

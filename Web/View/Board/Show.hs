@@ -1,6 +1,7 @@
 module Web.View.Board.Show where
 
 import Web.View.Prelude
+import Web.Helper.View
 import Named
 
 data ShowView = ShowView {board :: Board, cards :: [(Card, Int)]}
@@ -28,7 +29,6 @@ instance View ShowView where
       private = case board ^. #settings_ % #visibility of
           VisibilityPublic -> False
           VisibilityPrivate -> True
-      lockIcon = [hsx|<span>🔒</span>|]
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =
@@ -45,7 +45,6 @@ renderCard (card, count) =
     private = case card ^. #settings_ % #visibility of
       VisibilityPublic -> False
       VisibilityPrivate -> True
-    lockIcon = [hsx|<span>🔒</span>|]
 
 renderCardAddForm :: Board -> Html
 renderCardAddForm board =
