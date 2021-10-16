@@ -15,6 +15,7 @@ instance View FeedView where
             </ol>
         </nav>
         <h1>Feed</h1>
+        <p class="text-muted">Showing updates from the last 14 days.</p>
         {forEach feedItems renderFeedItem}
     |]
 
