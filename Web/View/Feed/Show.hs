@@ -20,7 +20,7 @@ instance View FeedView where
 
 renderFeedItem :: FeedItemV -> Html
 renderFeedItem FeedItemCardUpdateV {..} = [hsx|
-<div class="mt-4 woc-feed-item woc-feed-item-card-update">
+<div class="mt-5 woc-feed-item woc-feed-item-card-update">
   <strong>
     <a href={ShowUserAction (get #id owner)}>{get #displayName owner}</a> —
     {get #title card}

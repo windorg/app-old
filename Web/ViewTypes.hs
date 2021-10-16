@@ -17,7 +17,7 @@ import Web.Types
 data ReplyV = ReplyV {
     reply :: Reply,
     cardId :: Id Card,
-    authorDisplayName :: Maybe Text,
+    author :: Maybe User,
     editable :: Bool,
     deletable :: Bool,
     markAsReadAble :: Bool
@@ -28,8 +28,7 @@ fetchReplyV reply = do
     cardUpdate <- fetch (get #cardUpdateId reply)
     let cardId = get #cardId cardUpdate
     let ownerId = get #ownerId cardUpdate
-    mbAuthor <- mapM fetch (get #authorId reply)
-    let authorDisplayName = get #displayName <$> mbAuthor
+    author <- mapM fetch (get #authorId reply)
     editable <- userCanEdit @Reply (get #id reply)
     deletable <- userCanDelete @Reply (get #id reply)
     -- An inbox event that corresponds to the reply. If it exists, it can be marked as read.

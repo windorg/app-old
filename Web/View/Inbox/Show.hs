@@ -22,7 +22,7 @@ renderReply replyV = [hsx|
 <div class="reply">
   <div class="mb-1">
     <span class="text-muted small">
-      <span class="mr-2 font-weight-bold">{fromMaybe "[deleted]" (get #authorDisplayName replyV)}</span>
+      {authorName}
       <span>
           <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
               {renderTimestamp createdAt}
@@ -39,6 +39,13 @@ renderReply replyV = [hsx|
 |]
   where
     reply@Reply{..} = get #reply replyV
+    authorName = case get #author replyV of
+      Nothing -> [hsx|<span class="mr-2 font-weight-bold">[deleted]</span>|]
+      Just author -> [hsx|
+        <span class="mr-2 font-weight-bold">
+          <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
+        </span>
+      |]
 
 renderReplyMarkAsReadButton :: Reply -> Html
 renderReplyMarkAsReadButton reply = [hsx|
