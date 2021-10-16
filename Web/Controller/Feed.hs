@@ -16,7 +16,7 @@ getFeedItems = do
   feedItems <- query @CardUpdate
     -- TODO: this should be authorId but we don't have authorId yet.. although maybe it shouldn't be that?
     |> filterWhereIn (#ownerId, followedUsers)
-    |> filterWhereSql (#createdAt, "< current_timestamp - interval '14 days'")
+    |> filterWhereSql (#createdAt, ">= current_timestamp - interval '14 days'")
     |> orderByDesc #createdAt
     |> fetch
     >>= filterM (userCanView @CardUpdate . get #id)
