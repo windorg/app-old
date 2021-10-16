@@ -48,6 +48,8 @@ data UserController
   | EditUserAction {userId :: !(Id User)}
   | UpdateUserAction {userId :: !(Id User)}
   | DeleteUserAction {userId :: !(Id User)}
+  | UpdateFollowUserAction {userId :: !(Id User)}
+  | UpdateUnfollowUserAction {userId :: !(Id User)}
   deriving (Eq, Show, Data)
 
 data SessionsController
@@ -58,6 +60,10 @@ data SessionsController
 
 data InboxController
   = ShowInboxAction
+  deriving (Eq, Show, Data)
+
+data FeedController
+  = ShowFeedAction
   deriving (Eq, Show, Data)
 
 instance HasNewSessionUrl User where
@@ -191,3 +197,10 @@ instance Optics.LabelOptic "settings_" Optics.A_Lens Board Board BoardSettings B
         toJSON
 
 Optics.makeFieldLabelsNoPrefix ''BoardSettings
+
+---
+
+data FeedItem 
+  -- There might be more later (e.g. FeedItemCard)
+  = FeedItemCardUpdate CardUpdate
+  deriving (Show, Generic)

@@ -8,6 +8,7 @@ import IHP.ValidationSupport.ValidateField (matchesRegex)
 import Web.Controller.Authorization
 import Data.Text (strip)
 
+-- When adding new actions here, must also amend the "instance AutoRoute UserController"
 instance Controller UserController where
     action NewUserAction = do
         let user = newRecord
@@ -20,6 +21,13 @@ instance Controller UserController where
             |> orderByDesc #createdAt
             |> fetch
             >>= filterM (userCanView @Board . get #id)
+        followed <- case currentUserOrNothing of 
+            Nothing -> pure Nothing
+            Just _ -> query @FollowedUser
+                |> filterWhere (#subscriberId, currentUserId)
+                |> filterWhere (#followedUserId, userId)
+                |> fetchExists
+                <&> Just
         render ShowView { .. }
 
     action EditUserAction { userId } = do
@@ -58,6 +66,29 @@ instance Controller UserController where
         user <- fetch userId
         deleteRecord user
         redirectToPath "/"
+
+    action UpdateFollowUserAction {userId} = do
+        ensureIsUser
+        follows <- query @FollowedUser
+            |> filterWhere (#subscriberId, currentUserId)
+            |> filterWhere (#followedUserId, userId)
+            |> fetchExists
+        unless follows do
+            (newRecord :: FollowedUser)
+                |> set #subscriberId currentUserId
+                |> set #followedUserId userId
+                |> createRecord
+            pure ()
+        redirectBack
+
+    action UpdateUnfollowUserAction {userId} = do
+        ensureIsUser
+        mbFollow <- query @FollowedUser
+            |> filterWhere (#subscriberId, currentUserId)
+            |> filterWhere (#followedUserId, userId)
+            |> fetchOneOrNothing
+        mapM_ deleteRecord mbFollow
+        redirectBack
 
 buildUser user = user
     |> fill @["email","handle","displayName","passwordHash"]

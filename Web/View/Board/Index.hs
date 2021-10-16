@@ -26,7 +26,7 @@ instance View IndexView where
             render IndexViewUser{..} = [hsx|
                 <h1>
                     Your boards
-                    <a href={pathTo NewBoardAction} class="ml-3 btn btn-outline-primary btn-sm">+ New</a>
+                    <a href={NewBoardAction} class="ml-3 btn btn-outline-primary btn-sm">+ New</a>
                 </h1>
                 <div class="row-cols-1 row-cols-md2">{forEach ownBoards renderOwnBoard}</div>
                 <h1 class="mt-5">Others' public boards</h1>

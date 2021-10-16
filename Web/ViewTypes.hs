@@ -8,6 +8,11 @@ import Application.Orphans
 import Web.Controller.Authorization
 import IHP.ControllerPrelude
 import Web.Helper.Common
+import Web.Types
+
+----------------------------------------------------------------------------
+-- ReplyV
+----------------------------------------------------------------------------
 
 data ReplyV = ReplyV {
     reply :: Reply,
@@ -36,3 +41,20 @@ fetchReplyV reply = do
         |> fetchOneOrNothing
     let markAsReadAble = isJust mbUpdate
     pure ReplyV{..}
+
+----------------------------------------------------------------------------
+-- FeedItemV
+----------------------------------------------------------------------------
+
+data FeedItemV
+    = FeedItemCardUpdateV {
+        owner :: User,
+        cardUpdate :: CardUpdate,
+        card :: Card
+    }
+
+fetchFeedItemV :: (?modelContext::ModelContext, ?context::ControllerContext) => FeedItem -> IO FeedItemV
+fetchFeedItemV (FeedItemCardUpdate cardUpdate) = do
+    card <- fetch (get #cardId cardUpdate)
+    owner <- fetch (get #ownerId card)
+    pure FeedItemCardUpdateV{..}

@@ -82,6 +82,7 @@ instance (Controller CardController, Controller InboxController) => Controller R
                                     let subscriptionUpdate = (newRecord :: SubscriptionUpdate)
                                             |> set #subscriberId subscriber
                                             |> set #updateKind SukReply
+                                            -- TODO: not sure why we fill both cardUpdateId and replyId
                                             |> set #cardUpdateId (Just cardUpdateId)
                                             |> set #replyId (Just (get #id reply))
                                     subscriptionUpdate <- subscriptionUpdate |> createRecord

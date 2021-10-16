@@ -19,4 +19,4 @@ instance AutoRoute UserController
 instance AutoRoute SessionsController
 instance AutoRoute ReplyController
 instance AutoRoute InboxController
-
+instance AutoRoute FeedController

@@ -63,11 +63,22 @@ CREATE INDEX subscription_updates_board_id_index ON subscription_updates (board_
 CREATE INDEX subscription_updates_reply_id_index ON subscription_updates (reply_id);
 CREATE INDEX cards_owner_id_index ON cards (owner_id);
 CREATE INDEX card_updates_owner_id_index ON card_updates (owner_id);
+CREATE TABLE followed_users (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    subscriber_id UUID NOT NULL,
+    followed_user_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+CREATE INDEX followed_users_subscriber_id_index ON followed_users (subscriber_id);
+CREATE INDEX followed_users_followed_user_id_index ON followed_users (followed_user_id);
 ALTER TABLE boards ADD CONSTRAINT boards_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE card_updates ADD CONSTRAINT card_updates_ref_card_id FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE;
 ALTER TABLE card_updates ADD CONSTRAINT card_updates_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE cards ADD CONSTRAINT cards_ref_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;
 ALTER TABLE cards ADD CONSTRAINT cards_ref_owner_id FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
+ALTER TABLE followed_users ADD CONSTRAINT followed_users_ref_followed_user_id FOREIGN KEY (followed_user_id) REFERENCES users (id) ON DELETE CASCADE;
+ALTER TABLE followed_users ADD CONSTRAINT followed_users_ref_subscriber_id FOREIGN KEY (subscriber_id) REFERENCES users (id) ON DELETE CASCADE;
+ALTER TABLE followed_users ADD CONSTRAINT followed_users_unique UNIQUE (subscriber_id, followed_user_id);
 ALTER TABLE replies ADD CONSTRAINT replies_ref_author_id FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE SET NULL;
 ALTER TABLE replies ADD CONSTRAINT replies_ref_card_update_id FOREIGN KEY (card_update_id) REFERENCES card_updates (id) ON DELETE CASCADE;
 ALTER TABLE subscription_updates ADD CONSTRAINT subscription_updates_ref_board_id FOREIGN KEY (board_id) REFERENCES boards (id) ON DELETE CASCADE;

@@ -31,6 +31,7 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
                 <div class="text-primary">News</div>
                 <div id="changelog-badge" style="height:32px;width:32px;min-height:1px;"></div>
             </div>
+            <div class="mr-4"><a href={ShowFeedAction}>Feed</a></div>
             {inbox}
             <div>{loginOrLogout}</div>
         </div>

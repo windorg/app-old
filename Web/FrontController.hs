@@ -16,6 +16,7 @@ import Web.Controller.CardUpdate
 import Web.Controller.Card
 import Web.Controller.Board
 import Web.Controller.Inbox
+import Web.Controller.Feed
 import Web.Controller.Static
 
 instance FrontController WebApplication where
@@ -24,6 +25,7 @@ instance FrontController WebApplication where
         -- Generator Marker
         , parseRoute @ReplyController
         , parseRoute @InboxController
+        , parseRoute @FeedController
         , parseRoute @UserController
         , parseRoute @CardUpdateController
         , parseRoute @CardController

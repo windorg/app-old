@@ -6,6 +6,8 @@ module Web.Controller.Prelude
 , module Database.PostgreSQL.Simple.SqlQQ
 , module Optics
 , module Control.Monad.Extra
+, module Data.Functor
+, module Control.Monad
 )
 where
 
@@ -16,3 +18,5 @@ import Generated.Types
 import Database.PostgreSQL.Simple.SqlQQ
 import Optics ((%), (^.))
 import Control.Monad.Extra (filterM)
+import Data.Functor ((<&>))
+import Control.Monad ((<=<))
