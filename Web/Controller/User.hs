@@ -1,6 +1,7 @@
 module Web.Controller.User where
 
 import Web.Controller.Prelude
+import Web.Helper.Common
 import Web.View.User.New
 import Web.View.User.Edit
 import Web.View.User.Show
@@ -21,10 +22,10 @@ instance Controller UserController where
             |> orderByDesc #createdAt
             |> fetch
             >>= filterM (userCanView @Board . get #id)
-        followed <- case currentUserOrNothing of 
+        followed <- case mbCurrentUserId of 
             Nothing -> pure Nothing
-            Just _ -> query @FollowedUser
-                |> filterWhere (#subscriberId, currentUserId)
+            Just currentUid -> query @FollowedUser
+                |> filterWhere (#subscriberId, currentUid)
                 |> filterWhere (#followedUserId, userId)
                 |> fetchExists
                 <&> Just

@@ -4,6 +4,7 @@ import Web.Controller.Prelude
 import Web.View.Board.Index
 import Web.View.Board.New
 import Web.View.Board.Edit
+import Web.Helper.Common
 import Web.View.Board.Show
 import Web.Controller.Authorization
 import qualified Optics
@@ -16,14 +17,14 @@ instance Controller BoardController where
         let augmentBoard board = do
                 user <- fetch (get #ownerId board)
                 pure (board, #handle (get #handle user), #displayName (get #displayName user))
-        case currentUserOrNothing of
-            Just _ -> do
+        case mbCurrentUserId of
+            Just currentUid -> do
                 ownBoards <- query @Board 
-                    |> filterWhere (#ownerId, currentUserId)
+                    |> filterWhere (#ownerId, currentUid)
                     |> orderByAsc #createdAt
                     |> fetch
                 othersBoards <- query @Board 
-                    |> filterWhereNot (#ownerId, currentUserId)
+                    |> filterWhereNot (#ownerId, currentUid)
                     |> orderByDesc #createdAt
                     |> fetch
                     >>= filterM (userCanView @Board . get #id)

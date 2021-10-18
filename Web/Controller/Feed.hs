@@ -9,6 +9,7 @@ import Optics (view)
 -- | Last 14 days in newest->oldest order
 getFeedItems :: (?context::ControllerContext, ?modelContext :: ModelContext) => IO [FeedItem]
 getFeedItems = do
+  ensureIsUser
   followedUsers <- query @FollowedUser
     |> filterWhere (#subscriberId, currentUserId)
     |> fetch

@@ -8,6 +8,7 @@ import Control.Monad ((<=<))
 
 getUnreadReplies :: (?context::ControllerContext, ?modelContext :: ModelContext) => IO [Id Reply]
 getUnreadReplies = do
+  ensureIsUser
   unreadReplyUpdates <- query @SubscriptionUpdate
     |> filterWhere (#subscriberId, currentUserId)
     |> filterWhere (#updateKind, SukReply)

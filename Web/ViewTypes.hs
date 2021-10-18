@@ -32,12 +32,14 @@ fetchReplyV reply = do
     editable <- userCanEdit @Reply (get #id reply)
     deletable <- userCanDelete @Reply (get #id reply)
     -- An inbox event that corresponds to the reply. If it exists, it can be marked as read.
-    mbUpdate <- query @SubscriptionUpdate
-        |> filterWhere (#subscriberId, currentUserId)
-        |> filterWhere (#replyId, Just (get #id reply))
-        |> filterWhere (#updateKind, SukReply)
-        |> filterWhere (#isRead, False)
-        |> fetchOneOrNothing
+    mbUpdate <- case mbCurrentUserId of
+        Nothing -> pure Nothing
+        Just currentUid -> query @SubscriptionUpdate
+            |> filterWhere (#subscriberId, currentUid)
+            |> filterWhere (#replyId, Just (get #id reply))
+            |> filterWhere (#updateKind, SukReply)
+            |> filterWhere (#isRead, False)
+            |> fetchOneOrNothing
     let markAsReadAble = isJust mbUpdate
     pure ReplyV{..}
 
