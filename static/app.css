@@ -18,6 +18,10 @@ pre code {
   word-wrap: normal;
 }
 
+.small p {
+  margin-bottom: 0.6rem;
+}
+
 .ProseMirror li p,
 .rendered-content li p {
   margin-bottom: 0.5rem;

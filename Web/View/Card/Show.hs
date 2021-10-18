@@ -24,21 +24,32 @@ instance View ShowView where
                 <li class="breadcrumb-item active">{get #title card}</li>
             </ol>
         </nav>
-        <h1 style="margin-bottom:1em">
+        <h1 class="mb-3">
           {when private lockIcon}
           {get #title card}
           {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
         </h1>
-        {when editable (renderCardUpdateAddForm card)}
-        <div style="margin-top:30px;">
-          {forEach cardUpdates (renderCardUpdate (($) #editable editable) card)}
-        </div>
+        {if reverseOrder then reverseOrderHtml else normalOrderHtml}
      |]
      where
        editable = mbCurrentUserId == Just (get #ownerId board)
        private = case card ^. #settings_ % #visibility of
          VisibilityPublic -> False
          VisibilityPrivate -> True
+       reverseOrder = card ^. #settings_ % #reverseOrder
+       normalOrderHtml = [hsx|
+         {when editable (renderCardUpdateAddForm card)}
+         <div class="mt-4">
+           {forEach cardUpdates (renderCardUpdate (($) #editable editable) card)}
+         </div>
+       |]
+       reverseOrderHtml = [hsx|
+         <p class="text-muted small">Comment order: oldest to newest.</p>
+         <div class="mb-3">
+           {forEach (reverse cardUpdates) (renderCardUpdate (($) #editable editable) card)}
+         </div>
+         {when editable (renderCardUpdateAddForm card)}
+       |]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|

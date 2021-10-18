@@ -72,6 +72,7 @@ instance Controller CardController where
 buildCard card = card
     |> fill @'["title"]
     |> Optics.set #settings_ CardSettings{
-         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
+         visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic,
+         reverseOrder = paramOrDefault False "reverseOrder"
        }
     

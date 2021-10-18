@@ -2,7 +2,7 @@ module Web.Types where
 
 import Application.Orphans
 import Control.Monad (fail)
-import Data.Aeson (FromJSON (..), ToJSON (..))
+import Data.Aeson (FromJSON (..), ToJSON (..), (.:), withObject, (.:?), (.!=))
 import qualified Data.Aeson as Aeson
 import GHC.Generics (Generic)
 import Generated.Types
@@ -156,10 +156,16 @@ Optics.makeFieldLabelsNoPrefix ''CardUpdateSettings
 
 data CardSettings = CardSettings
   { visibility :: Visibility
+  -- | Whether to show updates from oldest to newest
+  , reverseOrder :: Bool
   }
   deriving (Show, Generic)
 
-instance FromJSON CardSettings
+instance FromJSON CardSettings where
+  parseJSON = withObject "CardSettings" \o -> do
+    visibility <- o .: "visibility"
+    reverseOrder <- o .:? "reverseOrder" .!= False
+    pure CardSettings{..}
 
 instance ToJSON CardSettings
 
