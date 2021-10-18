@@ -24,7 +24,7 @@ instance View ShowView where
                 <li class="breadcrumb-item active">{get #title card}</li>
             </ol>
         </nav>
-        <h1 class="mb-3">
+        <h1 class="mb-4">
           {when private lockIcon}
           {get #title card}
           {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
@@ -48,8 +48,9 @@ instance View ShowView where
          <div class="mb-3">
            {forEach (reverse cardUpdates) (renderCardUpdate (($) #editable editable) card)}
          </div>
-         {when editable (renderCardUpdateAddForm card)}
+         {when editable (scrollIntoView (renderCardUpdateAddForm card))}
        |]
+       scrollIntoView x = [hsx|<div class="js-scroll-into-view">{x}</div>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|
