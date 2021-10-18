@@ -4,7 +4,7 @@ import Web.View.Prelude
 import Web.Helper.View
 import Named
 
-data ShowView = ShowView {board :: Board, cards :: [(Card, Int)]}
+data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 
 instance View ShowView where
   html ShowView {..} =
@@ -12,6 +12,11 @@ instance View ShowView where
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
+                <li class="breadcrumb-item">
+                  <a href={ShowUserAction (get #id owner)}>
+                    <em>@{get #handle owner}</em>
+                  </a>
+                </li>
                 <li class="breadcrumb-item active">{get #title board}</li>
             </ol>
         </nav>

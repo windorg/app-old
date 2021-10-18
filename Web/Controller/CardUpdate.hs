@@ -17,6 +17,7 @@ instance Controller CardUpdateController where
         cardUpdate <- fetch cardUpdateId
         card <- fetch (get #cardId cardUpdate)
         board <- fetch (get #boardId card)
+        owner <- fetch (get #ownerId board)
         render EditView { .. }
 
     action UpdateCardUpdateAction { cardUpdateId } = do
@@ -24,6 +25,7 @@ instance Controller CardUpdateController where
         cardUpdate <- fetch cardUpdateId
         card <- fetch (get #cardId cardUpdate)
         board <- fetch (get #boardId card)
+        owner <- fetch (get #ownerId board)
         cardUpdate
             |> buildCardUpdate
             |> ifValid \case

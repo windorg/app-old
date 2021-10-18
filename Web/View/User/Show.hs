@@ -15,7 +15,7 @@ instance View ShowView where
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
-                <li class="breadcrumb-item active">belonging to @{get #handle user}</li>
+                <li class="breadcrumb-item active"><em>@{get #handle user}</em></li>
             </ol>
         </nav>
         <h1>

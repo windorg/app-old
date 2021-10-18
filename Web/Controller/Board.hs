@@ -48,6 +48,7 @@ instance Controller BoardController where
     action ShowBoardAction { boardId } = do
         accessDeniedUnless =<< userCanView @Board boardId
         board <- fetch boardId
+        owner <- fetch (get #ownerId board)
         cards <- get #cards board 
             |> orderByDesc #createdAt 
             |> fetch
@@ -59,11 +60,13 @@ instance Controller BoardController where
     action EditBoardAction { boardId } = do
         accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
+        owner <- fetch (get #ownerId board)
         render EditView { .. }
 
     action UpdateBoardAction { boardId } = do
         accessDeniedUnless =<< userCanEdit @Board boardId
         board <- fetch boardId
+        owner <- fetch (get #ownerId board)
         board
             |> buildBoard
             |> ifValid \case

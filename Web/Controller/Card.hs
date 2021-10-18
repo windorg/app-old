@@ -15,6 +15,7 @@ instance Controller CardController where
         accessDeniedUnless =<< userCanView @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
+        owner <- fetch (get #ownerId board)
         cardUpdates <- 
           get #cardUpdates card 
             |> orderByDesc #createdAt
@@ -32,12 +33,14 @@ instance Controller CardController where
         accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
+        owner <- fetch (get #ownerId board)
         render EditView { .. }
 
     action UpdateCardAction { cardId } = do
         accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
+        owner <- fetch (get #ownerId board)
         card
             |> buildCard
             |> ifValid \case

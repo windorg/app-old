@@ -8,6 +8,7 @@ import Web.Helper.View
 import qualified Optics
 
 data ShowView = ShowView {
+    owner :: User,
     board :: Board,
     card :: Card,
     cardUpdates :: [(CardUpdate, [ReplyV])]
@@ -18,6 +19,11 @@ instance View ShowView where
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
+                <li class="breadcrumb-item">
+                  <a href={ShowUserAction (get #id owner)}>
+                    <em>@{get #handle owner}</em>
+                  </a>
+                </li>
                 <li class="breadcrumb-item">
                   <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
                 </li>

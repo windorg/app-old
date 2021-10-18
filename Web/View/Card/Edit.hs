@@ -1,13 +1,18 @@
 module Web.View.Card.Edit where
 import Web.View.Prelude
 
-data EditView = EditView { board :: Board, card :: Card }
+data EditView = EditView { owner :: User, board :: Board, card :: Card }
 
 instance View EditView where
     html EditView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
+                <li class="breadcrumb-item">
+                  <a href={ShowUserAction (get #id owner)}>
+                    <em>@{get #handle owner}</em>
+                  </a>
+                </li>
                 <li class="breadcrumb-item">
                   <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
                 </li>
