@@ -5,7 +5,9 @@
 
 blockquote {
   margin-left: 1.5em;
+  padding-left: 1em;
   font-size: 90%;
+  border-left: 4px solid rgb(200, 200, 200);
 }
 
 pre {

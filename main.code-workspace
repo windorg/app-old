@@ -8,6 +8,9 @@
 		"nixEnvSelector.nixFile": "${workspaceRoot}/default.nix",
 		"haskell.plugin.hlint.diagnosticsOn": false,
 		"ormolu.extensions.TypeApplications": true,
-		"haskell.formattingProvider": "none"
+		"haskell.formattingProvider": "none",
+		"files.associations": {
+			"*.css": "CSS"
+		}
 	}
 }
