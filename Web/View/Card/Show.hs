@@ -5,6 +5,7 @@ import Named
 import Web.Controller.Authorization
 import Web.ViewTypes
 import Web.Helper.View
+import qualified Prelude
 import qualified Optics
 
 data ShowView = ShowView {
@@ -105,6 +106,9 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
     options formContext = formContext
       |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
       |> set #formId "woc-card-update-add-form"
+      |> if card ^. #settings_ % #reverseOrder 
+           then set #customFormAttributes [("onsubmit", "window.__scrollTo = 'footer'")]
+           else Prelude.id
 
 renderCardUpdate 
   :: "editable" :! Bool

@@ -15,6 +15,37 @@ var turndownService = new TurndownService();
 var cmarkReader = new commonmark.Parser();
 var cmarkWriter = new commonmark.HtmlRenderer({safe: true});
 
+window.__scrollTo = '';
+
+// From https://gist.github.com/hsablonniere/2581101
+if (!Element.prototype.scrollIntoViewIfNeeded) {
+  Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
+    centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
+
+    var parent = this.parentNode,
+        parentComputedStyle = window.getComputedStyle(parent, null),
+        parentBorderTopWidth = parseInt(parentComputedStyle.getPropertyValue('border-top-width')),
+        parentBorderLeftWidth = parseInt(parentComputedStyle.getPropertyValue('border-left-width')),
+        overTop = this.offsetTop - parent.offsetTop < parent.scrollTop,
+        overBottom = (this.offsetTop - parent.offsetTop + this.clientHeight - parentBorderTopWidth) > (parent.scrollTop + parent.clientHeight),
+        overLeft = this.offsetLeft - parent.offsetLeft < parent.scrollLeft,
+        overRight = (this.offsetLeft - parent.offsetLeft + this.clientWidth - parentBorderLeftWidth) > (parent.scrollLeft + parent.clientWidth),
+        alignWithTop = overTop && !overBottom;
+
+    if ((overTop || overBottom) && centerIfNeeded) {
+      parent.scrollTop = this.offsetTop - parent.offsetTop - parent.clientHeight / 2 - parentBorderTopWidth + this.clientHeight / 2;
+    }
+
+    if ((overLeft || overRight) && centerIfNeeded) {
+      parent.scrollLeft = this.offsetLeft - parent.offsetLeft - parent.clientWidth / 2 - parentBorderLeftWidth + this.clientWidth / 2;
+    }
+
+    if ((overTop || overBottom || overLeft || overRight) && !centerIfNeeded) {
+      this.scrollIntoView(alignWithTop);
+    }
+  };
+}
+
 // Still doesn't work properly with turbolinks though
 class AutoSize extends HTMLTextAreaElement {
     constructor () {
@@ -133,6 +164,12 @@ function onReadyOrTurbo() {
             });
         }
     });
+
+    // If we should scroll somewhere, do it
+    if (window.__scrollTo) {
+        document.querySelector(window.__scrollTo).scrollIntoViewIfNeeded();
+        window.__scrollTo = '';
+    }
 };
 
 $(document).ready(function () {
@@ -154,5 +191,8 @@ window.submitForm = function(form, possibleClickedButton) {
     $(form).find('.ProseMirror').each(function(_, editorElement) {
         $(editorElement).parent().prev('textarea')[0].value = turndownService.turndown(editorElement.editor.getHTML());
     });
+    if ($(form)[0].onsubmit) {
+        $(form)[0].onsubmit();
+    }
     return window.__ihp_submitForm(form, possibleClickedButton);
 };
