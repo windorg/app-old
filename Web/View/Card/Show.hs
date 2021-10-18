@@ -54,9 +54,8 @@ instance View ShowView where
          <div class="mb-3">
            {forEach (reverse cardUpdates) (renderCardUpdate (($) #editable editable) card)}
          </div>
-         {when editable (scrollIntoView (renderCardUpdateAddForm card))}
+         {when editable (renderCardUpdateAddForm card)}
        |]
-       scrollIntoView x = [hsx|<div class="js-scroll-into-view">{x}</div>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|
@@ -105,6 +104,7 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
     options :: FormContext CardUpdate -> FormContext CardUpdate
     options formContext = formContext
       |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
+      |> set #formId "woc-card-update-add-form"
 
 renderCardUpdate 
   :: "editable" :! Bool
