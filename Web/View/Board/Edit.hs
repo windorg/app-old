@@ -4,6 +4,9 @@ import Web.View.Prelude
 data EditView = EditView { owner :: User, board :: Board }
 
 instance View EditView where
+    beforeRender EditView{..} = do
+      setTitle (get #title board <> " / wind of change")
+
     html EditView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">

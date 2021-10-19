@@ -7,6 +7,9 @@ import Named
 data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 
 instance View ShowView where
+  beforeRender ShowView{..} = do
+    setTitle (get #title board <> " / wind of change")
+
   html ShowView {..} =
     [hsx|
         <nav>

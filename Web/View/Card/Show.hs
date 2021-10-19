@@ -16,6 +16,9 @@ data ShowView = ShowView {
     }
 
 instance View ShowView where
+    beforeRender ShowView{..} = do
+      setTitle (get #title card <> " / wind of change")
+
     html ShowView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">

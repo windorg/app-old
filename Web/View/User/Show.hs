@@ -11,6 +11,9 @@ data ShowView = ShowView {
     }
 
 instance View ShowView where
+    beforeRender ShowView{..} = do
+        setTitle (get #displayName user <> " / wind of change")
+
     html ShowView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
