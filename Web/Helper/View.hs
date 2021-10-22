@@ -3,6 +3,7 @@ module Web.Helper.View
   renderOthersBoard,
   renderUserPageBoard,
   lockIcon,
+  space,
   -- Crumbs
   userCrumb,
   boardCrumb,
@@ -17,7 +18,7 @@ renderOwnBoard board = [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
-                {when private lockIcon}{" " :: Text}
+                {when private (lockIcon <> space)}
                 <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
                 {renderBoardEditButton board}
                 {renderBoardDeleteButton board}
@@ -55,7 +56,7 @@ renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
-                {when private lockIcon}{" " :: Text}
+                {when private (lockIcon <> space)}
                 <a class="text-muted" href={ShowBoardAction (get #id board)}>{get #title board}</a>
             </h3>
             <a href={ShowUserAction (get #ownerId board)}>
@@ -78,7 +79,7 @@ renderUserPageBoard board = [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
-                {when private lockIcon}{" " :: Text}
+                {when private (lockIcon <> space)}
                 <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
             </h3>
         </div>
@@ -91,6 +92,9 @@ renderUserPageBoard board = [hsx|
 
 lockIcon :: Html
 lockIcon = [hsx|<span>🔒</span>|]
+
+space :: Html
+space = [hsx|<span>{"\xa0" :: Text}</span>|]
 
 ---
 
@@ -113,12 +117,16 @@ boardCrumb
   -> Html
 boardCrumb (Arg active) board = [hsx|
   <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
+    {when private (lockIcon <> space)}
     {if active then text else link text}
   </li>
 |]
   where
     link x = [hsx|<a href={ShowBoardAction (get #id board)}>{x}</a>|]
     text = [hsx|{get #title board}|]
+    private = case board ^. #settings_ % #visibility of
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
 
 cardCrumb
   :: "active" :! Bool
@@ -126,9 +134,13 @@ cardCrumb
   -> Html
 cardCrumb (Arg active) card = [hsx|
   <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
+    {when private (lockIcon <> space)}
     {if active then text else link text}
   </li>
 |]
   where
     link x = [hsx|<a href={ShowCardAction (get #id card)}>{x}</a>|]
     text = [hsx|{get #title card}|]
+    private = case card ^. #settings_ % #visibility of
+        VisibilityPublic -> False
+        VisibilityPrivate -> True

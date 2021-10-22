@@ -20,7 +20,7 @@ instance View ShowView where
             </ol>
         </nav>
         <h1 style="margin-bottom:1em;">
-          {when private lockIcon}{" " :: Text}
+          {when private lockIcon}
           {get #title board}
         </h1>
         {when editable (renderCardAddForm board)}
@@ -39,7 +39,7 @@ renderCard (card, count) =
   [hsx|
     <div class={"card mb-2 woc-card " <> if private then "woc-card-private" else "" :: Text}>
       <div class="card-body">
-        {when private lockIcon}{" " :: Text}
+        {when private (lockIcon <> space)}
         <a class="stretched-link" href={ShowCardAction (get #id card)}>{get #title card}</a>
         <span style="margin-left:.5em;" class="badge badge-secondary">{count}</span>
       </div>
