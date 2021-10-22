@@ -3,6 +3,10 @@ module Web.Helper.View
   renderOthersBoard,
   renderUserPageBoard,
   lockIcon,
+  -- Crumbs
+  userCrumb,
+  boardCrumb,
+  cardCrumb,
 ) where
 
 import Web.View.Prelude
@@ -87,3 +91,44 @@ renderUserPageBoard board = [hsx|
 
 lockIcon :: Html
 lockIcon = [hsx|<span>🔒</span>|]
+
+---
+
+userCrumb
+  :: "active" :! Bool
+  -> User
+  -> Html
+userCrumb (Arg active) user = [hsx|
+  <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
+    {if active then text else link text}
+  </li>
+|]
+  where
+    link x = [hsx|<a href={ShowUserAction (get #id user)}>{x}</a>|]
+    text = [hsx|<em>@{get #handle user}</em>|]
+
+boardCrumb
+  :: "active" :! Bool
+  -> Board
+  -> Html
+boardCrumb (Arg active) board = [hsx|
+  <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
+    {if active then text else link text}
+  </li>
+|]
+  where
+    link x = [hsx|<a href={ShowBoardAction (get #id board)}>{x}</a>|]
+    text = [hsx|{get #title board}|]
+
+cardCrumb
+  :: "active" :! Bool
+  -> Card
+  -> Html
+cardCrumb (Arg active) card = [hsx|
+  <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
+    {if active then text else link text}
+  </li>
+|]
+  where
+    link x = [hsx|<a href={ShowCardAction (get #id card)}>{x}</a>|]
+    text = [hsx|{get #title card}|]

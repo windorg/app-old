@@ -2,16 +2,10 @@ module Web.Controller.CardUpdate where
 
 import Web.Controller.Prelude
 import Web.View.CardUpdate.Edit
-import Web.View.CardUpdate.Show
 import Web.Controller.Authorization
 import qualified Optics
 
 instance Controller CardUpdateController where
-    action ShowCardUpdateAction { cardUpdateId } = do
-        accessDeniedUnless =<< userCanView @CardUpdate cardUpdateId
-        cardUpdate <- fetch cardUpdateId
-        render ShowView { .. }
-
     action EditCardUpdateAction { cardUpdateId } = do
         accessDeniedUnless =<< userCanEdit @CardUpdate cardUpdateId
         cardUpdate <- fetch cardUpdateId

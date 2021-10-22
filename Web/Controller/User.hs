@@ -9,7 +9,6 @@ import IHP.ValidationSupport.ValidateField (matchesRegex)
 import Web.Controller.Authorization
 import Data.Text (strip)
 
--- When adding new actions here, must also amend the "instance AutoRoute UserController"
 instance Controller UserController where
     action NewUserAction = do
         let user = newRecord

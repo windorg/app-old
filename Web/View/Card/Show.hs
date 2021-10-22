@@ -23,15 +23,9 @@ instance View ShowView where
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
-                <li class="breadcrumb-item">
-                  <a href={ShowUserAction (get #id owner)}>
-                    <em>@{get #handle owner}</em>
-                  </a>
-                </li>
-                <li class="breadcrumb-item">
-                  <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
-                </li>
-                <li class="breadcrumb-item active">{get #title card}</li>
+                {userCrumb (($) #active False) owner}
+                {boardCrumb (($) #active False) board}
+                {cardCrumb (($) #active True) card}
             </ol>
         </nav>
         <h1 class="mb-4">

@@ -1,5 +1,6 @@
 module Web.View.CardUpdate.Edit where
 import Web.View.Prelude
+import Web.Helper.View
 
 data EditView = EditView { owner :: User, board :: Board, card :: Card, cardUpdate :: CardUpdate }
 
@@ -8,19 +9,9 @@ instance View EditView where
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
-                <li class="breadcrumb-item">
-                  <a href={ShowUserAction (get #id owner)}>
-                    <em>@{get #handle owner}</em>
-                  </a>
-                </li>
-                <li class="breadcrumb-item">
-                  <a href={ShowBoardAction (get #id board)}>{get #title board}</a>
-                </li>
-                <li class="breadcrumb-item">
-                  <a href={ShowCardAction (get #cardId cardUpdate)}>
-                    {get #title card}
-                  </a>
-                </li>
+                {userCrumb (($) #active False) owner}
+                {boardCrumb (($) #active False) board}
+                {cardCrumb (($) #active False) card}
                 <li class="breadcrumb-item active">Edit update</li>
             </ol>
         </nav>

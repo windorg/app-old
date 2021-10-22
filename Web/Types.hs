@@ -34,8 +34,7 @@ data CardController
   deriving (Eq, Show, Data)
 
 data CardUpdateController
-  = ShowCardUpdateAction {cardUpdateId :: !(Id CardUpdate)}
-  | CreateCardUpdateAction {cardId :: !(Id Card)}
+  = CreateCardUpdateAction {cardId :: !(Id Card)}
   | EditCardUpdateAction {cardUpdateId :: !(Id CardUpdate)}
   | UpdateCardUpdateAction {cardUpdateId :: !(Id CardUpdate)}
   | DeleteCardUpdateAction {cardUpdateId :: !(Id CardUpdate)}
