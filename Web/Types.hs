@@ -157,6 +157,7 @@ data CardSettings = CardSettings
   { visibility :: Visibility
   -- | Whether to show updates from oldest to newest
   , reverseOrder :: Bool
+  , archived :: Bool
   }
   deriving (Show, Generic)
 
@@ -164,6 +165,7 @@ instance FromJSON CardSettings where
   parseJSON = withObject "CardSettings" \o -> do
     visibility <- o .: "visibility"
     reverseOrder <- o .:? "reverseOrder" .!= False
+    archived <- o .:? "archived" .!= False
     pure CardSettings{..}
 
 instance ToJSON CardSettings

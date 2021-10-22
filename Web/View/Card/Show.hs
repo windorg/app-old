@@ -29,6 +29,7 @@ instance View ShowView where
             </ol>
         </nav>
         <h1 class="mb-4">
+          {when archived archivedBadge}
           {when private lockIcon}
           {get #title card}
           {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
@@ -41,6 +42,7 @@ instance View ShowView where
          VisibilityPublic -> False
          VisibilityPrivate -> True
        reverseOrder = card ^. #settings_ % #reverseOrder
+       archived = card ^. #settings_ % #archived
        normalOrderHtml = [hsx|
          {when editable (renderCardUpdateAddForm card)}
          <div class="mt-4">
@@ -54,6 +56,7 @@ instance View ShowView where
          </div>
          {when editable (renderCardUpdateAddForm card)}
        |]
+       archivedBadge = [hsx|<span class="badge badge-secondary mr-2">Archived</span>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card = [hsx|

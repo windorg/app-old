@@ -76,6 +76,7 @@ buildCard card = card
     |> fill @'["title"]
     |> Optics.set #settings_ CardSettings{
          visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic,
-         reverseOrder = paramOrDefault False "reverseOrder"
+         reverseOrder = paramOrDefault False "reverseOrder",
+         archived = paramOrDefault False "archived"
        }
     

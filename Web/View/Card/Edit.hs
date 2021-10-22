@@ -25,12 +25,21 @@ instance View EditView where
 renderForm :: Card -> Html
 renderForm card = formFor card [hsx|
     {(textField #title)}
-    <div class="custom-control custom-checkbox">
+    <div class="custom-control custom-checkbox mb-3">
       <input type="checkbox" class="custom-control-input" name="reverseOrder" id="reverseOrder" checked={reverseOrder}>
       <label class="custom-control-label" for="reverseOrder">
         Show comments in reverse order<br>
         <span class="text-muted small">
           Good for cards that work like blog posts. Or maybe you just really like the reverse order.
+        </span>
+      </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="archived" id="archived" checked={archived}>
+      <label class="custom-control-label" for="archived">
+        Archive the card<br>
+        <span class="text-muted small">
+          Note that the card will still be visible (unless it's private). You can unarchive it later.
         </span>
       </label>
     </div>
@@ -46,3 +55,4 @@ renderForm card = formFor card [hsx|
       VisibilityPrivate -> True
       VisibilityPublic -> False
     reverseOrder = card ^. #settings_ % #reverseOrder
+    archived = card ^. #settings_ % #archived

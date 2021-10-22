@@ -3,6 +3,7 @@ module Web.View.Board.Show where
 import Web.View.Prelude
 import Web.Helper.View
 import Named
+import Optics (view)
 
 data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 
@@ -25,14 +26,24 @@ instance View ShowView where
         </h1>
         {when editable (renderCardAddForm board)}
         <div style="margin-top:30px;">
-          {forEach cards renderCard}
+          {forEach normalCards renderCard}
         </div>
+        {when (not (null archivedCards)) archive}
     |]
     where
       editable = mbCurrentUserId == Just (get #ownerId board)
       private = case board ^. #settings_ % #visibility of
           VisibilityPublic -> False
           VisibilityPrivate -> True
+      (normalCards, archivedCards) = partition (not . view (#settings_ % #archived) . fst) cards
+      archive = [hsx|
+        <details class="mt-3">
+          <summary>
+            <span class="badge badge-secondary mb-2">Archived</span>
+          </summary>
+          {forEach archivedCards renderCard}
+        </details>
+      |]
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =
