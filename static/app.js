@@ -46,6 +46,20 @@ if (!Element.prototype.scrollIntoViewIfNeeded) {
   };
 }
 
+$(window).on("error", function(evt) {
+    var e = evt.originalEvent; // get the javascript event
+    if (e.message) { 
+        alert("JavaScript error:\n    " + e.message + "\n" +
+              "Line:\n    " + e.lineno + "\n" +
+              "File:\n    " + e.filename + "\n\n" +
+              "Please reload the page!");
+    } else {
+        alert("JavaScript error:\n    " + e.type + "\n" +
+              "Element:\n    " + (e.srcElement || e.target) + "\n\n" +
+              "Please reload the page!");
+    }
+});
+
 // Still doesn't work properly with turbolinks though
 class AutoSize extends HTMLTextAreaElement {
     constructor () {
