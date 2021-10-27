@@ -21,7 +21,7 @@ instance Controller BoardController where
             Just currentUid -> do
                 ownBoards <- query @Board 
                     |> filterWhere (#ownerId, currentUid)
-                    |> orderByAsc #createdAt
+                    |> orderByDesc #createdAt
                     |> fetch
                 othersBoards <- query @Board 
                     |> filterWhereNot (#ownerId, currentUid)
