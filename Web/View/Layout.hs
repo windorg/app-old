@@ -31,7 +31,7 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
                 <div class="text-primary">News</div>
                 <div id="changelog-badge" style="height:32px;width:32px;min-height:1px;"></div>
             </div>
-            <div class="mr-4"><a href={ShowFeedAction}>Feed</a></div>
+            {feed}
             {inbox}
             <div>{loginOrLogout}</div>
         </div>
@@ -52,6 +52,9 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
           let badge | count == 0 = [hsx|<span id="inbox-badge" class="ml-2 badge badge-secondary">0</span>|]
                     | otherwise  = [hsx|<span id="inbox-badge" class="ml-2 badge badge-danger">{count}</span>|]
           in [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox{badge}</a></div>|]
+        Nothing -> mempty
+    feed = case currentUserOrNothing of
+        Just _ -> [hsx|<div class="mr-4"><a href={ShowFeedAction}>Feed</a></div>|]
         Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
         Just _ -> [hsx|<a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>|]
