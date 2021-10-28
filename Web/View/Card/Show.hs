@@ -122,7 +122,7 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
         {renderTimestamp (get #createdAt cardUpdate)}
       </span>
       {when private lockIcon}
-      <div class="ml-3 d-inline">
+      <div class="ml-3 d-inline-flex">
         {when editable (renderCardUpdateEditButton cardUpdate)}
         {when editable (renderCardUpdateDeleteButton cardUpdate)}
         <!-- We always render the reply button because we want to nudge people to sign up -->
@@ -143,19 +143,19 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
       VisibilityPrivate -> True
 
 renderCardUpdateEditButton cardUpdate = [hsx|
-  <a class="btn btn-tiny btn-outline-info"
+  <a class="btn btn-tiny btn-outline-info mr-1"
      href={EditCardUpdateAction (get #id cardUpdate)}>
     Edit
   </a>|]
 
 renderCardUpdateDeleteButton cardUpdate = [hsx|
-  <a class="btn btn-tiny btn-outline-danger js-delete"
+  <a class="btn btn-tiny btn-outline-danger js-delete mr-1"
      href={DeleteCardUpdateAction (get #id cardUpdate)}>
     Kill
   </a>|]
 
 renderCardUpdateReplyButton cardUpdate = [hsx|
-  <a class="btn btn-tiny btn-outline-secondary"
+  <a class="btn btn-tiny btn-outline-secondary mr-1"
      href={NewReplyAction (get #id cardUpdate) (show replySource)}>
     Reply
   </a>|]
