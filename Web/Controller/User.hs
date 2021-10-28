@@ -2,18 +2,15 @@ module Web.Controller.User where
 
 import Web.Controller.Prelude
 import Web.Helper.Common
-import Web.View.User.New
 import Web.View.User.Edit
 import Web.View.User.Show
 import IHP.ValidationSupport.ValidateField (matchesRegex)
 import Web.Controller.Authorization
+import Web.View.Sessions.LoginOrSignup
+import qualified IHP.AuthSupport.Controller.Sessions as Sessions
 import Data.Text (strip)
 
-instance Controller UserController where
-    action NewUserAction = do
-        let user = newRecord
-        render NewView { .. }
-
+instance Sessions.SessionsControllerConfig User => Controller UserController where
     action ShowUserAction { userId } = do
         user <- fetch userId
         boards <- query @Board 
@@ -54,13 +51,18 @@ instance Controller UserController where
             |> validateField #handle (matchesRegex "^[a-zA-Z0-9_-]{1,64}$")
             |> (\u -> if get #displayName u == "" then u |> set #displayName (get #handle u) else u)
             |> ifValid \case
-                Left user -> render NewView { .. } 
+                Left user -> render LoginOrSignupView { 
+                    loginUser = newRecord @User,
+                    signupUser = user
+                } 
                 Right user -> do
                     hashed <- hashPassword (get #passwordHash user)
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
-                    redirectToPath "/"
+                    login user
+                    redirectUrl <- getSessionAndClear "IHP.LoginSupport.redirectAfterLogin"
+                    redirectToPath (fromMaybe (Sessions.afterLoginRedirectPath @User) redirectUrl)
 
     action DeleteUserAction { userId } = do
         user <- fetch userId

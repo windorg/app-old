@@ -14,6 +14,7 @@ import Data.Functor (void)
 
 instance (Controller CardController, Controller InboxController) => Controller ReplyController where
     action NewReplyAction { cardUpdateId, replySourceSerialized } = do
+        ensureIsUser -- will redirect to login when logged out
         accessDeniedUnless =<< userCanReply cardUpdateId
         let replySource = read (cs replySourceSerialized)
         let reply = (newRecord :: Reply)

@@ -93,3 +93,23 @@ footer {
 .replies:not(:empty) {
   margin-bottom: 1.75rem;
 }
+
+#sessions-new {
+  padding: 0;
+}
+#login_panel, #signup_panel {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+#signup_panel {
+  background: linear-gradient(45deg, rgba(255, 255, 0, 0.5) 0%, rgba(0, 188, 212, 0.5) 50%, rgba(238, 130, 238, 0.5) 100%);
+}
+@media (min-width: 576px) { 
+  #login_panel, #signup_panel {
+    border-radius: 10px;
+    max-width: calc(50% - 1rem);
+  }
+  #signup_panel {
+    margin-left: 1rem;
+  }
+}

@@ -41,8 +41,7 @@ data CardUpdateController
   deriving (Eq, Show, Data)
 
 data UserController
-  = NewUserAction
-  | ShowUserAction {userId :: !(Id User)}
+  = ShowUserAction {userId :: !(Id User)}
   | CreateUserAction
   | EditUserAction {userId :: !(Id User)}
   | UpdateUserAction {userId :: !(Id User)}
@@ -51,8 +50,8 @@ data UserController
   | UpdateUnfollowUserAction {userId :: !(Id User)}
   deriving (Eq, Show, Data)
 
-data SessionsController
-  = NewSessionAction
+data LoginController
+  = LoginOrSignupAction
   | CreateSessionAction
   | DeleteSessionAction
   deriving (Eq, Show, Data)
@@ -66,7 +65,7 @@ data FeedController
   deriving (Eq, Show, Data)
 
 instance HasNewSessionUrl User where
-  newSessionUrl _ = "/NewSession"
+  newSessionUrl _ = "/LoginOrSignup"
 
 type instance CurrentUserRecord = User
 

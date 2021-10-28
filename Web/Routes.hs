@@ -16,7 +16,7 @@ instance AutoRoute CardUpdateController
 
 instance AutoRoute UserController
 
-instance AutoRoute SessionsController
+instance AutoRoute LoginController
 instance AutoRoute ReplyController
 instance AutoRoute InboxController
 instance AutoRoute FeedController

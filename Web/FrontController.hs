@@ -30,7 +30,7 @@ instance FrontController WebApplication where
         , parseRoute @CardUpdateController
         , parseRoute @CardController
         , parseRoute @BoardController
-        , parseRoute @SessionsController
+        , parseRoute @LoginController
         ]
 
 instance InitControllerContext WebApplication where

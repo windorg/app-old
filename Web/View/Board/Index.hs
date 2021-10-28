@@ -33,7 +33,7 @@ instance View IndexView where
                 <div class="row-cols-1 row-cols-md2">{forEach othersBoards renderOthersBoard}</div>
             |]
             render IndexViewGuest{..} = [hsx|
-                <p>To create your own boards, please <a href={NewUserAction}>sign up</a>.</p>
+                <p>To create your own boards, please <a href={LoginOrSignupAction}>sign up</a>.</p>
                 <h1 class="mt-5">Public boards</h1>
                 <div class="row-cols-1 row-cols-md2">{forEach allBoards renderOthersBoard}</div>
             |]

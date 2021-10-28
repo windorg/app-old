@@ -125,7 +125,8 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
       <div class="ml-3 d-inline">
         {when editable (renderCardUpdateEditButton cardUpdate)}
         {when editable (renderCardUpdateDeleteButton cardUpdate)}
-        {when (isJust currentUserOrNothing) (renderCardUpdateReplyButton cardUpdate)}
+        <!-- We always render the reply button because we want to nudge people to sign up -->
+        {renderCardUpdateReplyButton cardUpdate}
       </div>
     </div>
     <div class="rendered-content">
