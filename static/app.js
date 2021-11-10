@@ -2,6 +2,7 @@
 import { Editor, Extension } from 'https://cdn.skypack.dev/pin/@tiptap/core@v2.0.0-beta.103-1EijC0NTac4wtSFPah5m/mode=imports,min/optimized/@tiptap/core.js';
 import StarterKit from 'https://cdn.skypack.dev/pin/@tiptap/starter-kit@v2.0.0-beta.102-HbN0d7mePZcMK0Js0Mvg/mode=imports,min/optimized/@tiptap/starter-kit.js';
 import Typography from 'https://cdn.skypack.dev/pin/@tiptap/extension-typography@v2.0.0-beta.14-DZDA2cSqeTwyIh1QoLts/mode=imports,min/optimized/@tiptap/extension-typography.js';
+import Heading from './tiptap-heading.js';
 import HardBreak from './tiptap-hard-break.js';
 import CodeBlock from './tiptap-code-block.js';
 import { TrailingNode } from './tiptap-trailing-node.js';
@@ -131,6 +132,9 @@ function onReadyOrTurbo() {
                 Code,
                 CodeBlock,
                 Typography,
+                Heading.configure({
+                    levels: [1, 2, 3]
+                }),
                 Link,
                 TrailingNode,
                 SubmitShortcut,

@@ -13,6 +13,31 @@ pre code {
   word-wrap: normal;
 }
 
+.ProseMirror h1, .rendered-content h1 {
+  margin-top: 1.5em;
+  font-size: 130%;
+  font-weight: bold;
+}
+.ProseMirror h1:first-child, .rendered-content h1:first-child {
+  margin-top: 0.5rem;
+}
+.ProseMirror h2, .rendered-content h2 {
+  margin-top: 1em;
+  font-size: 110%;
+  font-weight: bold;
+}
+.ProseMirror h2:first-child, .rendered-content h2:first-child {
+  margin-top: 0.5rem;
+}
+.ProseMirror h3, .rendered-content h3 {
+  margin-top: 1em;
+  font-size: 100%;
+  font-weight: bold;
+}
+.ProseMirror h3:first-child, .rendered-content h3:first-child {
+  margin-top: 0.5rem;
+}
+
 .ProseMirror .small p,
 .ProseMirror.small p,
 .rendered-content .small p,
