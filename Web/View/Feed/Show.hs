@@ -28,7 +28,9 @@ renderFeedItem FeedItemCardUpdateV {..} = [hsx|
   </strong>
   <div style="margin-bottom:.3em">
     <span class="text-muted small">
-      {renderTimestamp (get #createdAt cardUpdate)}
+      <a href={pathTo (ShowCardAction (get #id card)) <> "#comment-" <> show (get #id cardUpdate)}>
+          {renderTimestamp (get #createdAt cardUpdate)}
+      </a>
     </span>
     {when private lockIcon}
     <div class="ml-3 d-inline">

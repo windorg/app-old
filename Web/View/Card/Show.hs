@@ -116,10 +116,13 @@ renderCardUpdate
   -> (CardUpdate, [ReplyV]) 
   -> Html
 renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
-  <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}>
+  <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}
+       id={"comment-" <> show (get #id cardUpdate)}>
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
-        {renderTimestamp (get #createdAt cardUpdate)}
+        <a href={pathTo (ShowCardAction (get #id card)) <> "#comment-" <> show (get #id cardUpdate)}>
+            {renderTimestamp (get #createdAt cardUpdate)}
+        </a>
       </span>
       {when private lockIcon}
       <div class="ml-3 d-inline-flex">
@@ -168,7 +171,11 @@ renderReply cardUpdate replyV = [hsx|
   <div class="mb-1">
     <span class="text-muted small">
       {authorName}
-      <span>{renderTimestamp createdAt}</span>
+      <span>
+        <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
+            {renderTimestamp createdAt}
+        </a>
+      </span>
       <div class="ml-2 d-inline">
         {when (get #editable replyV) $ renderReplyEditButton cardUpdate reply}
         {when (get #markAsReadAble replyV) $ renderReplyMarkAsReadButton cardUpdate reply}

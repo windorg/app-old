@@ -118,6 +118,18 @@ function onReady() {
 
 // Things that will be called on load, or Turbolinks reloads
 function onReadyOrTurbo() {
+    // Highlight the #hash target
+    const prevMarkedElement = document.querySelector('.hash-target');
+    if (prevMarkedElement) {
+        prevMarkedElement.classList.remove('hash-target');
+    }
+    if (location.hash) {
+        const markedElement = document.querySelector(location.hash);
+        if (markedElement) {
+            markedElement.classList.add('hash-target');
+        }
+    }
+
     // Headway (changelog)
     if (typeof Headway !== 'undefined') {Headway.init(headwayConfig)};
 
