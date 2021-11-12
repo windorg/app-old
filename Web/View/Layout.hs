@@ -57,7 +57,11 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
         Just _ -> [hsx|<div class="mr-4"><a href={ShowFeedAction}>Feed</a></div>|]
         Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
-        Just _ -> [hsx|<a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>|]
+        Just _ -> [hsx|
+          <form class="d-inline" method="POST" data-disable-javascript-submission="true" action={LogoutAction}>
+              <button class="btn btn-link p-0" type="submit">Logout</button>
+          </form>
+          |]
         Nothing -> [hsx|
           <a href={LoginOrSignupAction}>Login or sign up</a>
           |]

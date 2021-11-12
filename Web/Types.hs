@@ -50,10 +50,11 @@ data UserController
   | UpdateUnfollowUserAction {userId :: !(Id User)}
   deriving (Eq, Show, Data)
 
+-- When modifying, also change the AutoRoute instance
 data LoginController
   = LoginOrSignupAction
   | CreateSessionAction
-  | DeleteSessionAction
+  | LogoutAction
   deriving (Eq, Show, Data)
 
 data InboxController

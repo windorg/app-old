@@ -16,7 +16,13 @@ instance AutoRoute CardUpdateController
 
 instance AutoRoute UserController
 
-instance AutoRoute LoginController
+instance AutoRoute LoginController where
+    allowedMethodsForAction = \case
+      "LoginOrSignupAction" -> [ GET, HEAD ]
+      "CreateSessionAction" -> [ POST ]
+      "LogoutAction" -> [ POST ]
+      _ -> error "instance AutoRoute LoginController: impossible"
+
 instance AutoRoute ReplyController
 instance AutoRoute InboxController
 instance AutoRoute FeedController

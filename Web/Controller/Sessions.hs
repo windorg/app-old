@@ -44,10 +44,10 @@ instance Controller LoginController where
                 setErrorMessage "Invalid credentials"
                 redirectTo LoginOrSignupAction
 
-    action DeleteSessionAction = do
+    action LogoutAction = do
         case currentUserOrNothing of
             Just user -> logout user
             Nothing -> pure ()
-        redirectTo BoardsAction
+        redirectToPath "/"
 
 instance Sessions.SessionsControllerConfig User
