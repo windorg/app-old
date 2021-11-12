@@ -124,6 +124,15 @@ footer {
   margin-bottom: 1.75rem;
 }
 
+.woc-inbox .reply {
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+
+.userpic {
+  border-radius: 50%;
+}
+
 #sessions-new {
   padding: 0;
 }

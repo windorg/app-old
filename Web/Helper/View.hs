@@ -8,10 +8,16 @@ module Web.Helper.View
   userCrumb,
   boardCrumb,
   cardCrumb,
+  -- Gravatars
+  gravatarSmall,
 ) where
 
 import Web.View.Prelude
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
+import qualified Data.ByteString.Lazy as LBS
 import Named
+import Data.Digest.Pure.MD5 (md5)
 
 renderOwnBoard :: Board -> Html
 renderOwnBoard board = [hsx|
@@ -144,3 +150,15 @@ cardCrumb (Arg active) card = [hsx|
     private = case card ^. #settings_ % #visibility of
         VisibilityPublic -> False
         VisibilityPrivate -> True
+
+---
+
+gravatarHash :: Text -> Text
+gravatarHash = show . md5 . LBS.fromStrict . T.encodeUtf8 . T.toLower . T.strip
+
+gravatarSmall :: Text -> Html
+gravatarSmall email = [hsx|
+  <img class="userpic userpic-small" 
+       width="32"
+       src={"https://www.gravatar.com/avatar/" <> gravatarHash email <> "?s=64&d=mp"}/>
+  |]

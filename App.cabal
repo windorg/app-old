@@ -32,7 +32,8 @@ executable App
     cmark,
     neat-interpolation,
     optics,
-    fmt
+    fmt,
+    pureMD5
   hs-source-dirs:      .
   default-language:    Haskell2010
   extensions:

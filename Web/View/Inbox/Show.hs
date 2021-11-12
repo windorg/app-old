@@ -1,6 +1,7 @@
 module Web.View.Inbox.Show where
 
 import Web.View.Prelude
+import Web.Helper.View
 import Web.ViewTypes
 
 data InboxView = InboxView { unreadReplies :: [ReplyV] }
@@ -13,28 +14,33 @@ instance View InboxView where
                 <li class="breadcrumb-item active">Inbox</li>
             </ol>
         </nav>
-        <h1>Inbox</h1>
-        {forEach unreadReplies renderReply}
+        <h1 class="mb-4">Inbox</h1>
+        <div class="woc-inbox">
+          {forEach unreadReplies renderReply}
+        </div>
     |]
 
 renderReply :: ReplyV -> Html
 renderReply replyV = [hsx|
-<div class="reply">
-  <div class="mb-1">
-    <span class="text-muted small">
-      {authorName}
-      <span>
-          <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
-              {renderTimestamp createdAt}
-          </a>
+<div class="reply media">
+  {gravatarSmall authorEmail}
+  <div class="media-body ml-2 mt-n1">
+    <div class="mb-1">
+      <span class="text-muted small">
+        {authorName}
+        <span>
+            <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
+                {renderTimestamp createdAt}
+            </a>
+        </span>
+        <!-- We won't render the "delete" button to not confuse people into thinking delete = mark as read -->
+        <div class="ml-2 d-inline">
+          {renderReplyMarkAsReadButton reply}
+        </div> 
       </span>
-      <!-- We won't render the "delete" button to not confuse people into thinking delete = mark as read -->
-      <div class="ml-2 d-inline">
-        {renderReplyMarkAsReadButton reply}
-      </div> 
-    </span>
+    </div>
+    <div class="rendered-content small">{renderMarkdown content}</div>
   </div>
-  <div class="rendered-content small">{renderMarkdown content}</div>
 </div>
 |]
   where
@@ -46,6 +52,9 @@ renderReply replyV = [hsx|
           <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
         </span>
       |]
+    authorEmail = case get #author replyV of
+      Nothing -> ""
+      Just author -> get #email author
 
 renderReplyMarkAsReadButton :: Reply -> Html
 renderReplyMarkAsReadButton reply = [hsx|

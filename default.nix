@@ -17,6 +17,7 @@ let
             text
             hlint
             fmt
+            pureMD5
             aeson
             unordered-containers
             extra
