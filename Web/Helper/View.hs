@@ -1,16 +1,4 @@
-module Web.Helper.View 
-( renderOwnBoard,
-  renderOthersBoard,
-  renderUserPageBoard,
-  lockIcon,
-  space,
-  -- Crumbs
-  userCrumb,
-  boardCrumb,
-  cardCrumb,
-  -- Gravatars
-  gravatarSmall,
-) where
+module Web.Helper.View where
 
 import Web.View.Prelude
 import qualified Data.Text as T
@@ -160,5 +148,12 @@ gravatarSmall :: Text -> Html
 gravatarSmall email = [hsx|
   <img class="userpic userpic-small" 
        width="32"
+       src={"https://www.gravatar.com/avatar/" <> gravatarHash email <> "?s=64&d=mp"}/>
+  |]
+
+gravatarTiny :: Text -> Html
+gravatarTiny email = [hsx|
+  <img class="userpic userpic-small" 
+       width="16"
        src={"https://www.gravatar.com/avatar/" <> gravatarHash email <> "?s=64&d=mp"}/>
   |]

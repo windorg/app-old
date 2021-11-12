@@ -135,7 +135,7 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
     <div class="rendered-content">
       {renderMarkdown (get #content cardUpdate)}
     </div>
-    <div class="replies ml-5">
+    <div class="woc-card-update-replies ml-5">
       {forEach replies (renderReply cardUpdate)}
     </div>
   </div>
@@ -167,25 +167,28 @@ renderCardUpdateReplyButton cardUpdate = [hsx|
 
 renderReply :: CardUpdate -> ReplyV -> Html
 renderReply cardUpdate replyV = [hsx|
-<div id={"reply-" <> show (get #id reply)} class="reply">
-  <div class="mb-1">
-    <span class="text-muted small">
-      {authorName}
-      <span>
-        <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
-            {renderTimestamp createdAt}
-        </a>
-      </span>
-      <div class="ml-2 d-inline">
-        {when (get #editable replyV) $ renderReplyEditButton cardUpdate reply}
-        {when (get #markAsReadAble replyV) $ renderReplyMarkAsReadButton cardUpdate reply}
-        {when (get #deletable replyV) $ renderReplyDeleteButton cardUpdate reply}
-      </div> 
-    </span>
+  <div id={"reply-" <> show (get #id reply)} class="reply media">
+    {gravatarTiny authorEmail}
+    <div class="media-body ml-1" style="margin-top: -6px;">
+      <div class="woc-reply-info">
+        <span class="text-muted small">
+          {authorName}
+          <span>
+            <a href={pathTo (ShowCardAction (get #cardId replyV)) <> "#reply-" <> show (get #id reply)}>
+                {renderTimestamp createdAt}
+            </a>
+          </span>
+          <div class="ml-2 d-inline">
+            {when (get #editable replyV) $ renderReplyEditButton cardUpdate reply}
+            {when (get #markAsReadAble replyV) $ renderReplyMarkAsReadButton cardUpdate reply}
+            {when (get #deletable replyV) $ renderReplyDeleteButton cardUpdate reply}
+          </div> 
+        </span>
+      </div>
+      <div class="woc-reply-content rendered-content small">{renderMarkdown content}</div>
+    </div>
   </div>
-  <div class="rendered-content small">{renderMarkdown content}</div>
-</div>
-|]
+  |]
   where
     reply@Reply{..} = get #reply replyV
     authorName = case get #author replyV of
@@ -195,6 +198,9 @@ renderReply cardUpdate replyV = [hsx|
           <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
         </span>
       |]
+    authorEmail = case get #author replyV of
+      Nothing -> ""
+      Just author -> get #email author
 
 renderReplyEditButton :: CardUpdate -> Reply -> Html
 renderReplyEditButton cardUpdate reply = [hsx|

@@ -120,8 +120,15 @@ footer {
   margin-bottom: 1.75rem; /* Only for private ones! We don't want them to stick together. */
 }
 
-.replies:not(:empty) {
+.woc-card-update-replies .reply {
+  margin-top: 0.75rem;
+}
+.woc-card-update-replies .reply .woc-reply-info {
+  margin-bottom: 0.15rem;
+}
+.woc-card-update-replies:not(:empty) {
   margin-bottom: 1.75rem;
+  margin-top: 1.25rem;
 }
 
 .woc-inbox .reply {
