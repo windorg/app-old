@@ -47,7 +47,9 @@ renderLoginForm user = [hsx|
 renderSignupForm :: User -> Html
 renderSignupForm user = formFor user [hsx|
     <form id="signup_form" method="POST" action={CreateUserAction}>
-        {emailField #email}
+        {(emailField #email) {
+            fieldLabel = "Email (will be used for pulling the userpic from Gravatar)"
+        }}
         {textField #handle}
         {(textField #displayName) {
             fieldLabel = "Display name"
