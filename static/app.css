@@ -78,6 +78,23 @@ footer {
   margin-top: auto;
 }
 
+.woc-logo-text {
+  font-family: 'Open Sans';
+}
+@media (max-width: 550px) { 
+  .woc-logo-icon {
+    width: 32px;
+  }
+  .woc-logo-text {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .woc-logo-icon {
+    display: none;
+  }
+}
+
 .btn-tiny {
   padding: 0.125rem 0.25rem;
   font-size: 0.5rem;

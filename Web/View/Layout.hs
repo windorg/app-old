@@ -27,6 +27,13 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 <body>
     <div class="container mt-4">
         <div class="d-flex justify-content-end align-items-center align-self-center mb-3">
+            <div style="position:relative">
+                <a href="/" class="stretched-link text-reset text-decoration-none">
+                    <img src="/favicon-large.png" width="50" class="mr-2 woc-logo-icon">
+                    <span class="woc-logo-text">wind of change</span>
+                </a>
+            </div>
+            <div class="d-flex" style="flex: 1"></div>
             <div id="changelog-trigger" class="d-flex align-items-center align-self-center mr-2" style="cursor:pointer">
                 <div class="text-primary">News</div>
                 <div id="changelog-badge" style="height:32px;width:32px;min-height:1px;"></div>
@@ -72,6 +79,10 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 
 stylesheets :: Html
 stylesheets = [hsx|
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
+        />
         <link rel="stylesheet" href={assetPath "/vendor/bootstrap.min.css"}/>
         <link rel="stylesheet" href={assetPath "/vendor/flatpickr.min.css"}/>
         <link rel="stylesheet" href={assetPath "/app.css"}/>
