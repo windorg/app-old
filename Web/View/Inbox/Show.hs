@@ -23,8 +23,8 @@ instance View InboxView where
 renderReply :: ReplyV -> Html
 renderReply replyV = [hsx|
 <div class="reply media">
-  {gravatarSmall authorEmail}
-  <div class="media-body ml-2 mt-n1">
+  {gravatar}
+  <div class="media-body ml-2 mt-n2">
     <div class="mb-1">
       <span class="text-muted small">
         {authorName}
@@ -52,9 +52,9 @@ renderReply replyV = [hsx|
           <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
         </span>
       |]
-    authorEmail = case get #author replyV of
-      Nothing -> ""
-      Just author -> get #email author
+    gravatar = case get #author replyV of
+      Nothing -> [hsx|<span>{gravatarSmall ""}</span>|]
+      Just author -> [hsx|<a href={ShowUserAction (get #id author)}>{gravatarSmall (get #email author)}</a>|]
 
 renderReplyMarkAsReadButton :: Reply -> Html
 renderReplyMarkAsReadButton reply = [hsx|

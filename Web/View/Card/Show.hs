@@ -168,8 +168,8 @@ renderCardUpdateReplyButton cardUpdate = [hsx|
 renderReply :: CardUpdate -> ReplyV -> Html
 renderReply cardUpdate replyV = [hsx|
   <div id={"reply-" <> show (get #id reply)} class="reply media">
-    {gravatarTiny authorEmail}
-    <div class="media-body ml-1" style="margin-top: -6px;">
+    {gravatar}
+    <div class="media-body ml-1">
       <div class="woc-reply-info">
         <span class="text-muted small">
           {authorName}
@@ -198,9 +198,9 @@ renderReply cardUpdate replyV = [hsx|
           <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
         </span>
       |]
-    authorEmail = case get #author replyV of
-      Nothing -> ""
-      Just author -> get #email author
+    gravatar = case get #author replyV of
+      Nothing -> [hsx|<span>{gravatarTiny ""}</span>|]
+      Just author -> [hsx|<a href={ShowUserAction (get #id author)}>{gravatarTiny (get #email author)}</a>|]
 
 renderReplyEditButton :: CardUpdate -> Reply -> Html
 renderReplyEditButton cardUpdate reply = [hsx|
