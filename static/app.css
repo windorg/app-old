@@ -153,6 +153,10 @@ footer {
   margin-bottom: 2rem;
 }
 
+.woc-feed-item-card-update {
+  max-width: 40rem;
+}
+
 .userpic {
   border-radius: 50%;
 }

@@ -21,24 +21,27 @@ instance View FeedView where
 
 renderFeedItem :: FeedItemV -> Html
 renderFeedItem FeedItemCardUpdateV {..} = [hsx|
-<div class="mt-5 woc-feed-item woc-feed-item-card-update">
-  <strong>
-    <a href={ShowUserAction (get #id owner)}>{get #displayName owner}</a> —
-    {get #title card}
-  </strong>
-  <div style="margin-bottom:.3em">
-    <span class="text-muted small">
-      <a href={pathTo (ShowCardAction (get #id card)) <> "#comment-" <> show (get #id cardUpdate)}>
-          {renderTimestamp (get #createdAt cardUpdate)}
-      </a>
-    </span>
-    {when private lockIcon}
-    <div class="ml-3 d-inline">
-      {renderCardUpdateGoToCard cardUpdate}
+<div class="mt-5 woc-feed-item woc-feed-item-card-update media">
+  {gravatar}
+  <div class="media-body ml-2 mt-n1">
+    <strong>
+      <a href={ShowUserAction (get #id owner)}>{get #displayName owner}</a> —
+      {get #title card}
+    </strong>
+    <div style="margin-bottom:.3em">
+      <span class="text-muted small">
+        <a href={pathTo (ShowCardAction (get #id card)) <> "#comment-" <> show (get #id cardUpdate)}>
+            {renderTimestamp (get #createdAt cardUpdate)}
+        </a>
+      </span>
+      {when private lockIcon}
+      <div class="ml-3 d-inline">
+        {renderCardUpdateGoToCard cardUpdate}
+      </div>
     </div>
-  </div>
-  <div class="rendered-content">
-    {renderMarkdown (get #content cardUpdate)}
+    <div class="rendered-content">
+      {renderMarkdown (get #content cardUpdate)}
+    </div>
   </div>
 </div>
 |]
@@ -46,6 +49,7 @@ renderFeedItem FeedItemCardUpdateV {..} = [hsx|
     private = case cardUpdate ^. #settings_ % #visibility of
       VisibilityPublic -> False
       VisibilityPrivate -> True
+    gravatar = [hsx|<a href={ShowUserAction (get #id owner)}>{gravatarSmall (get #email owner)}</a>|]
 
 renderCardUpdateGoToCard cardUpdate = [hsx|
   <a class="btn btn-tiny btn-outline-secondary"
