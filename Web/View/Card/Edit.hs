@@ -1,8 +1,15 @@
 module Web.View.Card.Edit where
+
 import Web.View.Prelude
 import Web.Helper.View
+import Named
 
-data EditView = EditView { owner :: User, board :: Board, card :: Card }
+data EditView = EditView { 
+  owner :: User,
+  ownBoards :: [Board],
+  board :: Board,
+  card :: Card 
+  }
 
 instance View EditView where
     beforeRender EditView{..} = do
@@ -19,12 +26,15 @@ instance View EditView where
             </ol>
         </nav>
         <h1>Edit card</h1>
-        {renderForm card}
+        {renderForm (($) #ownBoards ownBoards) card}
     |]
 
-renderForm :: Card -> Html
-renderForm card = formFor card [hsx|
+renderForm :: "ownBoards" :! [Board] -> Card -> Html
+renderForm (Arg ownBoards) card = formFor card [hsx|
     {(textField #title)}
+    {(selectField #boardId ownBoards) {
+      fieldLabel = "Board"
+    }}
     <div class="custom-control custom-checkbox mb-3">
       <input type="checkbox" class="custom-control-input" name="reverseOrder" id="reverseOrder" checked={reverseOrder}>
       <label class="custom-control-label" for="reverseOrder">

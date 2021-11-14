@@ -10,6 +10,7 @@ import IHP.LoginSupport.Types
 import IHP.ModelSupport
 import IHP.Prelude
 import qualified Optics
+import IHP.View.Form (CanSelect(..))
 
 data WebApplication = WebApplication deriving (Eq, Show)
 
@@ -211,3 +212,10 @@ data FeedItem
   -- There might be more later (e.g. FeedItemCard)
   = FeedItemCardUpdate CardUpdate
   deriving (Show, Generic)
+
+---
+
+instance CanSelect Board where
+  type SelectValue Board = Id Board
+  selectValue = get #id
+  selectLabel = get #title

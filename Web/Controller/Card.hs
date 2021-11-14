@@ -30,21 +30,37 @@ instance Controller CardController where
         render ShowView { cardUpdates = zip cardUpdates replySets, .. }
 
     action EditCardAction { cardId } = do
+        ensureIsUser
         accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
         owner <- fetch (get #ownerId board)
+        ownBoards <- query @Board 
+            |> filterWhere (#ownerId, currentUserId)
+            |> orderByDesc #createdAt
+            |> fetch
         render EditView { .. }
 
     action UpdateCardAction { cardId } = do
+        ensureIsUser
         accessDeniedUnless =<< userCanEdit @Card cardId
         card <- fetch cardId
         board <- fetch (get #boardId card)
         owner <- fetch (get #ownerId board)
+        ownBoards <- query @Board 
+            |> filterWhere (#ownerId, currentUserId)
+            |> orderByDesc #createdAt
+            |> fetch
         card
             |> buildCard
+            |> fill @'["boardId"]
+            |> validateField #boardId (\bid -> 
+                if bid `elem` map (get #id) ownBoards
+                    then Success
+                    else Failure "The board must belong to you")
             |> ifValid \case
-                Left card -> render EditView { .. }
+                Left card -> do
+                    render EditView { .. }
                 Right card -> do
                     card <- card |> updateRecord
                     redirectTo ShowCardAction { .. }
