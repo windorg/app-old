@@ -9,52 +9,50 @@ import qualified Prelude
 import qualified Optics
 
 data ShowView = ShowView {
-    owner :: User,
-    board :: Board,
-    card :: Card,
-    cardUpdates :: [(CardUpdate, [ReplyV])]
+    cardV :: CardV
     }
 
 instance View ShowView where
     beforeRender ShowView{..} = do
-      setTitle (get #title card <> " / wind of change")
+      setTitle (get #title (get #card cardV) <> " / wind of change")
 
     html ShowView { .. } = [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
-                {userCrumb (($) #active False) owner}
-                {boardCrumb (($) #active False) board}
+                {userCrumb (($) #active False) (get #owner cardV)}
+                {boardCrumb (($) #active False) (get #board cardV)}
                 {cardCrumb (($) #active True) card}
             </ol>
         </nav>
         <h1 class="mb-4">
           {when archived archivedBadge}
           {when private lockIcon}
-          {get #title card}
-          {when editable (renderCardEditButton card <> renderCardDeleteButton card)}
+          {title}
+          {when (get #editable cardV) 
+            (renderCardEditButton card <> renderCardDeleteButton card)}
         </h1>
         {if reverseOrder then reverseOrderHtml else normalOrderHtml}
      |]
      where
-       editable = mbCurrentUserId == Just (get #ownerId board)
+       card@Card{..} = get #card cardV
        private = case card ^. #settings_ % #visibility of
          VisibilityPublic -> False
          VisibilityPrivate -> True
        reverseOrder = card ^. #settings_ % #reverseOrder
        archived = card ^. #settings_ % #archived
        normalOrderHtml = [hsx|
-         {when editable (renderCardUpdateAddForm card)}
+         {when (get #editable cardV) (renderCardUpdateAddForm card)}
          <div class="mt-4">
-           {forEach cardUpdates (renderCardUpdate (($) #editable editable) card)}
+           {forEach (get #cardUpdates cardV) renderCardUpdate}
          </div>
        |]
        reverseOrderHtml = [hsx|
          <p class="text-muted small">Comment order: oldest to newest.</p>
          <div class="mb-3">
-           {forEach (reverse cardUpdates) (renderCardUpdate (($) #editable editable) card)}
+           {forEach (reverse (get #cardUpdates cardV)) renderCardUpdate}
          </div>
-         {when editable (renderCardUpdateAddForm card)}
+         {when (get #editable cardV) (renderCardUpdateAddForm card)}
        |]
        archivedBadge = [hsx|<span class="badge badge-secondary mr-2">Archived</span>|]
 
@@ -111,23 +109,21 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
            else Prelude.id
 
 renderCardUpdate 
-  :: "editable" :! Bool
-  -> Card
-  -> (CardUpdate, [ReplyV]) 
+  :: CardUpdateV
   -> Html
-renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
+renderCardUpdate cardUpdateV = [hsx|
   <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}
        id={"comment-" <> show (get #id cardUpdate)}>
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
-        <a href={pathTo (ShowCardAction (get #id card)) <> "#comment-" <> show (get #id cardUpdate)}>
+        <a href={pathTo (ShowCardAction cardId) <> "#comment-" <> show (get #id cardUpdate)}>
             {renderTimestamp (get #createdAt cardUpdate)}
         </a>
       </span>
       {when private lockIcon}
       <div class="ml-3 d-inline-flex">
-        {when editable (renderCardUpdateEditButton cardUpdate)}
-        {when editable (renderCardUpdateDeleteButton cardUpdate)}
+        {when (get #editable cardUpdateV) (renderCardUpdateEditButton cardUpdate)}
+        {when (get #editable cardUpdateV) (renderCardUpdateDeleteButton cardUpdate)}
         <!-- We always render the reply button because we want to nudge people to sign up -->
         {renderCardUpdateReplyButton cardUpdate}
       </div>
@@ -136,11 +132,13 @@ renderCardUpdate (Arg editable) card (cardUpdate, replies) = [hsx|
       {renderMarkdown (get #content cardUpdate)}
     </div>
     <div class="woc-card-update-replies ml-5">
-      {forEach replies (renderReply cardUpdate)}
+      {forEach (get #replies cardUpdateV) (renderReply cardUpdate)}
     </div>
   </div>
   |]
   where
+    cardUpdate = get #cardUpdate cardUpdateV
+    cardId = get #id (get #card cardUpdateV)
     private = case cardUpdate ^. #settings_ % #visibility of
       VisibilityPublic -> False
       VisibilityPrivate -> True

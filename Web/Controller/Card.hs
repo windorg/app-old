@@ -14,20 +14,8 @@ instance Controller CardController where
     action ShowCardAction { cardId } = do
         accessDeniedUnless =<< userCanView @Card cardId
         card <- fetch cardId
-        board <- fetch (get #boardId card)
-        owner <- fetch (get #ownerId board)
-        cardUpdates <- 
-          get #cardUpdates card 
-            |> orderByDesc #createdAt
-            |> fetch
-            >>= filterM (userCanView @CardUpdate . get #id)
-        replySets <- forM cardUpdates \c ->
-            get #replies c
-              |> orderByAsc #createdAt
-              |> fetch
-              >>= filterM (userCanView @Reply . get #id)
-              >>= mapM fetchReplyV
-        render ShowView { cardUpdates = zip cardUpdates replySets, .. }
+        cardV <- fetchCardV card
+        render ShowView { .. }
 
     action EditCardAction { cardId } = do
         ensureIsUser

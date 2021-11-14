@@ -9,6 +9,52 @@ import Web.Controller.Authorization
 import IHP.ControllerPrelude
 import Web.Helper.Common
 import Web.Types
+import Control.Monad (filterM)
+
+----------------------------------------------------------------------------
+-- CardV
+----------------------------------------------------------------------------
+
+data CardV = CardV {
+    card :: Card,
+    owner :: User,
+    board :: Board,
+    -- | Ordered in ascending order of creation
+    cardUpdates :: [CardUpdateV],
+    editable :: Bool
+}
+
+fetchCardV :: (?modelContext::ModelContext, ?context::ControllerContext) => Card -> IO CardV
+fetchCardV card = do
+    board <- fetch (get #boardId card)
+    owner <- fetch (get #ownerId board)
+    editable <- userCanEdit @Card (get #id card)
+    cardUpdatesPlain :: [CardUpdate] <- 
+        get #cardUpdates card 
+            |> orderByDesc #createdAt
+            |> fetch
+            >>= filterM (userCanView @CardUpdate . get #id)
+    cardUpdates :: [CardUpdateV] <- forM cardUpdatesPlain \cardUpdate -> do
+        replies <- get #replies cardUpdate
+            |> orderByAsc #createdAt
+            |> fetch
+            >>= filterM (userCanView @Reply . get #id)
+            >>= mapM fetchReplyV
+        -- Here we assume that the card update is editable iff the card is editable. Might not be true later.
+        pure CardUpdateV {..}
+    pure CardV {..}
+
+----------------------------------------------------------------------------
+-- CardUpdateV
+----------------------------------------------------------------------------
+
+-- TODO: might want to move ReplyV out of here
+data CardUpdateV = CardUpdateV {
+    cardUpdate :: CardUpdate,
+    card :: Card,
+    replies :: [ReplyV],
+    editable :: Bool
+}
 
 ----------------------------------------------------------------------------
 -- ReplyV
