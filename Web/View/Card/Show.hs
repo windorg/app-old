@@ -15,10 +15,11 @@ data ShowView = ShowView {
 
 instance View ShowView where
     beforeRender ShowView{..} = do
+      let owner = get #owner cardV
       setTitle (get #title (get #card cardV) <> " / wind of change")
       setOGTitle (get #title (get #card cardV))
-      setDescription $ format "by @{}" (get #handle (get #owner cardV))
-      setOGDescription $ format "by @{}" (get #handle (get #owner cardV))
+      setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+      setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
 
     html ShowView { .. } = [hsx|
         <nav>

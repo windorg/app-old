@@ -20,12 +20,12 @@ socialTags = [hsx|
   {ogTitleOrDefault "wind of change"}
   {ogDescriptionOrDefault "keep going"}
   <meta property="og:site_name" content="wind of change">
-  <meta property="og:image" content="https://windofchange.me/favicon.png">
+  <meta property="og:image" content="https://windofchange.me/favicon-square.png">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content={ogTitle}>
   <meta property="twitter:description" content={ogDescription}>
-  <meta property="twitter:image" content="https://windofchange.me/favicon.png">
+  <meta property="twitter:image" content="https://windofchange.me/favicon-square.png">
   |]
   where
     ogTitle = case maybeFromFrozenContext @OGTitle of
