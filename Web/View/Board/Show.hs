@@ -4,12 +4,16 @@ import Web.View.Prelude
 import Web.Helper.View
 import Named
 import Optics (view)
+import Fmt (format)
 
 data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 
 instance View ShowView where
   beforeRender ShowView{..} = do
     setTitle (get #title board <> " / wind of change")
+    setOGTitle (get #title board)
+    setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+    setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
 
   html ShowView {..} =
     [hsx|

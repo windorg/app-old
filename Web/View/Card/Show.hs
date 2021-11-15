@@ -7,6 +7,7 @@ import Web.ViewTypes
 import Web.Helper.View
 import qualified Prelude
 import qualified Optics
+import Fmt (format)
 
 data ShowView = ShowView {
     cardV :: CardV
@@ -15,6 +16,9 @@ data ShowView = ShowView {
 instance View ShowView where
     beforeRender ShowView{..} = do
       setTitle (get #title (get #card cardV) <> " / wind of change")
+      setOGTitle (get #title (get #card cardV))
+      setDescription $ format "by @{}" (get #handle (get #owner cardV))
+      setOGDescription $ format "by @{}" (get #handle (get #owner cardV))
 
     html ShowView { .. } = [hsx|
         <nav>

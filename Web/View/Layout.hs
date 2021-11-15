@@ -9,10 +9,31 @@ import IHP.Controller.RequestContext
 import Web.Types
 import Web.Routes
 import Application.Helper.View
+import IHP.PageHead.Types
 
 data LayoutView = LayoutView {
     inboxCount :: Maybe Int
 }
+
+socialTags :: Html
+socialTags = [hsx|
+  {ogTitleOrDefault "wind of change"}
+  {ogDescriptionOrDefault "keep going"}
+  <meta property="og:site_name" content="wind of change">
+  <meta property="og:image" content="https://windofchange.me/favicon.png">
+
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:title" content={ogTitle}>
+  <meta property="twitter:description" content={ogDescription}>
+  <meta property="twitter:image" content="https://windofchange.me/favicon.png">
+  |]
+  where
+    ogTitle = case maybeFromFrozenContext @OGTitle of
+      Just (OGTitle title) -> title
+      Nothing -> "wind of change"
+    ogDescription = case maybeFromFrozenContext @OGDescription of
+      Just (OGDescription desc) -> desc
+      Nothing -> "keep going"
 
 defaultLayout :: LayoutView -> Html -> Html
 defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
@@ -23,6 +44,8 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
     {scripts}
 
     <title>{pageTitleOrDefault "wind of change"}</title>
+    {descriptionOrDefault "keep going"}
+    {socialTags}
 </head>
 <body>
     <div class="container mt-4">
@@ -125,9 +148,5 @@ metaTags = [hsx|
     <link rel="icon" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon-large.png">
     <meta name="theme-color" content="#ffffff">
-    <meta property="og:title" content="wind of change"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://windofchange.me"/>
-    <meta property="og:description" content="keep going"/>
     {autoRefreshMeta}
 |]

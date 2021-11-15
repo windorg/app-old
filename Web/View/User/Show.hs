@@ -2,6 +2,7 @@ module Web.View.User.Show where
 
 import Web.View.Prelude
 import Web.Helper.View
+import Fmt (format)
 
 data ShowView = ShowView { 
     user :: User,
@@ -12,7 +13,8 @@ data ShowView = ShowView {
 
 instance View ShowView where
     beforeRender ShowView{..} = do
-        setTitle (get #displayName user <> " / wind of change")
+        setTitle $ format "{} @{} / wind of change" (get #displayName user) (get #handle user)
+        setOGTitle $ format "{} @{}" (get #displayName user) (get #handle user)
 
     html ShowView { .. } = [hsx|
         <nav>
