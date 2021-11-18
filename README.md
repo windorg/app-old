@@ -1,4 +1,4 @@
-# wind of change <https://windofchange.me> — social note-taking
+# [wind of change](https://windofchange.me) — social note-taking
 
 [**windofchange.me**](https://windofchange.me) is a social note-taking webapp written in Haskell with the [IHP framework](https://ihp.digitallyinduced.com/).
 
