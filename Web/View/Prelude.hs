@@ -25,14 +25,6 @@ import Fmt (format)
 import Text.Blaze.Internal (customAttribute)
 import qualified Text.Blaze.Html5.Attributes as H
 
-autosize :: Int -> FormField -> FormField
-autosize minRows f = f { 
-    fieldInput = \formField -> 
-        fieldInput f f 
-            ! customAttribute "is" "auto-size" 
-            ! H.rows (cs (show minRows))
-    }
-
 cmdEnterSubmit :: FormField -> FormField
 cmdEnterSubmit f = f { 
     fieldInput = \formField -> 

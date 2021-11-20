@@ -57,34 +57,6 @@ $(window).on("error", function(evt) {
     }
 });
 
-// Still doesn't work properly with turbolinks though
-class AutoSize extends HTMLTextAreaElement {
-    constructor () {
-        super();
-        autosize(this);
-        $(this).on('focus', function () {
-            autosize.update(this);
-        });
-    }
-    connectedCallback() {
-        autosize.update(this);
-    }
-}
-customElements.define(
-    "auto-size",
-    AutoSize,
-    { extends: "textarea" }
-);
-
-const SubmitShortcut = Extension.create({
-    name: 'SubmitShortcut',
-    addKeyboardShortcuts() {
-        return {
-            'Mod-Enter': () => window.submitForm($(this.editor.options.element).closest('form')[0])
-        }
-    }
-})
-
 // From https://stackoverflow.com/a/53744331/615030
 function loadScript(scriptUrl) {
   const script = document.createElement('script');
@@ -132,9 +104,6 @@ function onReadyOrTurbo() {
 
     // Headway (changelog)
     if (typeof Headway !== 'undefined') {Headway.init(headwayConfig)};
-
-    // Autosize
-    autosize(document.querySelectorAll("textarea[is='auto-size']"));
 
     const newTiptap = function (content) {
         return new Editor({

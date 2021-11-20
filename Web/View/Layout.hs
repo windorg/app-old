@@ -114,7 +114,6 @@ stylesheets = [hsx|
 scripts :: Html
 scripts = [hsx|
         {when isDevelopment devScripts}
-        <script src="//unpkg.com/@ungap/custom-elements"></script>
         <script src={assetPath "/vendor/jquery-3.6.0.slim.min.js"}></script>
         <script src={assetPath "/vendor/timeago.js"}></script>
         <script src={assetPath "/vendor/popper.min.js"}></script>
@@ -128,7 +127,6 @@ scripts = [hsx|
         <script src={assetPath "/ihp-auto-refresh.js"}></script>
 
         <!-- Called in app.js -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
         <script type="module" src={assetPath "/app.js"}></script>
     |]
