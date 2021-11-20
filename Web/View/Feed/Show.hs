@@ -43,9 +43,6 @@ renderFeedItem FeedItemCardUpdateV {..} = [hsx|
         </a>
       </span>
       {when private lockIcon}
-      <div class="ml-3 d-inline">
-        {renderCardUpdateGoToCard cardUpdate}
-      </div>
     </div>
     <div class="rendered-content">
       {renderMarkdown (get #content cardUpdate)}
@@ -58,9 +55,3 @@ renderFeedItem FeedItemCardUpdateV {..} = [hsx|
       VisibilityPublic -> False
       VisibilityPrivate -> True
     gravatar = [hsx|<a href={ShowUserAction (get #id owner)}>{gravatarSmall (get #email owner)}</a>|]
-
-renderCardUpdateGoToCard cardUpdate = [hsx|
-  <a class="btn btn-tiny btn-outline-secondary"
-     href={ShowCardAction (get #cardId cardUpdate)}>
-    Go to card
-  </a>|]
