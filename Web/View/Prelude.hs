@@ -8,6 +8,7 @@ module Web.View.Prelude
 , module Web.Helper.Common
 , module Web.View.Prelude
 , module Optics
+, module Fmt
 ) where
 
 import IHP.ViewPrelude
@@ -19,6 +20,7 @@ import Web.Helper.Common
 import Application.Helper.View
 
 import Optics ((%), (^.))
+import Fmt (format)
 
 import Text.Blaze.Internal (customAttribute)
 import qualified Text.Blaze.Html5.Attributes as H

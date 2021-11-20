@@ -4,7 +4,6 @@ import Web.View.Prelude
 import Web.Helper.View
 import Named
 import Optics (view)
-import Fmt (format)
 
 data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 

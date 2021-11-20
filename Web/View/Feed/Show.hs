@@ -4,7 +4,10 @@ import Web.View.Prelude
 import Web.Helper.View
 import Web.ViewTypes
 
-data FeedView = FeedView { feedItems :: [FeedItemV] }
+data FeedView = FeedView { 
+  feedItems :: [FeedItemV],
+  days :: Int
+  }
 
 instance View FeedView where
     html FeedView { .. } = [hsx|
@@ -15,9 +18,14 @@ instance View FeedView where
             </ol>
         </nav>
         <h1>Feed</h1>
-        <p class="text-muted">Showing updates from the last 14 days.</p>
+        <p class="text-muted">
+          Showing updates from the last {if days == 1 then "day" else show days <> " days" :: Text}.
+          {when (days < 14) show14}
+        </p>
         {forEach feedItems renderFeedItem}
-    |]
+      |]
+      where
+        show14 = [hsx|<a href={ShowFeedAction (Just 14)}>Show the last 14 days.</a>|]
 
 renderFeedItem :: FeedItemV -> Html
 renderFeedItem FeedItemCardUpdateV {..} = [hsx|

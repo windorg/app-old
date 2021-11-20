@@ -2,7 +2,6 @@ module Web.View.User.Show where
 
 import Web.View.Prelude
 import Web.Helper.View
-import Fmt (format)
 
 data ShowView = ShowView { 
     user :: User,

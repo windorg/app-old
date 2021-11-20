@@ -8,6 +8,7 @@ module Web.Controller.Prelude
 , module Control.Monad.Extra
 , module Data.Functor
 , module Control.Monad
+, module Fmt
 )
 where
 
@@ -20,3 +21,4 @@ import Optics ((%), (^.))
 import Control.Monad.Extra (filterM)
 import Data.Functor ((<&>))
 import Control.Monad ((<=<))
+import Fmt (format)

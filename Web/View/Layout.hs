@@ -84,7 +84,7 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
           in [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox{badge}</a></div>|]
         Nothing -> mempty
     feed = case currentUserOrNothing of
-        Just _ -> [hsx|<div class="mr-4"><a href={ShowFeedAction}>Feed</a></div>|]
+        Just _ -> [hsx|<div class="mr-4"><a href={ShowFeedAction Nothing}>Feed</a></div>|]
         Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
         Just _ -> [hsx|

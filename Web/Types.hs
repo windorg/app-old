@@ -63,7 +63,7 @@ data InboxController
   deriving (Eq, Show, Data)
 
 data FeedController
-  = ShowFeedAction
+  = ShowFeedAction { days :: !(Maybe Int) }
   deriving (Eq, Show, Data)
 
 instance HasNewSessionUrl User where

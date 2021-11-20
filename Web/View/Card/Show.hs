@@ -7,7 +7,6 @@ import Web.ViewTypes
 import Web.Helper.View
 import qualified Prelude
 import qualified Optics
-import Fmt (format)
 
 data ShowView = ShowView {
     cardV :: CardV
