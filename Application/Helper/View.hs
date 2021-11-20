@@ -9,11 +9,11 @@ import Fmt
 renderMarkdown :: Text -> Html
 renderMarkdown text = preEscapedToHtml (CMark.commonmarkToHtml [CMark.optSafe] text)
 
--- TODO render year as well
 renderTimestamp :: UTCTime -> Text
 renderTimestamp time =
-    -- February 14th, 18:20
-    format "{} {}, {}"
+    -- February 14th, 2021, 18:20 UTC
+    format "{} {}, {}, {} UTC"
       (timeF "%B" time)
       (dayOfMonthOrdF time)
+      (yearF time)
       (timeF "%R" time)
