@@ -13,6 +13,12 @@ pre code {
   word-wrap: normal;
 }
 
+/* https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size 
+   This is needed to prevent code blocks from breaking the viewport in the feed. */
+.media-body {
+  min-width: 0;
+}
+
 /* Highlight things linked to via #anchor in the URL */
 .hash-target {
   box-shadow: #ffe988 0px 0px 0px 3px;
