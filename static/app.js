@@ -72,6 +72,15 @@ function loadScript(scriptUrl) {
   });
 }
 
+const SubmitShortcut = Extension.create({
+    name: 'SubmitShortcut',
+    addKeyboardShortcuts() {
+        return {
+            'Mod-Enter': () => window.submitForm($(this.editor.options.element).closest('form')[0])
+        }
+    }
+})
+
 const headwayConfig = {
     selector: "#changelog-badge",
     trigger: "#changelog-trigger",
