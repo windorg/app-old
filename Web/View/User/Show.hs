@@ -1,13 +1,13 @@
 module Web.View.User.Show where
 
-import Web.View.Prelude
 import Web.Helper.View
+import Web.View.Prelude
 
-data ShowView = ShowView { 
-    user :: User,
-    boards :: [Board],
-    -- Nothing if there's no current user
-    followed :: Maybe Bool
+data ShowView = ShowView
+    { user :: User,
+      boards :: [Board],
+      -- Nothing if there's no current user
+      followed :: Maybe Bool
     }
 
 instance View ShowView where
@@ -15,7 +15,8 @@ instance View ShowView where
         setTitle $ format "{} @{} / wind of change" (get #displayName user) (get #handle user)
         setOGTitle $ format "{} @{}" (get #displayName user) (get #handle user)
 
-    html ShowView { .. } = [hsx|
+    html ShowView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -31,13 +32,15 @@ instance View ShowView where
     |]
       where
         followUnfollow = case followed of
-          Nothing -> mempty
-          Just False -> [hsx|
+            Nothing -> mempty
+            Just False ->
+                [hsx|
             <form class="d-inline" method="POST" action={UpdateFollowUserAction (get #id user)}>
               <button class="ml-3 btn btn-outline-primary btn-sm">Follow</button>
             </form>
             |]
-          Just True -> [hsx|
+            Just True ->
+                [hsx|
             <form class="d-inline" method="POST" action={UpdateUnfollowUserAction (get #id user)}>
               <button class="ml-3 btn btn-outline-secondary btn-sm">Unfollow</button>
             </form>

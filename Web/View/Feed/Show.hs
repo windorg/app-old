@@ -1,16 +1,17 @@
 module Web.View.Feed.Show where
 
-import Web.View.Prelude
 import Web.Helper.View
+import Web.View.Prelude
 import Web.ViewTypes
 
-data FeedView = FeedView { 
-  feedItems :: [FeedItemV],
-  days :: Int
-  }
+data FeedView = FeedView
+    { feedItems :: [FeedItemV],
+      days :: Int
+    }
 
 instance View FeedView where
-    html FeedView { .. } = [hsx|
+    html FeedView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -28,7 +29,8 @@ instance View FeedView where
         show14 = [hsx|<a href={ShowFeedAction (Just 14)}>Show the last 14 days.</a>|]
 
 renderFeedItem :: FeedItemV -> Html
-renderFeedItem FeedItemCardUpdateV {..} = [hsx|
+renderFeedItem FeedItemCardUpdateV{..} =
+    [hsx|
 <div class="mt-5 woc-feed-item woc-feed-item-card-update media">
   {gravatar}
   <div class="media-body ml-2 mt-n1">
@@ -52,6 +54,6 @@ renderFeedItem FeedItemCardUpdateV {..} = [hsx|
 |]
   where
     private = case cardUpdate ^. #settings_ % #visibility of
-      VisibilityPublic -> False
-      VisibilityPrivate -> True
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
     gravatar = [hsx|<a href={ShowUserAction (get #id owner)}>{gravatarSmall (get #email owner)}</a>|]

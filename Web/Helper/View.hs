@@ -1,14 +1,15 @@
 module Web.Helper.View where
 
-import Web.View.Prelude
+import qualified Data.ByteString.Lazy as LBS
+import Data.Digest.Pure.MD5 (md5)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import qualified Data.ByteString.Lazy as LBS
 import Named
-import Data.Digest.Pure.MD5 (md5)
+import Web.View.Prelude
 
 renderOwnBoard :: Board -> Html
-renderOwnBoard board = [hsx|
+renderOwnBoard board =
+    [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
@@ -25,7 +26,8 @@ renderOwnBoard board = [hsx|
         VisibilityPublic -> False
         VisibilityPrivate -> True
 
-renderBoardEditButton board = [hsx|
+renderBoardEditButton board =
+    [hsx|
   <a
     class="btn btn-sm btn-outline-info"
     style="margin-left:.5rem; padding:.125rem .25rem; font-size:.5rem;"
@@ -35,7 +37,8 @@ renderBoardEditButton board = [hsx|
   </a>
   |]
 
-renderBoardDeleteButton board = [hsx|
+renderBoardDeleteButton board =
+    [hsx|
   <a
     class="btn btn-sm btn-outline-danger js-delete"
     style="padding:.125rem .25rem; font-size:.5rem;"
@@ -46,7 +49,8 @@ renderBoardDeleteButton board = [hsx|
   |]
 
 renderOthersBoard :: (Board, "handle" :! Text, "displayName" :! Text) -> Html
-renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
+renderOthersBoard (board, Arg handle, Arg displayName) =
+    [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
@@ -69,7 +73,8 @@ renderOthersBoard (board, Arg handle, Arg displayName) = [hsx|
 
 -- | Like renderOthersBoard but without the names.
 renderUserPageBoard :: Board -> Html
-renderUserPageBoard board = [hsx|
+renderUserPageBoard board =
+    [hsx|
     <div class={"woc-board card mt-3 mb-3 " <> if private then "woc-board-private" else "" :: Text}>
         <div class="card-body">
             <h3>
@@ -92,11 +97,12 @@ space = [hsx|<span>{"\xa0" :: Text}</span>|]
 
 ---
 
-userCrumb
-  :: "active" :! Bool
-  -> User
-  -> Html
-userCrumb (Arg active) user = [hsx|
+userCrumb ::
+    "active" :! Bool ->
+    User ->
+    Html
+userCrumb (Arg active) user =
+    [hsx|
   <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
     {if active then text else link text}
   </li>
@@ -105,11 +111,12 @@ userCrumb (Arg active) user = [hsx|
     link x = [hsx|<a href={ShowUserAction (get #id user)}>{x}</a>|]
     text = [hsx|<em>@{get #handle user}</em>|]
 
-boardCrumb
-  :: "active" :! Bool
-  -> Board
-  -> Html
-boardCrumb (Arg active) board = [hsx|
+boardCrumb ::
+    "active" :! Bool ->
+    Board ->
+    Html
+boardCrumb (Arg active) board =
+    [hsx|
   <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
     {when private (lockIcon <> space)}
     {if active then text else link text}
@@ -122,11 +129,12 @@ boardCrumb (Arg active) board = [hsx|
         VisibilityPublic -> False
         VisibilityPrivate -> True
 
-cardCrumb
-  :: "active" :! Bool
-  -> Card
-  -> Html
-cardCrumb (Arg active) card = [hsx|
+cardCrumb ::
+    "active" :! Bool ->
+    Card ->
+    Html
+cardCrumb (Arg active) card =
+    [hsx|
   <li class={"breadcrumb-item " <> if active then "active" else "" :: Text}>
     {when private (lockIcon <> space)}
     {if active then text else link text}
@@ -145,14 +153,16 @@ gravatarHash :: Text -> Text
 gravatarHash = show . md5 . LBS.fromStrict . T.encodeUtf8 . T.toLower . T.strip
 
 gravatarSmall :: Text -> Html
-gravatarSmall email = [hsx|
+gravatarSmall email =
+    [hsx|
   <img class="userpic userpic-small" 
        width="32"
        src={"https://www.gravatar.com/avatar/" <> gravatarHash email <> "?s=64&d=mp"}/>
   |]
 
 gravatarTiny :: Text -> Html
-gravatarTiny email = [hsx|
+gravatarTiny email =
+    [hsx|
   <img class="userpic userpic-small" 
        width="16"
        src={"https://www.gravatar.com/avatar/" <> gravatarHash email <> "?s=64&d=mp"}/>

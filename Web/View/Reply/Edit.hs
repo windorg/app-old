@@ -1,21 +1,29 @@
 module Web.View.Reply.Edit where
-import Web.View.Prelude
-import Web.Helper.ReplySource
 
-data EditView = EditView { replySource :: ReplySource, reply :: Reply }
+import Web.Helper.ReplySource
+import Web.View.Prelude
+
+data EditView = EditView {replySource :: ReplySource, reply :: Reply}
 
 instance View EditView where
-    html EditView { .. } = renderModal Modal
-      { modalTitle = "Edit reply"
-      , modalCloseUrl = pathToReplySource replySource
-      , modalFooter = Nothing
-      , modalContent = [hsx|
+    html EditView{..} =
+        renderModal
+            Modal
+                { modalTitle = "Edit reply",
+                  modalCloseUrl = pathToReplySource replySource,
+                  modalFooter = Nothing,
+                  modalContent =
+                    [hsx|
           {renderForm reply replySource}
         |]
-      }
+                }
 
 renderForm :: Reply -> ReplySource -> Html
-renderForm reply replySource = formFor' reply (pathTo action) [hsx|
+renderForm reply replySource =
+    formFor'
+        reply
+        (pathTo action)
+        [hsx|
     {(textareaField #content) {
         disableLabel = True,
         fieldClass = "use-tiptap"

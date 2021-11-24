@@ -1,22 +1,23 @@
 module Web.View.Layout where
 
-import IHP.ViewPrelude
-import IHP.Environment
-import qualified Text.Blaze.Html5            as H
-import qualified Text.Blaze.Html5.Attributes as A
+import Application.Helper.View
 import Generated.Types
 import IHP.Controller.RequestContext
-import Web.Types
-import Web.Routes
-import Application.Helper.View
+import IHP.Environment
 import IHP.PageHead.Types
+import IHP.ViewPrelude
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
+import Web.Routes
+import Web.Types
 
-data LayoutView = LayoutView {
-    inboxCount :: Maybe Int
-}
+data LayoutView = LayoutView
+    { inboxCount :: Maybe Int
+    }
 
 socialTags :: Html
-socialTags = [hsx|
+socialTags =
+    [hsx|
   {ogTitleOrDefault "wind of change"}
   {ogDescriptionOrDefault "keep going"}
   <meta property="og:site_name" content="wind of change">
@@ -29,14 +30,16 @@ socialTags = [hsx|
   |]
   where
     ogTitle = case maybeFromFrozenContext @OGTitle of
-      Just (OGTitle title) -> title
-      Nothing -> "wind of change"
+        Just (OGTitle title) -> title
+        Nothing -> "wind of change"
     ogDescription = case maybeFromFrozenContext @OGDescription of
-      Just (OGDescription desc) -> desc
-      Nothing -> "keep going"
+        Just (OGDescription desc) -> desc
+        Nothing -> "keep going"
 
 defaultLayout :: LayoutView -> Html -> Html
-defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
+defaultLayout LayoutView{..} inner =
+    H.docTypeHtml ! A.lang "en" $
+        [hsx|
 <head>
     {metaTags}
 
@@ -79,20 +82,23 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
   where
     inbox = case inboxCount of
         Just count ->
-          let badge | count == 0 = [hsx|<span id="inbox-badge" class="ml-2 badge badge-secondary">0</span>|]
-                    | otherwise  = [hsx|<span id="inbox-badge" class="ml-2 badge badge-danger">{count}</span>|]
-          in [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox{badge}</a></div>|]
+            let badge
+                    | count == 0 = [hsx|<span id="inbox-badge" class="ml-2 badge badge-secondary">0</span>|]
+                    | otherwise = [hsx|<span id="inbox-badge" class="ml-2 badge badge-danger">{count}</span>|]
+             in [hsx|<div class="mr-4"><a href={ShowInboxAction}>Inbox{badge}</a></div>|]
         Nothing -> mempty
     feed = case currentUserOrNothing of
         Just _ -> [hsx|<div class="mr-4"><a href={ShowFeedAction Nothing}>Feed</a></div>|]
         Nothing -> mempty
     loginOrLogout = case currentUserOrNothing of
-        Just _ -> [hsx|
+        Just _ ->
+            [hsx|
           <form class="d-inline" method="POST" data-disable-javascript-submission="true" action={LogoutAction}>
               <button class="btn btn-link p-0" type="submit">Logout</button>
           </form>
           |]
-        Nothing -> [hsx|
+        Nothing ->
+            [hsx|
           <a href={LoginOrSignupAction}>Login or sign up</a>
           |]
 
@@ -101,7 +107,8 @@ defaultLayout LayoutView{..} inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 -- See https://ihp.digitallyinduced.com/Guide/assets.html for more details
 
 stylesheets :: Html
-stylesheets = [hsx|
+stylesheets =
+    [hsx|
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
@@ -112,7 +119,8 @@ stylesheets = [hsx|
     |]
 
 scripts :: Html
-scripts = [hsx|
+scripts =
+    [hsx|
         {when isDevelopment devScripts}
         <script src={assetPath "/vendor/jquery-3.6.0.slim.min.js"}></script>
         <script src={assetPath "/vendor/timeago.js"}></script>
@@ -132,12 +140,14 @@ scripts = [hsx|
     |]
 
 devScripts :: Html
-devScripts = [hsx|
+devScripts =
+    [hsx|
         <script id="livereload-script" src={assetPath "/livereload.js"}></script>
     |]
 
 metaTags :: Html
-metaTags = [hsx|
+metaTags =
+    [hsx|
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <link rel="manifest" href="/manifest.json">

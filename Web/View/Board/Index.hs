@@ -1,20 +1,21 @@
 module Web.View.Board.Index where
 
-import Web.View.Prelude
-import Web.Helper.View
 import Named
+import Web.Helper.View
+import Web.View.Prelude
 
-data IndexView 
-    = IndexViewUser { 
-        ownBoards :: [Board], 
-        othersBoards :: [(Board, "handle" :! Text, "displayName" :! Text)] 
-    }
-    | IndexViewGuest {
-        allBoards :: [(Board, "handle" :! Text, "displayName" :! Text)]
-    }
+data IndexView
+    = IndexViewUser
+        { ownBoards :: [Board],
+          othersBoards :: [(Board, "handle" :! Text, "displayName" :! Text)]
+        }
+    | IndexViewGuest
+        { allBoards :: [(Board, "handle" :! Text, "displayName" :! Text)]
+        }
 
 instance View IndexView where
-    html view = [hsx|
+    html view =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item active"><a href={BoardsAction}>Boards</a></li>
@@ -22,8 +23,9 @@ instance View IndexView where
         </nav>
         {render view}
     |]
-        where
-            render IndexViewUser{..} = [hsx|
+      where
+        render IndexViewUser{..} =
+            [hsx|
                 <h1>
                     Your boards
                     <a href={NewBoardAction} class="ml-3 btn btn-outline-primary btn-sm">+ New</a>
@@ -32,7 +34,8 @@ instance View IndexView where
                 <h1 class="mt-5">Others' public boards</h1>
                 <div class="row-cols-1 row-cols-md2">{forEach othersBoards renderOthersBoard}</div>
             |]
-            render IndexViewGuest{..} = [hsx|
+        render IndexViewGuest{..} =
+            [hsx|
                 <p>To create your own boards, please <a href={LoginOrSignupAction}>sign up</a>.</p>
                 <h1 class="mt-5">Public boards</h1>
                 <div class="row-cols-1 row-cols-md2">{forEach allBoards renderOthersBoard}</div>

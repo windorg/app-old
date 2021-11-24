@@ -2,13 +2,15 @@ module Web.View.Sessions.LoginOrSignup where
 
 import Web.View.Prelude
 
-data LoginOrSignupView user = LoginOrSignupView { 
-    loginUser :: user, 
-    signupUser :: user 
-    } deriving (Typeable)
+data LoginOrSignupView user = LoginOrSignupView
+    { loginUser :: user,
+      signupUser :: user
+    }
+    deriving (Typeable)
 
 instance View (LoginOrSignupView User) where
-    html LoginOrSignupView { .. } = [hsx|
+    html LoginOrSignupView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -30,7 +32,8 @@ instance View (LoginOrSignupView User) where
     |]
 
 renderLoginForm :: User -> Html
-renderLoginForm user = [hsx|
+renderLoginForm user =
+    [hsx|
     <form id="login_form" method="POST" action={CreateSessionAction}>
         <div class="form-group">
             <label for="email">Email</label>
@@ -45,7 +48,10 @@ renderLoginForm user = [hsx|
 |]
 
 renderSignupForm :: User -> Html
-renderSignupForm user = formFor user [hsx|
+renderSignupForm user =
+    formFor
+        user
+        [hsx|
     <form id="signup_form" method="POST" action={CreateUserAction}>
         {(emailField #email) {
             fieldLabel = "Email (will be used for pulling the userpic from Gravatar)"

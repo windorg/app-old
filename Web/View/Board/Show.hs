@@ -1,21 +1,21 @@
 module Web.View.Board.Show where
 
-import Web.View.Prelude
-import Web.Helper.View
 import Named
 import Optics (view)
+import Web.Helper.View
+import Web.View.Prelude
 
 data ShowView = ShowView {owner :: User, board :: Board, cards :: [(Card, Int)]}
 
 instance View ShowView where
-  beforeRender ShowView{..} = do
-    setTitle (get #title board <> " / wind of change")
-    setOGTitle (get #title board)
-    setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
-    setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+    beforeRender ShowView{..} = do
+        setTitle (get #title board <> " / wind of change")
+        setOGTitle (get #title board)
+        setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+        setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
 
-  html ShowView {..} =
-    [hsx|
+    html ShowView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -33,13 +33,14 @@ instance View ShowView where
         </div>
         {when (not (null archivedCards)) archive}
     |]
-    where
-      editable = mbCurrentUserId == Just (get #ownerId board)
-      private = case board ^. #settings_ % #visibility of
-          VisibilityPublic -> False
-          VisibilityPrivate -> True
-      (normalCards, archivedCards) = partition (not . view (#settings_ % #archived) . fst) cards
-      archive = [hsx|
+      where
+        editable = mbCurrentUserId == Just (get #ownerId board)
+        private = case board ^. #settings_ % #visibility of
+            VisibilityPublic -> False
+            VisibilityPrivate -> True
+        (normalCards, archivedCards) = partition (not . view (#settings_ % #archived) . fst) cards
+        archive =
+            [hsx|
         <details class="mt-3">
           <summary>
             <span class="badge badge-secondary mb-2">Archived</span>
@@ -50,7 +51,7 @@ instance View ShowView where
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =
-  [hsx|
+    [hsx|
     <div class={"card mb-2 woc-card " <> if private then "woc-card-private" else "" :: Text}>
       <div class="card-body">
         {when private (lockIcon <> space)}
@@ -61,15 +62,15 @@ renderCard (card, count) =
   |]
   where
     private = case card ^. #settings_ % #visibility of
-      VisibilityPublic -> False
-      VisibilityPrivate -> True
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
 
 renderCardAddForm :: Board -> Html
 renderCardAddForm board =
-  formForWithOptions
-    card
-    options
-    [hsx|
+    formForWithOptions
+        card
+        options
+        [hsx|
   <style>
     .title-field { max-width:40rem; width:100%; }
   </style>
@@ -93,5 +94,5 @@ renderCardAddForm board =
 
     options :: FormContext Card -> FormContext Card
     options formContext =
-      formContext
-        |> set #formAction (pathTo (CreateCardAction (get #id board)))
+        formContext
+            |> set #formAction (pathTo (CreateCardAction (get #id board)))

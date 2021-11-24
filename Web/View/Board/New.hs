@@ -1,10 +1,12 @@
 module Web.View.Board.New where
+
 import Web.View.Prelude
 
-data NewView = NewView { board :: Board }
+data NewView = NewView {board :: Board}
 
 instance View NewView where
-    html NewView { .. } = [hsx|
+    html NewView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -16,7 +18,10 @@ instance View NewView where
     |]
 
 renderForm :: Board -> Html
-renderForm board = formFor board [hsx|
+renderForm board =
+    formFor
+        board
+        [hsx|
     {(textField #title)}
     {submitButton}
     <div class="ml-4 custom-control custom-control-inline custom-checkbox">
@@ -26,5 +31,5 @@ renderForm board = formFor board [hsx|
 |]
   where
     private = case board ^. #settings_ % #visibility of
-      VisibilityPrivate -> True
-      VisibilityPublic -> False
+        VisibilityPrivate -> True
+        VisibilityPublic -> False

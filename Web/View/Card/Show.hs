@@ -1,26 +1,27 @@
 module Web.View.Card.Show where
 
-import Web.View.Prelude
 import Named
-import Web.Controller.Authorization
-import Web.ViewTypes
-import Web.Helper.View
-import qualified Prelude
 import qualified Optics
+import Web.Controller.Authorization
+import Web.Helper.View
+import Web.View.Prelude
+import Web.ViewTypes
+import qualified Prelude
 
-data ShowView = ShowView {
-    cardV :: CardV
+data ShowView = ShowView
+    { cardV :: CardV
     }
 
 instance View ShowView where
     beforeRender ShowView{..} = do
-      let owner = get #owner cardV
-      setTitle (get #title (get #card cardV) <> " / wind of change")
-      setOGTitle (get #title (get #card cardV))
-      setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
-      setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+        let owner = get #owner cardV
+        setTitle (get #title (get #card cardV) <> " / wind of change")
+        setOGTitle (get #title (get #card cardV))
+        setDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
+        setOGDescription $ format "by {} @{}" (get #displayName owner) (get #handle owner)
 
-    html ShowView { .. } = [hsx|
+    html ShowView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -38,30 +39,33 @@ instance View ShowView where
         </h1>
         {if reverseOrder then reverseOrderHtml else normalOrderHtml}
      |]
-     where
-       card@Card{..} = get #card cardV
-       private = case card ^. #settings_ % #visibility of
-         VisibilityPublic -> False
-         VisibilityPrivate -> True
-       reverseOrder = card ^. #settings_ % #reverseOrder
-       archived = card ^. #settings_ % #archived
-       normalOrderHtml = [hsx|
+      where
+        card@Card{..} = get #card cardV
+        private = case card ^. #settings_ % #visibility of
+            VisibilityPublic -> False
+            VisibilityPrivate -> True
+        reverseOrder = card ^. #settings_ % #reverseOrder
+        archived = card ^. #settings_ % #archived
+        normalOrderHtml =
+            [hsx|
          {when (get #editable cardV) (renderCardUpdateAddForm card)}
          <div class="mt-4">
            {forEach (get #cardUpdates cardV) renderCardUpdate}
          </div>
        |]
-       reverseOrderHtml = [hsx|
+        reverseOrderHtml =
+            [hsx|
          <p class="text-muted small">Comment order: oldest to newest.</p>
          <div class="mb-3">
            {forEach (reverse (get #cardUpdates cardV)) renderCardUpdate}
          </div>
          {when (get #editable cardV) (renderCardUpdateAddForm card)}
        |]
-       archivedBadge = [hsx|<span class="badge badge-secondary mr-2">Archived</span>|]
+        archivedBadge = [hsx|<span class="badge badge-secondary mr-2">Archived</span>|]
 
 renderCardEditButton :: Card -> Html
-renderCardEditButton card = [hsx|
+renderCardEditButton card =
+    [hsx|
   <a
     href={EditCardAction (get #id card)}
     class="btn btn-sm btn-outline-info"
@@ -72,7 +76,8 @@ renderCardEditButton card = [hsx|
   |]
 
 renderCardDeleteButton :: Card -> Html
-renderCardDeleteButton card = [hsx|
+renderCardDeleteButton card =
+    [hsx|
   <a
     href={DeleteCardAction (get #id card)}
     class="btn btn-sm btn-outline-danger js-delete"
@@ -83,7 +88,11 @@ renderCardDeleteButton card = [hsx|
   |]
 
 renderCardUpdateAddForm :: Card -> Html
-renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
+renderCardUpdateAddForm card =
+    formForWithOptions
+        cardUpdate
+        options
+        [hsx|
   <style>
     .update-content-field { max-width:40rem; width:100%; }
   </style>
@@ -105,17 +114,19 @@ renderCardUpdateAddForm card = formForWithOptions cardUpdate options [hsx|
     cardUpdate = (newRecord :: CardUpdate)
 
     options :: FormContext CardUpdate -> FormContext CardUpdate
-    options formContext = formContext
-      |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
-      |> set #formId "woc-card-update-add-form"
-      |> if card ^. #settings_ % #reverseOrder 
-           then set #customFormAttributes [("onsubmit", "window.__scrollTo = 'footer'")]
-           else Prelude.id
+    options formContext =
+        formContext
+            |> set #formAction (pathTo (CreateCardUpdateAction (get #id card)))
+            |> set #formId "woc-card-update-add-form"
+            |> if card ^. #settings_ % #reverseOrder
+                then set #customFormAttributes [("onsubmit", "window.__scrollTo = 'footer'")]
+                else Prelude.id
 
-renderCardUpdate 
-  :: CardUpdateV
-  -> Html
-renderCardUpdate cardUpdateV = [hsx|
+renderCardUpdate ::
+    CardUpdateV ->
+    Html
+renderCardUpdate cardUpdateV =
+    [hsx|
   <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}
        id={"comment-" <> show (get #id cardUpdate)}>
     <div style="margin-bottom:.3em">
@@ -144,22 +155,25 @@ renderCardUpdate cardUpdateV = [hsx|
     cardUpdate = get #cardUpdate cardUpdateV
     cardId = get #id (get #card cardUpdateV)
     private = case cardUpdate ^. #settings_ % #visibility of
-      VisibilityPublic -> False
-      VisibilityPrivate -> True
+        VisibilityPublic -> False
+        VisibilityPrivate -> True
 
-renderCardUpdateEditButton cardUpdate = [hsx|
+renderCardUpdateEditButton cardUpdate =
+    [hsx|
   <a class="btn btn-tiny btn-outline-info mr-1"
      href={EditCardUpdateAction (get #id cardUpdate)}>
     Edit
   </a>|]
 
-renderCardUpdateDeleteButton cardUpdate = [hsx|
+renderCardUpdateDeleteButton cardUpdate =
+    [hsx|
   <a class="btn btn-tiny btn-outline-danger js-delete mr-1"
      href={DeleteCardUpdateAction (get #id cardUpdate)}>
     Kill
   </a>|]
 
-renderCardUpdateReplyButton cardUpdate = [hsx|
+renderCardUpdateReplyButton cardUpdate =
+    [hsx|
   <a class="btn btn-tiny btn-outline-secondary mr-1"
      href={NewReplyAction (get #id cardUpdate) (show replySource)}>
     Reply
@@ -168,7 +182,8 @@ renderCardUpdateReplyButton cardUpdate = [hsx|
     replySource = ReplySourceCard (get #cardId cardUpdate)
 
 renderReply :: CardUpdate -> ReplyV -> Html
-renderReply cardUpdate replyV = [hsx|
+renderReply cardUpdate replyV =
+    [hsx|
   <div id={"reply-" <> show (get #id reply)} class="reply media">
     {gravatar}
     <div class="media-body ml-1">
@@ -194,18 +209,20 @@ renderReply cardUpdate replyV = [hsx|
   where
     reply@Reply{..} = get #reply replyV
     authorName = case get #author replyV of
-      Nothing -> [hsx|<span class="mr-2 font-weight-bold">[deleted]</span>|]
-      Just author -> [hsx|
+        Nothing -> [hsx|<span class="mr-2 font-weight-bold">[deleted]</span>|]
+        Just author ->
+            [hsx|
         <span class="mr-2 font-weight-bold">
           <a href={ShowUserAction (get #id author)}>{get #displayName author}</a>
         </span>
       |]
     gravatar = case get #author replyV of
-      Nothing -> [hsx|<span>{gravatarTiny ""}</span>|]
-      Just author -> [hsx|<a href={ShowUserAction (get #id author)}>{gravatarTiny (get #email author)}</a>|]
+        Nothing -> [hsx|<span>{gravatarTiny ""}</span>|]
+        Just author -> [hsx|<a href={ShowUserAction (get #id author)}>{gravatarTiny (get #email author)}</a>|]
 
 renderReplyEditButton :: CardUpdate -> Reply -> Html
-renderReplyEditButton cardUpdate reply = [hsx|
+renderReplyEditButton cardUpdate reply =
+    [hsx|
   <a class="btn btn-tiny btn-outline-info"
      href={EditReplyAction (get #id reply) (show replySource)}>
     Edit
@@ -214,7 +231,8 @@ renderReplyEditButton cardUpdate reply = [hsx|
     replySource = ReplySourceCard (get #cardId cardUpdate)
 
 renderReplyDeleteButton :: CardUpdate -> Reply -> Html
-renderReplyDeleteButton cardUpdate reply = [hsx|
+renderReplyDeleteButton cardUpdate reply =
+    [hsx|
   <a class="btn btn-tiny btn-outline-danger js-delete"
      href={DeleteReplyAction (get #id reply) (show replySource)}>
     Kill
@@ -223,7 +241,8 @@ renderReplyDeleteButton cardUpdate reply = [hsx|
     replySource = ReplySourceCard (get #cardId cardUpdate)
 
 renderReplyMarkAsReadButton :: CardUpdate -> Reply -> Html
-renderReplyMarkAsReadButton cardUpdate reply = [hsx|
+renderReplyMarkAsReadButton cardUpdate reply =
+    [hsx|
   <form class="d-inline" method="POST" action={UpdateMarkReplyAsReadAction (get #id reply) (show replySource)}>
     <button class="btn btn-tiny btn-outline-info">Mark as read</button>
   </form>

@@ -1,21 +1,22 @@
 module Web.View.Card.Edit where
 
-import Web.View.Prelude
-import Web.Helper.View
 import Named
+import Web.Helper.View
+import Web.View.Prelude
 
-data EditView = EditView { 
-  owner :: User,
-  ownBoards :: [Board],
-  board :: Board,
-  card :: Card 
-  }
+data EditView = EditView
+    { owner :: User,
+      ownBoards :: [Board],
+      board :: Board,
+      card :: Card
+    }
 
 instance View EditView where
     beforeRender EditView{..} = do
-      setTitle (get #title card <> " / wind of change")
+        setTitle (get #title card <> " / wind of change")
 
-    html EditView { .. } = [hsx|
+    html EditView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -30,7 +31,10 @@ instance View EditView where
     |]
 
 renderForm :: "ownBoards" :! [Board] -> Card -> Html
-renderForm (Arg ownBoards) card = formFor card [hsx|
+renderForm (Arg ownBoards) card =
+    formFor
+        card
+        [hsx|
     {(textField #title)}
     {(selectField #boardId ownBoards) {
       fieldLabel = "Board"
@@ -62,7 +66,7 @@ renderForm (Arg ownBoards) card = formFor card [hsx|
 |]
   where
     private = case card ^. #settings_ % #visibility of
-      VisibilityPrivate -> True
-      VisibilityPublic -> False
+        VisibilityPrivate -> True
+        VisibilityPublic -> False
     reverseOrder = card ^. #settings_ % #reverseOrder
     archived = card ^. #settings_ % #archived

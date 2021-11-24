@@ -3,13 +3,14 @@ module Web.View.Board.Edit where
 import Web.Helper.View
 import Web.View.Prelude
 
-data EditView = EditView { owner :: User, board :: Board }
+data EditView = EditView {owner :: User, board :: Board}
 
 instance View EditView where
     beforeRender EditView{..} = do
-      setTitle (get #title board <> " / wind of change")
+        setTitle (get #title board <> " / wind of change")
 
-    html EditView { .. } = [hsx|
+    html EditView{..} =
+        [hsx|
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href={BoardsAction}>Boards</a></li>
@@ -23,7 +24,10 @@ instance View EditView where
     |]
 
 renderForm :: Board -> Html
-renderForm board = formFor board [hsx|
+renderForm board =
+    formFor
+        board
+        [hsx|
     {(textField #title)}
     {submitButton}
     <div class="ml-4 custom-control custom-control-inline custom-checkbox">
@@ -33,5 +37,5 @@ renderForm board = formFor board [hsx|
 |]
   where
     private = case board ^. #settings_ % #visibility of
-      VisibilityPrivate -> True
-      VisibilityPublic -> False
+        VisibilityPrivate -> True
+        VisibilityPublic -> False

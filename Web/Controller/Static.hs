@@ -1,11 +1,11 @@
 module Web.Controller.Static where
 
+import qualified Data.ByteString.Lazy as LBS
+import Network.HTTP.Types (status200)
+import Network.HTTP.Types.Header (hContentType)
+import Network.Wai (responseLBS)
 import Web.Controller.Prelude
 import Web.View.Static.Welcome
-import qualified Data.ByteString.Lazy as LBS
-import Network.HTTP.Types.Header (hContentType)
-import Network.HTTP.Types (status200)
-import Network.Wai (responseLBS)
 
 instance Controller StaticController where
     action WelcomeAction =
@@ -13,7 +13,7 @@ instance Controller StaticController where
             then redirectTo BoardsAction
             else renderLanding
 
-renderLanding :: (?context :: ControllerContext) => IO () 
+renderLanding :: (?context :: ControllerContext) => IO ()
 renderLanding = do
     page <- LBS.readFile "static/home.html"
     respondAndExit $ responseLBS status200 [(hContentType, "text/html")] page

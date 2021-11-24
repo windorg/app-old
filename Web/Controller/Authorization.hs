@@ -2,9 +2,9 @@
 
 module Web.Controller.Authorization where
 
-import Web.Controller.Prelude
-import Named
 import Control.Monad.Extra (andM)
+import Named
+import Web.Controller.Prelude
 import Web.Helper.Common
 
 userCanEditReplyPure :: "user" :! Maybe (Id User) -> Reply -> Bool
@@ -13,16 +13,16 @@ userCanEditReplyPure (Arg user) reply =
         Nothing -> False -- nobody can edit deleted users' replies
         Just authorId -> Just authorId == user
 
-userCanDeleteReplyPure 
-  :: "user" :! Maybe (Id User)
-  -> "cardOwner" :! Id User
-  -> Reply 
-  -> Bool
+userCanDeleteReplyPure ::
+    "user" :! Maybe (Id User) ->
+    "cardOwner" :! Id User ->
+    Reply ->
+    Bool
 userCanDeleteReplyPure (Arg user) (Arg cardOwner) reply =
     case user of
         Nothing -> False -- logged-out users can't delete anything
         Just u -> u == cardOwner || Just u == get #authorId reply
-        
+
 class Access thing where
     userCanView :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id thing -> IO Bool
     userCanEdit :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id thing -> IO Bool
@@ -40,11 +40,11 @@ instance Access Board where
 instance Access Card where
     userCanView cardId = do
         card <- fetch cardId
-        andM [
-            -- Must be able to see the board
-            userCanView @Board (get #boardId card),
-            -- And the card, too
-            case card ^. #settings_ % #visibility of
+        andM
+            [ -- Must be able to see the board
+              userCanView @Board (get #boardId card),
+              -- And the card, too
+              case card ^. #settings_ % #visibility of
                 VisibilityPublic -> pure True
                 VisibilityPrivate -> pure $ mbCurrentUserId == Just (get #ownerId card)
             ]
@@ -54,11 +54,11 @@ instance Access Card where
 instance Access CardUpdate where
     userCanView cardUpdateId = do
         cardUpdate <- fetch cardUpdateId
-        andM [
-            -- Must be able to see the card
-            userCanView @Card (get #cardId cardUpdate),
-            -- And the card update, too
-            case cardUpdate ^. #settings_ % #visibility of
+        andM
+            [ -- Must be able to see the card
+              userCanView @Card (get #cardId cardUpdate),
+              -- And the card update, too
+              case cardUpdate ^. #settings_ % #visibility of
                 VisibilityPublic -> pure True
                 VisibilityPrivate -> pure $ mbCurrentUserId == Just (get #ownerId cardUpdate)
             ]
@@ -68,13 +68,14 @@ instance Access CardUpdate where
 instance Access Reply where
     userCanView replyId = do
         reply <- fetch replyId
-        andM [
-            userCanView @CardUpdate (get #cardUpdateId reply),
-            -- TODO: we might want to add replies that only the author & the card owner can see
-            case reply ^. #settings_ % #visibility of
+        andM
+            [ userCanView @CardUpdate (get #cardUpdateId reply),
+              -- TODO: we might want to add replies that only the author & the card owner can see
+              case reply ^. #settings_ % #visibility of
                 VisibilityPublic -> pure True
-                VisibilityPrivate -> (== mbCurrentUserId) <$> 
-                    (Just <$> getOwnerById @CardUpdate (get #cardUpdateId reply))
+                VisibilityPrivate ->
+                    (== mbCurrentUserId)
+                        <$> (Just <$> getOwnerById @CardUpdate (get #cardUpdateId reply))
             ]
     userCanEdit replyId = do
         reply :: Reply <- fetch replyId
@@ -82,10 +83,11 @@ instance Access Reply where
     userCanDelete replyId = do
         reply :: Reply <- fetch replyId
         cardOwner <- getOwnerById @CardUpdate (get #cardUpdateId reply)
-        pure $ userCanDeleteReplyPure 
-            (#user mbCurrentUserId)
-            (#cardOwner cardOwner)
-            reply
-        
+        pure $
+            userCanDeleteReplyPure
+                (#user mbCurrentUserId)
+                (#cardOwner cardOwner)
+                reply
+
 userCanReply :: (?context :: ControllerContext, ?modelContext :: ModelContext) => Id CardUpdate -> IO Bool
 userCanReply id = userCanView @CardUpdate id

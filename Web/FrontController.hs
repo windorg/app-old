@@ -10,27 +10,28 @@ import Web.Controller.Sessions
 import qualified Prelude
 
 -- Controller Imports
-import Web.Controller.Reply
-import Web.Controller.User
-import Web.Controller.CardUpdate
-import Web.Controller.Card
+
 import Web.Controller.Board
-import Web.Controller.Inbox
+import Web.Controller.Card
+import Web.Controller.CardUpdate
 import Web.Controller.Feed
+import Web.Controller.Inbox
+import Web.Controller.Reply
 import Web.Controller.Static
+import Web.Controller.User
 
 instance FrontController WebApplication where
-    controllers = 
-        [ startPage WelcomeAction
-        -- Generator Marker
-        , parseRoute @ReplyController
-        , parseRoute @InboxController
-        , parseRoute @FeedController
-        , parseRoute @UserController
-        , parseRoute @CardUpdateController
-        , parseRoute @CardController
-        , parseRoute @BoardController
-        , parseRoute @LoginController
+    controllers =
+        [ startPage WelcomeAction,
+          -- Generator Marker
+          parseRoute @ReplyController,
+          parseRoute @InboxController,
+          parseRoute @FeedController,
+          parseRoute @UserController,
+          parseRoute @CardUpdateController,
+          parseRoute @CardController,
+          parseRoute @BoardController,
+          parseRoute @LoginController
         ]
 
 instance InitControllerContext WebApplication where

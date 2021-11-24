@@ -1,46 +1,45 @@
 module Web.Controller.User where
 
-import Web.Controller.Prelude
-import Web.Helper.Common
-import Web.View.User.Edit
-import Web.View.User.Show
+import Data.Text (strip)
+import qualified IHP.AuthSupport.Controller.Sessions as Sessions
 import IHP.ValidationSupport.ValidateField (matchesRegex)
 import Web.Controller.Authorization
+import Web.Controller.Prelude
+import Web.Helper.Common
 import Web.View.Sessions.LoginOrSignup
-import qualified IHP.AuthSupport.Controller.Sessions as Sessions
-import Data.Text (strip)
+import Web.View.User.Edit
+import Web.View.User.Show
 
 instance Sessions.SessionsControllerConfig User => Controller UserController where
-    action ShowUserAction { userId } = do
+    action ShowUserAction{userId} = do
         user <- fetch userId
-        boards <- query @Board 
-            |> filterWhere (#ownerId, userId)
-            |> orderByDesc #createdAt
-            |> fetch
-            >>= filterM (userCanView @Board . get #id)
-        followed <- case mbCurrentUserId of 
+        boards <-
+            query @Board
+                |> filterWhere (#ownerId, userId)
+                |> orderByDesc #createdAt
+                |> fetch
+                >>= filterM (userCanView @Board . get #id)
+        followed <- case mbCurrentUserId of
             Nothing -> pure Nothing
-            Just currentUid -> query @FollowedUser
-                |> filterWhere (#subscriberId, currentUid)
-                |> filterWhere (#followedUserId, userId)
-                |> fetchExists
-                <&> Just
-        render ShowView { .. }
-
-    action EditUserAction { userId } = do
+            Just currentUid ->
+                query @FollowedUser
+                    |> filterWhere (#subscriberId, currentUid)
+                    |> filterWhere (#followedUserId, userId)
+                    |> fetchExists
+                    <&> Just
+        render ShowView{..}
+    action EditUserAction{userId} = do
         user <- fetch userId
-        render EditView { .. }
-
-    action UpdateUserAction { userId } = do
+        render EditView{..}
+    action UpdateUserAction{userId} = do
         user <- fetch userId
         user
             |> buildUser
             |> ifValid \case
-                Left user -> render EditView { .. }
+                Left user -> render EditView{..}
                 Right user -> do
                     user <- user |> updateRecord
-                    redirectTo EditUserAction { .. }
-
+                    redirectTo EditUserAction{..}
     action CreateUserAction = do
         let user = newRecord @User
         user
@@ -51,30 +50,32 @@ instance Sessions.SessionsControllerConfig User => Controller UserController whe
             |> validateField #handle (matchesRegex "^[a-zA-Z0-9_-]{1,64}$")
             |> (\u -> if get #displayName u == "" then u |> set #displayName (get #handle u) else u)
             |> ifValid \case
-                Left user -> render LoginOrSignupView { 
-                    loginUser = newRecord @User,
-                    signupUser = user
-                } 
+                Left user ->
+                    render
+                        LoginOrSignupView
+                            { loginUser = newRecord @User,
+                              signupUser = user
+                            }
                 Right user -> do
                     hashed <- hashPassword (get #passwordHash user)
-                    user <- user
-                        |> set #passwordHash hashed
-                        |> createRecord
+                    user <-
+                        user
+                            |> set #passwordHash hashed
+                            |> createRecord
                     login user
                     redirectUrl <- getSessionAndClear "IHP.LoginSupport.redirectAfterLogin"
                     redirectToPath (fromMaybe (Sessions.afterLoginRedirectPath @User) redirectUrl)
-
-    action DeleteUserAction { userId } = do
+    action DeleteUserAction{userId} = do
         user <- fetch userId
         deleteRecord user
         redirectToPath "/"
-
-    action UpdateFollowUserAction {userId} = do
+    action UpdateFollowUserAction{userId} = do
         ensureIsUser
-        follows <- query @FollowedUser
-            |> filterWhere (#subscriberId, currentUserId)
-            |> filterWhere (#followedUserId, userId)
-            |> fetchExists
+        follows <-
+            query @FollowedUser
+                |> filterWhere (#subscriberId, currentUserId)
+                |> filterWhere (#followedUserId, userId)
+                |> fetchExists
         unless follows do
             (newRecord :: FollowedUser)
                 |> set #subscriberId currentUserId
@@ -82,15 +83,16 @@ instance Sessions.SessionsControllerConfig User => Controller UserController whe
                 |> createRecord
             pure ()
         redirectBack
-
-    action UpdateUnfollowUserAction {userId} = do
+    action UpdateUnfollowUserAction{userId} = do
         ensureIsUser
-        mbFollow <- query @FollowedUser
-            |> filterWhere (#subscriberId, currentUserId)
-            |> filterWhere (#followedUserId, userId)
-            |> fetchOneOrNothing
+        mbFollow <-
+            query @FollowedUser
+                |> filterWhere (#subscriberId, currentUserId)
+                |> filterWhere (#followedUserId, userId)
+                |> fetchOneOrNothing
         mapM_ deleteRecord mbFollow
         redirectBack
 
-buildUser user = user
-    |> fill @["email","handle","displayName","passwordHash"]
+buildUser user =
+    user
+        |> fill @["email", "handle", "displayName", "passwordHash"]
