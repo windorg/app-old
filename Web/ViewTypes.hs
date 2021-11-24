@@ -3,6 +3,7 @@ module Web.ViewTypes where
 
 import Application.Orphans
 import Control.Monad (filterM)
+import GHC.Generics (Generic)
 import Generated.Types
 import IHP.ControllerPrelude
 import IHP.ModelSupport
@@ -23,6 +24,7 @@ data CardV = CardV
       cardUpdates :: [CardUpdateV],
       editable :: Bool
     }
+    deriving (Generic)
 
 fetchCardV :: (?modelContext :: ModelContext, ?context :: ControllerContext) => Card -> IO CardV
 fetchCardV card = do
@@ -56,6 +58,7 @@ data CardUpdateV = CardUpdateV
       replies :: [ReplyV],
       editable :: Bool
     }
+    deriving (Generic)
 
 ----------------------------------------------------------------------------
 -- ReplyV
@@ -69,6 +72,7 @@ data ReplyV = ReplyV
       deletable :: Bool,
       markAsReadAble :: Bool
     }
+    deriving (Generic)
 
 fetchReplyV :: (?modelContext :: ModelContext, ?context :: ControllerContext) => Reply -> IO ReplyV
 fetchReplyV reply = do
@@ -100,6 +104,7 @@ data FeedItemV = FeedItemCardUpdateV
       cardUpdate :: CardUpdate,
       card :: Card
     }
+    deriving (Generic)
 
 fetchFeedItemV :: (?modelContext :: ModelContext, ?context :: ControllerContext) => FeedItem -> IO FeedItemV
 fetchFeedItemV (FeedItemCardUpdate cardUpdate) = do

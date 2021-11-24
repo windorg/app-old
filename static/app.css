@@ -139,6 +139,11 @@ footer {
   border-radius: 5px;
 }
 
+.woc-card-update-pinned,
+.woc-card-update-private.woc-card-update-pinned {
+    background-color: #ffecd0;
+}
+
 .woc-card-update-private {
   margin-bottom: 1.75rem; /* Only for private ones! We don't want them to stick together. */
 }

@@ -42,13 +42,7 @@ instance Controller BoardController where
                 render IndexViewGuest{..}
     action NewBoardAction = do
         ensureIsUser
-        let board =
-                (newRecord :: Board)
-                    |> Optics.set
-                        #settings_
-                        BoardSettings
-                            { visibility = VisibilityPublic
-                            }
+        let board = newRecord :: Board
         render NewView{..}
     action ShowBoardAction{boardId} = do
         accessDeniedUnless =<< userCanView @Board boardId
@@ -98,8 +92,7 @@ instance Controller BoardController where
 buildBoard board =
     board
         |> fill @'["title"]
-        |> Optics.set
-            #settings_
-            BoardSettings
+        |> Optics.over #settings_ \settings ->
+            (settings :: BoardSettings)
                 { visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
                 }

@@ -57,7 +57,7 @@ renderForm (Arg ownBoards) card =
         </span>
       </label>
     </div>
-    <div class="mb-4"></div>
+    <div class="mb-4"><!-- spacer --></div>
     {submitButton}
     <div class="ml-4 custom-control custom-control-inline custom-checkbox">
       <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>

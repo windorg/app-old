@@ -81,9 +81,8 @@ instance Controller CardController where
 buildCard card =
     card
         |> fill @'["title"]
-        |> Optics.set
-            #settings_
-            CardSettings
+        |> Optics.over #settings_ \settings ->
+            settings
                 { visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic,
                   reverseOrder = paramOrDefault False "reverseOrder",
                   archived = paramOrDefault False "archived"

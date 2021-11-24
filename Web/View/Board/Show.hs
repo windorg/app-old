@@ -41,13 +41,13 @@ instance View ShowView where
         (normalCards, archivedCards) = partition (not . view (#settings_ % #archived) . fst) cards
         archive =
             [hsx|
-        <details class="mt-3">
-          <summary>
-            <span class="badge badge-secondary mb-2">Archived</span>
-          </summary>
-          {forEach archivedCards renderCard}
-        </details>
-      |]
+                <details class="mt-3">
+                    <summary>
+                        <span class="badge badge-secondary mb-2">Archived</span>
+                    </summary>
+                    {forEach archivedCards renderCard}
+                </details>
+            |]
 
 renderCard :: (Card, Int) -> Html
 renderCard (card, count) =

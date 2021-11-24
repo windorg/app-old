@@ -1,5 +1,6 @@
 module Web.View.Card.Show where
 
+import qualified Data.Text as T
 import Named
 import qualified Optics
 import Web.Controller.Authorization
@@ -37,7 +38,7 @@ instance View ShowView where
           {when (get #editable cardV) 
             (renderCardEditButton card <> renderCardDeleteButton card)}
         </h1>
-        {if reverseOrder then reverseOrderHtml else normalOrderHtml}
+        {if reverseOrder then reverseOrderUpdates else normalOrderUpdates}
      |]
       where
         card@Card{..} = get #card cardV
@@ -46,46 +47,48 @@ instance View ShowView where
             VisibilityPrivate -> True
         reverseOrder = card ^. #settings_ % #reverseOrder
         archived = card ^. #settings_ % #archived
-        normalOrderHtml =
+        (pinnedUpdates, otherUpdates) =
+            partition (^. #cardUpdate % #settings_ % #pinned) (get #cardUpdates cardV)
+        normalOrderUpdates =
             [hsx|
-         {when (get #editable cardV) (renderCardUpdateAddForm card)}
-         <div class="mt-4">
-           {forEach (get #cardUpdates cardV) renderCardUpdate}
-         </div>
-       |]
-        reverseOrderHtml =
+                {when (get #editable cardV) (renderCardUpdateAddForm card)}
+                <div class="mt-4">
+                    {forEach (pinnedUpdates <> otherUpdates) renderCardUpdate}
+                </div>
+            |]
+        reverseOrderUpdates =
             [hsx|
-         <p class="text-muted small">Comment order: oldest to newest.</p>
-         <div class="mb-3">
-           {forEach (reverse (get #cardUpdates cardV)) renderCardUpdate}
-         </div>
-         {when (get #editable cardV) (renderCardUpdateAddForm card)}
-       |]
+                <p class="text-muted small">Comment order: oldest to newest.</p>
+                <div class="mb-3">
+                    {forEach (reverse pinnedUpdates <> reverse otherUpdates) renderCardUpdate}
+                </div>
+                {when (get #editable cardV) (renderCardUpdateAddForm card)}
+            |]
         archivedBadge = [hsx|<span class="badge badge-secondary mr-2">Archived</span>|]
 
 renderCardEditButton :: Card -> Html
 renderCardEditButton card =
     [hsx|
-  <a
-    href={EditCardAction (get #id card)}
-    class="btn btn-sm btn-outline-info"
-    style="margin-left:1em"
-  >
-    Edit
-  </a>
-  |]
+        <a
+          href={EditCardAction (get #id card)}
+          class="btn btn-sm btn-outline-info"
+          style="margin-left:1em"
+        >
+          Edit
+        </a>
+    |]
 
 renderCardDeleteButton :: Card -> Html
 renderCardDeleteButton card =
     [hsx|
-  <a
-    href={DeleteCardAction (get #id card)}
-    class="btn btn-sm btn-outline-danger js-delete"
-    style="margin-left:1em"
-  >
-    Delete
-  </a>
-  |]
+        <a
+          href={DeleteCardAction (get #id card)}
+          class="btn btn-sm btn-outline-danger js-delete"
+          style="margin-left:1em"
+        >
+          Delete
+        </a>
+    |]
 
 renderCardUpdateAddForm :: Card -> Html
 renderCardUpdateAddForm card =
@@ -93,23 +96,23 @@ renderCardUpdateAddForm card =
         cardUpdate
         options
         [hsx|
-  <style>
-    .update-content-field { max-width:40rem; width:100%; }
-  </style>
-  {(textareaField #content) {
-     disableLabel = True,
-     fieldClass = "update-content-field use-tiptap"
-   }
-  }
-  {submitButton {
-     label = "Post"
-   }
-  }
-  <div class="ml-4 custom-control custom-control-inline custom-checkbox">
-    <input type="checkbox" class="custom-control-input" id="private" name="private">
-    <label class="custom-control-label" for="private">🔒 Private comment</label>
-  </div>
-  |]
+            <style>
+              .update-content-field { max-width:40rem; width:100%; }
+            </style>
+            {(textareaField #content) {
+               disableLabel = True,
+               fieldClass = "update-content-field use-tiptap"
+             }
+            }
+            {submitButton {
+               label = "Post"
+             }
+            }
+            <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="private" name="private">
+              <label class="custom-control-label" for="private">🔒 Private comment</label>
+            </div>
+        |]
   where
     cardUpdate = (newRecord :: CardUpdate)
 
@@ -127,7 +130,11 @@ renderCardUpdate ::
     Html
 renderCardUpdate cardUpdateV =
     [hsx|
-  <div class={"woc-card-update " <> if private then "woc-card-update-private" else "" :: Text}
+  <div class={T.unwords [
+                "woc-card-update",
+                if private then "woc-card-update-private" else "",
+                if pinned then "woc-card-update-pinned" else ""
+              ]}
        id={"comment-" <> show (get #id cardUpdate)}>
     <div style="margin-bottom:.3em">
       <span class="text-muted small">
@@ -157,6 +164,7 @@ renderCardUpdate cardUpdateV =
     private = case cardUpdate ^. #settings_ % #visibility of
         VisibilityPublic -> False
         VisibilityPrivate -> True
+    pinned = cardUpdate ^. #settings_ % #pinned
 
 renderCardUpdateEditButton cardUpdate =
     [hsx|

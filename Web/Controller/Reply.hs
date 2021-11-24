@@ -20,11 +20,6 @@ instance (Controller CardController, Controller InboxController) => Controller R
         let reply =
                 (newRecord :: Reply)
                     |> set #cardUpdateId cardUpdateId
-                    |> Optics.set
-                        #settings_
-                        ReplySettings
-                            { visibility = VisibilityPublic
-                            }
         setModal NewView{..}
         jumpToReplySource replySource
     action EditReplyAction{replySourceSerialized, replyId} = do
@@ -118,8 +113,7 @@ instance (Controller CardController, Controller InboxController) => Controller R
 buildReply reply =
     reply
         |> fill @'["content"]
-        |> Optics.set
-            #settings_
-            ReplySettings
+        |> Optics.over #settings_ \settings ->
+            (settings :: ReplySettings)
                 { visibility = if paramOrDefault False "private" then VisibilityPrivate else VisibilityPublic
                 }

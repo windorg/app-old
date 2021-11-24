@@ -26,18 +26,29 @@ renderForm cardUpdate =
     formFor
         cardUpdate
         [hsx|
-    {(textareaField #content) {
-        disableLabel = True,
-        fieldClass = "use-tiptap"
-      }
-    }
-    {submitButton {label = "Save"}}
-    <div class="ml-4 custom-control custom-control-inline custom-checkbox">
-      <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>
-      <label class="custom-control-label" for="private">🔒 Private comment</label>
-    </div>
-|]
+            {(textareaField #content) {
+                disableLabel = True,
+                fieldClass = "use-tiptap"
+             }
+            }
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" name="pinned" id="pinned" checked={pinned}>
+              <label class="custom-control-label" for="pinned">
+                Pinned comment<br>
+                <span class="text-muted small">
+                  The comment will always be shown on top.
+                </span>
+              </label>
+            </div>
+            <div class="mb-4"><!-- spacer --></div>
+            {submitButton {label = "Save"}}
+            <div class="ml-4 custom-control custom-control-inline custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="private" id="private" checked={private}>
+                <label class="custom-control-label" for="private">🔒 Private comment</label>
+            </div>
+        |]
   where
     private = case cardUpdate ^. #settings_ % #visibility of
         VisibilityPrivate -> True
         VisibilityPublic -> False
+    pinned = cardUpdate ^. #settings_ % #pinned

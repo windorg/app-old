@@ -109,7 +109,10 @@ data ReplySettings = ReplySettings
     }
     deriving (Show, Generic)
 
-instance FromJSON ReplySettings
+instance FromJSON ReplySettings where
+    parseJSON = withObject "ReplySettings" \o -> do
+        visibility <- o .:? "visibility" .!= VisibilityPublic
+        pure ReplySettings{..}
 
 instance ToJSON ReplySettings
 
@@ -130,12 +133,19 @@ Optics.makeFieldLabelsNoPrefix ''ReplySettings
 data CardUpdateSettings = CardUpdateSettings
     { -- | Whether the cardupdate is private or public
       visibility :: Visibility,
+      -- Whether the card update is pinned. Several card updates can be pinned in the same card.
+      pinned :: Bool,
       -- | Who is following the thread (e.g. all users that replied to it). Does not include the card owner.
       subscribers :: Set (Id User)
     }
     deriving (Show, Generic)
 
-instance FromJSON CardUpdateSettings
+instance FromJSON CardUpdateSettings where
+    parseJSON = withObject "CardUpdateSettings" \o -> do
+        visibility <- o .:? "visibility" .!= VisibilityPublic
+        pinned <- o .:? "pinned" .!= False
+        subscribers <- o .:? "subscribers" .!= mempty
+        pure CardUpdateSettings{..}
 
 instance ToJSON CardUpdateSettings
 
@@ -163,7 +173,7 @@ data CardSettings = CardSettings
 
 instance FromJSON CardSettings where
     parseJSON = withObject "CardSettings" \o -> do
-        visibility <- o .: "visibility"
+        visibility <- o .:? "visibility" .!= VisibilityPublic
         reverseOrder <- o .:? "reverseOrder" .!= False
         archived <- o .:? "archived" .!= False
         pure CardSettings{..}
@@ -189,7 +199,10 @@ data BoardSettings = BoardSettings
     }
     deriving (Show, Generic)
 
-instance FromJSON BoardSettings
+instance FromJSON BoardSettings where
+    parseJSON = withObject "BoardSettings" \o -> do
+        visibility <- o .:? "visibility" .!= VisibilityPublic
+        pure BoardSettings{..}
 
 instance ToJSON BoardSettings
 
