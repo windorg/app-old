@@ -2,8 +2,9 @@ module Web.Types where
 
 import Application.Orphans
 import Control.Monad (fail)
-import Data.Aeson (FromJSON (..), ToJSON (..), withObject, (.!=), (.:), (.:?))
+import Data.Aeson (FromJSON (..), ToJSON (..), Value (Null), withObject, (.!=), (.:), (.:?))
 import qualified Data.Aeson as Aeson
+import Data.Function ((&))
 import GHC.Generics (Generic)
 import Generated.Types
 import IHP.LoginSupport.Types
@@ -110,9 +111,11 @@ data ReplySettings = ReplySettings
     deriving (Show, Generic)
 
 instance FromJSON ReplySettings where
-    parseJSON = withObject "ReplySettings" \o -> do
-        visibility <- o .:? "visibility" .!= VisibilityPublic
-        pure ReplySettings{..}
+    parseJSON Null = parseJSON (Aeson.Object mempty)
+    parseJSON obj =
+        obj & withObject "ReplySettings" \o -> do
+            visibility <- o .:? "visibility" .!= VisibilityPublic
+            pure ReplySettings{..}
 
 instance ToJSON ReplySettings
 
@@ -122,7 +125,7 @@ instance Optics.LabelOptic "settings_" Optics.A_Lens Reply Reply ReplySettings R
             Optics.% Optics.iso
                 ( \x -> case Aeson.fromJSON x of
                     Aeson.Success y -> y
-                    _ -> error "#settings_ could not parse the ReplySettings field"
+                    _ -> error "#settings_ could not parse the ReplySettings fieldJ"
                 )
                 toJSON
 
@@ -141,11 +144,13 @@ data CardUpdateSettings = CardUpdateSettings
     deriving (Show, Generic)
 
 instance FromJSON CardUpdateSettings where
-    parseJSON = withObject "CardUpdateSettings" \o -> do
-        visibility <- o .:? "visibility" .!= VisibilityPublic
-        pinned <- o .:? "pinned" .!= False
-        subscribers <- o .:? "subscribers" .!= mempty
-        pure CardUpdateSettings{..}
+    parseJSON Null = parseJSON (Aeson.Object mempty)
+    parseJSON obj =
+        obj & withObject "CardUpdateSettings" \o -> do
+            visibility <- o .:? "visibility" .!= VisibilityPublic
+            pinned <- o .:? "pinned" .!= False
+            subscribers <- o .:? "subscribers" .!= mempty
+            pure CardUpdateSettings{..}
 
 instance ToJSON CardUpdateSettings
 
@@ -155,7 +160,7 @@ instance Optics.LabelOptic "settings_" Optics.A_Lens CardUpdate CardUpdate CardU
             Optics.% Optics.iso
                 ( \x -> case Aeson.fromJSON x of
                     Aeson.Success y -> y
-                    _ -> error "#settings_ could not parse the CardUpdateSettings field"
+                    _ -> error ("#settings_ could not parse the CardUpdateSettings field")
                 )
                 toJSON
 
@@ -172,11 +177,13 @@ data CardSettings = CardSettings
     deriving (Show, Generic)
 
 instance FromJSON CardSettings where
-    parseJSON = withObject "CardSettings" \o -> do
-        visibility <- o .:? "visibility" .!= VisibilityPublic
-        reverseOrder <- o .:? "reverseOrder" .!= False
-        archived <- o .:? "archived" .!= False
-        pure CardSettings{..}
+    parseJSON Null = parseJSON (Aeson.Object mempty)
+    parseJSON obj =
+        obj & withObject "CardSettings" \o -> do
+            visibility <- o .:? "visibility" .!= VisibilityPublic
+            reverseOrder <- o .:? "reverseOrder" .!= False
+            archived <- o .:? "archived" .!= False
+            pure CardSettings{..}
 
 instance ToJSON CardSettings
 
@@ -200,9 +207,11 @@ data BoardSettings = BoardSettings
     deriving (Show, Generic)
 
 instance FromJSON BoardSettings where
-    parseJSON = withObject "BoardSettings" \o -> do
-        visibility <- o .:? "visibility" .!= VisibilityPublic
-        pure BoardSettings{..}
+    parseJSON Null = parseJSON (Aeson.Object mempty)
+    parseJSON obj =
+        obj & withObject "BoardSettings" \o -> do
+            visibility <- o .:? "visibility" .!= VisibilityPublic
+            pure BoardSettings{..}
 
 instance ToJSON BoardSettings
 
